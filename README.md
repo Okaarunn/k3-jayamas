@@ -1,18 +1,6 @@
 # Jayamas K3 System
 
-Aplikasi manajemen keselamatan kerja (K3) berbasis web yang dibangun menggunakan CodeIgniter 4 dengan sistem autentikasi Myth/Auth. Sistem ini dirancang untuk membantu pengelolaan pengguna, data K3, serta kontrol akses berbasis role.
-
----
-
-## Fitur Utama
-
-- Autentikasi (Login / Logout)
-- Manajemen User (Admin)
-- Role-based Access Control (Administrator, Editor, Viewer)
-- Validasi form & keamanan password
-- UI modern & responsif
-- Session-based authentication
-- Flash message & error handling
+Aplikasi manajemen produksi berbasis web yang dibangun menggunakan CodeIgniter 4. Sistem ini dirancang untuk membantu pengelolaan barang produksi.
 
 ---
 
@@ -31,8 +19,8 @@ Aplikasi manajemen keselamatan kerja (K3) berbasis web yang dibangun menggunakan
 ### 1. Clone Project
 
 ```bash
-git clone https://github.com/Okaarunn/k3-jayamas.git
-cd k3-jayamas
+git clone https://github.com/Okaarunn/dhr-jayamas.git
+cd dhr-jayamas
 ```
 
 ### 2. Install Depedency
@@ -43,17 +31,21 @@ composer install
 
 cp env .env
 
-### 4. Generate keys
+### 4. Generate Keys
 
 php spark key:generate
 
-### 5. Database migration
+### 5. Database Migration
 
 php spark migrate -all
 
-### 6. Database seeder
+### 6. Database Seeder
 
 php spark db:seed DatabaseSeeder
+
+### 7. Run project
+
+php spark serve
 
 ### Default Seeder Account
 
