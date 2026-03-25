@@ -9,6 +9,9 @@ use CodeIgniter\Database\Config;
  */
 class Database extends Config
 {
+
+    public $defaultSeeder = 'DatabaseSeeder';
+
     /**
      * The directory that holds the Migrations and Seeds directories.
      */
