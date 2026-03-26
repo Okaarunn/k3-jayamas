@@ -3,32 +3,47 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use Myth\Auth\Models\GroupModel;
+use Myth\Auth\Models\UserModel;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        $groupModel = new GroupModel();
+        $userModel = model(UserModel::class);
 
-        $this->db->table('users')->insert([
-            'email'         => 'aditya@mail.com',
-            'username'      => 'aditya',
-            'password_hash' => \Myth\Auth\Password::hash('aditya12345'),
-            'active'        => 1,
-            'created_at'    => date('Y-m-d H:i:s'),
-            'updated_at'    => date('Y-m-d H:i:s'),
-        ]);
+        $users = [
+            [
+                'email'    => 'admin@mail.com',
+                'username' => 'admin',
+                'password' => 'jayamas2026',
+                'active'   => 1,
+                'group'    => 'administrator'
+            ],
+            [
+                'email'    => 'editor@mail.com',
+                'username' => 'editor',
+                'password' => 'editor12345',
+                'active'   => 1,
+                'group'    => 'editor'
+            ],
+            [
+                'email'    => 'viewer@mail.com',
+                'username' => 'viewer',
+                'password' => 'viewer12345',
+                'active'   => 1,
+                'group'    => 'viewer'
+            ],
+        ];
 
-        $userId = $this->db->insertID();
-
-        $group = $this->db->table('auth_groups')
-            ->where('name', 'administrator')
-            ->get()
-            ->getRow();
-
-        if ($group) {
-            $groupModel->addUserToGroup($userId, $group->id);
+        foreach ($users as $user) {
+            $userModel
+                ->withGroup($user['group'])
+                ->save([
+                    'email'    => $user['email'],
+                    'username' => $user['username'],
+                    'password' => $user['password'],
+                    'active'   => $user['active'],
+                ]);
         }
     }
 }
