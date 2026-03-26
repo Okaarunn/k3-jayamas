@@ -3,48 +3,77 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use Myth\Auth\Models\UserModel;
+use Myth\Auth\Models\GroupModel;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        $userModel = model(UserModel::class);
+        $groupModel = new GroupModel();
 
-        // data users
         $users = [
             [
-                'email'    => 'admin@mail.com',
-                'username' => 'admin',
-                'password' => 'jayamas2026',
-                'active'   => 1,
-                'group'    => 'administrator'
+                'data' => [
+                    'email'         => 'admin@jayamas.com',
+                    'username'      => 'admin',
+                    'password_hash' => \Myth\Auth\Password::hash('jayamas2026'),
+                    'active'        => 1,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                    'updated_at'    => date('Y-m-d H:i:s'),
+                ],
+                'role' => 'administrator',
             ],
             [
-                'email'    => 'editor@mail.com',
-                'username' => 'editor',
-                'password' => 'editor12345',
-                'active'   => 1,
-                'group'    => 'editor'
+                'data' => [
+                    'email'         => 'editor@jayamas.com',
+                    'username'      => 'editor',
+                    'password_hash' => \Myth\Auth\Password::hash('editor12345'),
+                    'active'        => 1,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                    'updated_at'    => date('Y-m-d H:i:s'),
+                ],
+                'role' => 'editor',
             ],
             [
-                'email'    => 'viewer@mail.com',
-                'username' => 'viewer',
-                'password' => 'viewer12345',
-                'active'   => 1,
-                'group'    => 'viewer'
+                'data' => [
+                    'email'         => 'viewer@jayamas.com',
+                    'username'      => 'viewer',
+                    'password_hash' => \Myth\Auth\Password::hash('viewer12345'),
+                    'active'        => 1,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                    'updated_at'    => date('Y-m-d H:i:s'),
+                ],
+                'role' => 'viewer',
             ],
         ];
 
+        // check if the username already exists
         foreach ($users as $user) {
-            $userModel
-                ->withGroup($user['group'])
-                ->save([
-                    'email'    => $user['email'],
-                    'username' => $user['username'],
-                    'password' => $user['password'],
-                    'active'   => $user['active'],
-                ]);
+            $exists = $this->db->table('users')
+                ->where('email', $user['data']['email'])
+                ->orWhere('username', $user['data']['username'])
+                ->get()->getRow();
+
+            if ($exists) {
+                echo "Skip: {$user['data']['username']} sudah ada.\n";
+                continue;
+            }
+
+            // insert users
+            $this->db->table('users')->insert($user['data']);
+            $userId = $this->db->insertID();
+
+            // get role
+            $group = $this->db->table('auth_groups')
+                ->where('name', $user['role'])
+                ->get()->getRow();
+
+            if ($group) {
+                $groupModel->addUserToGroup($userId, $group->id);
+                echo "Berhasil: {$user['data']['username']} ({$user['role']}) ditambahkan.\n";
+            } else {
+                echo "Peringatan: Role '{$user['role']}' tidak ditemukan di auth_groups.\n";
+            }
         }
     }
 }

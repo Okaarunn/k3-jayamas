@@ -13,9 +13,7 @@ class Induksi extends BaseController
         $this->db = \Config\Database::connect();
     }
 
-    // ------------------------------------------------------------------
-    // Helper: ambil semua induksi + username pencatat
-    // ------------------------------------------------------------------
+    // get data induksi with created by users
     private function getInduksi(int $id = 0)
     {
         $builder = $this->db->table('induksi i');
@@ -31,9 +29,7 @@ class Induksi extends BaseController
         return $builder->orderBy('i.tanggal_induksi', 'DESC')->get()->getResult();
     }
 
-    // ------------------------------------------------------------------
-    // Daftar Induksi — semua role
-    // ------------------------------------------------------------------
+    //    get data induksi
     public function index()
     {
         $data = [
@@ -43,9 +39,7 @@ class Induksi extends BaseController
         return view('induksi/induksi', $data);
     }
 
-    // ------------------------------------------------------------------
-    // Form Tambah — administrator & editor
-    // ------------------------------------------------------------------
+    // create data
     public function create()
     {
         $data = [
@@ -55,11 +49,10 @@ class Induksi extends BaseController
         return view('induksi/create', $data);
     }
 
-    // ------------------------------------------------------------------
-    // Simpan Induksi Baru
-    // ------------------------------------------------------------------
+    // store data induksi
     public function store()
     {
+        // data validation
         $rules = [
             'tanggal_induksi' => 'required|valid_date[Y-m-d]',
             'jumlah_peserta'  => 'required|integer|greater_than[0]',
@@ -77,6 +70,8 @@ class Induksi extends BaseController
         $mime     = null;
         $size     = null;
 
+        // file
+
         $file = $this->request->getFile('dokumentasi');
         if ($file && $file->isValid() && ! $file->hasMoved()) {
             $newName    = $file->getRandomName();
@@ -86,16 +81,17 @@ class Induksi extends BaseController
                 mkdir($uploadPath, 0755, true);
             }
 
-            // Ambil semua info SEBELUM move()
+            // get data file
             $origName = $file->getClientName();
             $mime     = $file->getClientMimeType();
             $size     = $file->getSize();
 
-            // Baru pindahkan file
+            // move file to upload path with new file name
             $file->move($uploadPath, $newName);
             $filename = $newName;
         }
 
+        // insert data
         $this->db->table('induksi')->insert([
             'tanggal_induksi'           => $this->request->getPost('tanggal_induksi'),
             'jumlah_peserta'            => (int) $this->request->getPost('jumlah_peserta'),
@@ -114,9 +110,7 @@ class Induksi extends BaseController
         return redirect()->to('/induksi');
     }
 
-    // ------------------------------------------------------------------
-    // Form Edit — administrator & editor
-    // ------------------------------------------------------------------
+    // edit data induksi
     public function edit(int $id = 0)
     {
         $row = $this->getInduksi($id);
@@ -134,17 +128,17 @@ class Induksi extends BaseController
         return view('induksi/edit', $data);
     }
 
-    // ------------------------------------------------------------------
-    // Update Induksi
-    // ------------------------------------------------------------------
+    // update induksi
     public function update(int $id = 0)
     {
+        // get data id induksi
         $row = $this->getInduksi($id);
         if (empty($row)) {
             session()->setFlashdata('error', 'Data induksi tidak ditemukan.');
             return redirect()->to('/induksi');
         }
 
+        // data validation
         $rules = [
             'tanggal_induksi' => 'required|valid_date[Y-m-d]',
             'jumlah_peserta'  => 'required|integer|greater_than[0]',
@@ -152,11 +146,13 @@ class Induksi extends BaseController
             'dokumentasi'     => 'permit_empty|uploaded[dokumentasi]|max_size[dokumentasi,5120]|ext_in[dokumentasi,jpg,jpeg,png,pdf]',
         ];
 
+        // validation notification 
         if (! $this->validate($rules)) {
             session()->setFlashdata('errors', $this->validator->getErrors());
             return redirect()->back()->withInput();
         }
 
+        // get data request
         $updateData = [
             'tanggal_induksi' => $this->request->getPost('tanggal_induksi'),
             'jumlah_peserta'  => (int) $this->request->getPost('jumlah_peserta'),
@@ -165,24 +161,26 @@ class Induksi extends BaseController
             'updated_at'      => date('Y-m-d H:i:s'),
         ];
 
+        // if user input new file
         $file = $this->request->getFile('dokumentasi');
         if ($file && $file->isValid() && ! $file->hasMoved()) {
-            // Hapus file lama
+            // delete path old file
             if (! empty($row->dokumentasi_filename)) {
                 $oldPath = FCPATH . '/uploads/induksi/' . $row->dokumentasi_filename;
                 if (file_exists($oldPath)) unlink($oldPath);
             }
 
+            // new file name
             $newName    = $file->getRandomName();
             $uploadPath = FCPATH . 'uploads/induksi/';
             if (! is_dir($uploadPath)) mkdir($uploadPath, 0755, true);
 
-            // Ambil semua info SEBELUM move()
+            // get data file
             $origName = $file->getClientName();
-            $mime     = $file->getClientMimeType(); // baca dari header HTTP, bukan file temp
+            $mime     = $file->getClientMimeType();
             $size     = $file->getSize();
 
-            // Baru pindahkan file
+            // move file to upload path
             $file->move($uploadPath, $newName);
 
             $updateData['dokumentasi_filename']      = $newName;
@@ -197,17 +195,19 @@ class Induksi extends BaseController
         return redirect()->to('/induksi');
     }
 
-    // ------------------------------------------------------------------
-    // Hapus Induksi (soft delete)
-    // ------------------------------------------------------------------
+
+    // delete data induksi
     public function delete(int $id = 0)
     {
+
+        // get data induksi by id
         $row = $this->getInduksi($id);
         if (empty($row)) {
             session()->setFlashdata('error', 'Data tidak ditemukan.');
             return redirect()->to('/induksi');
         }
 
+        // delete data
         $this->db->table('induksi')->where('id', $id)->update([
             'deleted_at' => date('Y-m-d H:i:s'),
         ]);
@@ -216,9 +216,7 @@ class Induksi extends BaseController
         return redirect()->to('/induksi');
     }
 
-    // ------------------------------------------------------------------
-    // Export CSV — semua role
-    // ------------------------------------------------------------------
+    //   export csv
     public function export()
     {
         $data = $this->getInduksi();

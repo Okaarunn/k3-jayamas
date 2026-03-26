@@ -49,6 +49,6 @@ php spark serve
 
 ### Default Seeder Account
 
-Role Administrator
-Username aditya
-Password aditya12345
+Role Editor
+Username editor
+Password editor12345

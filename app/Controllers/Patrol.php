@@ -21,7 +21,7 @@ class Patrol extends BaseController
         return 'K3-' . str_pad($id, 4, '0', STR_PAD_LEFT);
     }
 
-    // get data patrol
+    // get data induksi with created by users
     private function getPatrol(int $id = 0)
     {
         $builder = $this->db->table('patrol p');
@@ -37,7 +37,7 @@ class Patrol extends BaseController
         return $builder->orderBy('p.tanggal_patrol', 'DESC')->get()->getResult();
     }
 
-    // upload foto
+    // upload file
     private function uploadFoto(string $fieldName): array
     {
         $file = $this->request->getFile($fieldName);
@@ -46,16 +46,20 @@ class Patrol extends BaseController
             return [null, null, null, null];
         }
 
+        // define upload path
         $uploadPath = FCPATH . 'uploads/patrol/';
         if (! is_dir($uploadPath)) {
             mkdir($uploadPath, 0755, true);
         }
 
+        // get data file
         $newName  = $file->getRandomName();
         $origName = $file->getClientName();
         $mime     = $file->getClientMimeType();
         $size     = $file->getSize();
 
+
+        // move file to upload path
         $file->move($uploadPath, $newName);
 
         return [$newName, $origName, $mime, $size];
@@ -76,6 +80,7 @@ class Patrol extends BaseController
     // create patrol
     public function create()
     {
+        // get last data id
         $last = $this->db->table('patrol')
             ->select('id')
             ->orderBy('id', 'DESC')
@@ -83,6 +88,7 @@ class Patrol extends BaseController
             ->get()
             ->getRow();
 
+        // add 1 
         $nextId = ($last->id ?? 0) + 1;
 
         $data = [
@@ -97,6 +103,7 @@ class Patrol extends BaseController
     // store patrol
     public function store()
     {
+        // data validation
         $rules = [
             'nama_petugas'         => 'required|max_length[100]',
             'tanggal_patrol'       => 'required|valid_date[Y-m-d]',
@@ -114,6 +121,7 @@ class Patrol extends BaseController
         [$beforeFile, $beforeOrig, $beforeMime, $beforeSize] = $this->uploadFoto('foto_before');
         [$afterFile,  $afterOrig,  $afterMime,  $afterSize]  = $this->uploadFoto('foto_after');
 
+        // insert data induksi
         $this->db->table('patrol')->insert([
             'nama_petugas'              => $this->request->getPost('nama_petugas'),
             'tanggal_patrol'            => $this->request->getPost('tanggal_patrol'),
@@ -135,8 +143,10 @@ class Patrol extends BaseController
 
         $id = $this->db->insertID();
 
+        // generate unique code
         $kode = $this->generateCode($id);
 
+        // update code
         $this->db->table('patrol')
             ->where('id', $id)
             ->update(['kode' => $kode]);
@@ -148,12 +158,14 @@ class Patrol extends BaseController
     // edit patrol
     public function edit(int $id = 0)
     {
+        // get patrol data id
         $row = $this->getPatrol($id);
 
         if (empty($row)) {
             session()->setFlashdata('error', 'Data patrol tidak ditemukan.');
             return redirect()->to('/patrol');
         }
+
 
         $data = [
             'title'  => 'Edit Laporan Patrol',
@@ -165,12 +177,14 @@ class Patrol extends BaseController
 
     public function update(int $id = 0)
     {
+        // get data id
         $row = $this->getPatrol($id);
         if (empty($row)) {
             session()->setFlashdata('error', 'Data patrol tidak ditemukan.');
             return redirect()->to('/patrol');
         }
 
+        // data validation
         $rules = [
             'nama_petugas'         => 'required|max_length[100]',
             'tanggal_patrol'       => 'required|valid_date[Y-m-d]',
@@ -185,6 +199,7 @@ class Patrol extends BaseController
             return redirect()->back()->withInput();
         }
 
+        // update data patrol
         $updateData = [
             'nama_petugas'         => $this->request->getPost('nama_petugas'),
             'tanggal_patrol'       => $this->request->getPost('tanggal_patrol'),
@@ -194,7 +209,7 @@ class Patrol extends BaseController
             'updated_at'           => date('Y-m-d H:i:s'),
         ];
 
-        // Foto Before — ganti jika ada upload baru
+        // image before: change if there is a new upload
         $fileBefore = $this->request->getFile('foto_before');
         if ($fileBefore && $fileBefore->isValid() && ! $fileBefore->hasMoved()) {
             if (! empty($row->foto_before_filename)) {
@@ -208,7 +223,7 @@ class Patrol extends BaseController
             $updateData['foto_before_size']          = $s;
         }
 
-        // Foto After — ganti jika ada upload baru
+        // image after: change if there is a new upload
         $fileAfter = $this->request->getFile('foto_after');
         if ($fileAfter && $fileAfter->isValid() && ! $fileAfter->hasMoved()) {
             if (! empty($row->foto_after_filename)) {
@@ -231,6 +246,7 @@ class Patrol extends BaseController
     // delete patrol
     public function delete(int $id = 0)
     {
+        // get patrol data id
         $row = $this->getPatrol($id);
         if (empty($row)) {
             session()->setFlashdata('error', 'Data tidak ditemukan.');
