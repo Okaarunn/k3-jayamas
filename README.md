@@ -19,8 +19,8 @@ Aplikasi manajemen produksi berbasis web yang dibangun menggunakan CodeIgniter 4
 ### 1. Clone Project
 
 ```bash
-git clone https://github.com/Okaarunn/dhr-jayamas.git
-cd dhr-jayamas
+git clone https://github.com/Okaarunn/k3-jayamas.git
+cd k3-jayamas
 ```
 
 ### 2. Install Depedency
