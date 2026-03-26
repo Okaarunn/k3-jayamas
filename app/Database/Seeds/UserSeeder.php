@@ -11,6 +11,7 @@ class UserSeeder extends Seeder
     {
         $userModel = model(UserModel::class);
 
+        // data users
         $users = [
             [
                 'email'    => 'admin@mail.com',
