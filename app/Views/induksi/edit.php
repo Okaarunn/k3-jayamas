@@ -2,7 +2,6 @@
 <?php $this->section('page-content'); ?>
 
 <style>
-    /* Sama persis dengan create — reuse style */
     .edit-header {
         background: linear-gradient(135deg, #004d40 0%, #00695c 60%, #00897b 100%);
         border-radius: 16px;

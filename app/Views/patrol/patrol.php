@@ -400,7 +400,7 @@
                                 </td>
 
                                 <td style="max-width:200px">
-                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:.82rem">
+                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:.82rem; line-clamp: [none];">
                                         <?= esc($row->keterangan ?? '-') ?>
                                     </div>
                                 </td>

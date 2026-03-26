@@ -325,18 +325,18 @@
 
     <?= $this->include('components/alert') ?>
 
-    <!-- Page Header -->
+    <!-- page header-->
     <div class="page-header">
         <div>
             <h1><i class="fas fa-user-check mr-2"></i> Data Induksi K3</h1>
             <p>Pencatatan dan manajemen hasil training / induksi Keselamatan dan Kesehatan Kerja</p>
         </div>
         <div class="d-flex" style="gap:10px">
-            <!-- Export — semua role -->
+            <!-- button export -->
             <a href="<?= base_url('induksi/export') ?>" class="btn-export">
                 <i class="fas fa-file-download"></i> Export
             </a>
-            <!-- Tambah — hanya administrator & editor -->
+            <!-- button add data induksi -->
             <?php if (in_groups(['administrator', 'editor'])) : ?>
                 <a href="<?= base_url('induksi/create') ?>" class="btn-add">
                     <i class="fas fa-plus"></i> Tambah Induksi
@@ -345,7 +345,7 @@
         </div>
     </div>
 
-    <!-- Stats Strip -->
+    <!-- card total data -->
     <div class="card card-main mb-4">
         <div class="card-body">
             <div class="stats-strip">
@@ -371,7 +371,7 @@
         </div>
     </div>
 
-    <!-- Table Card -->
+    <!-- data table -->
     <div class="card card-main">
         <div class="card-body">
             <div class="table-wrapper">
@@ -403,7 +403,7 @@
                                 </td>
 
                                 <td style="max-width:220px">
-                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;">
+                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; line-clamp: [none]">
                                         <?= esc($row->keterangan ?? '-') ?>
                                     </div>
                                 </td>
