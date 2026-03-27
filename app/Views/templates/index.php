@@ -125,7 +125,11 @@
     <!-- jQuery (local + CDN fallback) -->
     <script src="<?= base_url('vendor/jquery/jquery.min.js') ?>"></script>
     <script>
-        window.jQuery || document.write('<script src="https://code.jquery.com/jquery-3.7.1.min.js"><\/script>');
+        if (typeof jQuery === 'undefined') {
+            var script = document.createElement('script');
+            script.src = 'https://code.jquery.com/jquery-3.7.1.min.js';
+            document.head.appendChild(script);
+        }
     </script>
 
     <!-- Bootstrap Bundle (requires jQuery) -->
@@ -140,7 +144,11 @@
     <!-- DataTables (CDN + local fallback) -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script>
-        if (typeof $.fn.DataTable === 'undefined') document.write('<script src="<?= base_url('vendor/datatables/jquery.dataTables.min.js') ?>"><\/script>');
+        if (typeof $.fn.DataTable === 'undefined') {
+            var dtScript = document.createElement('script');
+            dtScript.src = '<?= base_url('vendor/datatables/jquery.dataTables.min.js') ?>';
+            document.head.appendChild(dtScript);
+        }
     </script>
 
     <?= $this->renderSection('scripts') ?>

@@ -56,7 +56,7 @@ Events::on('pre_system', static function (): void {
 
 Events::on('login', function ($user) {
     if (in_groups('administrator', $user->id)) {
-        redirect()->to('/admin')->send();
+        redirect()->to('/')->send();
         exit;
     }
 
