@@ -121,24 +121,32 @@
         </div>
     </div>
 
-    <script src="<?= base_url('vendor/jquery/jquery.min.js') ?>"></script>
 
-    <!-- Bootstrap -->
+    <!-- jQuery (local + CDN fallback) -->
+    <script src="<?= base_url('vendor/jquery/jquery.min.js') ?>"></script>
+    <script>
+        window.jQuery || document.write('<script src="https://code.jquery.com/jquery-3.7.1.min.js"><\/script>');
+    </script>
+
+    <!-- Bootstrap Bundle (requires jQuery) -->
     <script src="<?= base_url('vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 
-    <!-- Plugin -->
+    <!-- jQuery Easing (requires jQuery) -->
     <script src="<?= base_url('vendor/jquery-easing/jquery.easing.min.js') ?>"></script>
 
-    <!-- SB Admin -->
+    <!-- SB Admin 2 (requires jQuery) -->
     <script src="<?= base_url('js/sb-admin-2.min.js') ?>"></script>
 
-    <!-- DataTables -->
+    <!-- DataTables (CDN + local fallback) -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        if (typeof $.fn.DataTable === 'undefined') document.write('<script src="<?= base_url('vendor/datatables/jquery.dataTables.min.js') ?>"><\/script>');
+    </script>
 
     <?= $this->renderSection('scripts') ?>
 
     <script>
-        const toastTimers = {};
+        const toastTimers = {}
 
         function escapeHtml(str) {
             return $('<div>').text(str).html();
