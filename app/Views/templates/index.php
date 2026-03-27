@@ -121,23 +121,19 @@
         </div>
     </div>
 
-    <!-- Bootstrap core JavaScript -->
-    <script src="<?= base_url(); ?>/vendor/jquery/jquery.min.js"></script>
-    <script src="<?= base_url(); ?>/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="<?= base_url('vendor/jquery/jquery.min.js') ?>"></script>
 
-    <!-- Core plugin JavaScript -->
-    <script src="<?= base_url(); ?>/vendor/jquery-easing/jquery.easing.min.js"></script>
+    <!-- Bootstrap -->
+    <script src="<?= base_url('vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 
-    <!-- Custom scripts for all pages -->
-    <script src="<?= base_url(); ?>/js/sb-admin-2.min.js"></script>
+    <!-- Plugin -->
+    <script src="<?= base_url('vendor/jquery-easing/jquery.easing.min.js') ?>"></script>
 
-    <!-- DataTables JS -->
+    <!-- SB Admin -->
+    <script src="<?= base_url('js/sb-admin-2.min.js') ?>"></script>
+
+    <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
-
-
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-
 
     <?= $this->renderSection('scripts') ?>
 
