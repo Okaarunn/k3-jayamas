@@ -19,7 +19,8 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <link href="<?= base_url(); ?>/css/sb-admin-2.min.css" rel="stylesheet" />
 
     <!-- DataTables CSS -->
@@ -122,34 +123,20 @@
     </div>
 
 
-    <!-- jQuery (local + CDN fallback) -->
-    <script src="<?= base_url('vendor/jquery/jquery.min.js') ?>"></script>
-    <script>
-        if (typeof jQuery === 'undefined') {
-            var script = document.createElement('script');
-            script.src = 'https://code.jquery.com/jquery-3.7.1.min.js';
-            document.head.appendChild(script);
-        }
-    </script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <!-- Bootstrap Bundle (requires jQuery) -->
-    <script src="<?= base_url('vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
+    <!-- Bootstrap 4 (SB Admin 2 compatible) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- jQuery Easing (requires jQuery) -->
-    <script src="<?= base_url('vendor/jquery-easing/jquery.easing.min.js') ?>"></script>
+    <!-- jQuery Easing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
 
-    <!-- SB Admin 2 (requires jQuery) -->
+    <!-- SB Admin 2 -->
     <script src="<?= base_url('js/sb-admin-2.min.js') ?>"></script>
 
-    <!-- DataTables (CDN + local fallback) -->
+    <!-- DataTables -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script>
-        if (typeof $.fn.DataTable === 'undefined') {
-            var dtScript = document.createElement('script');
-            dtScript.src = '<?= base_url('vendor/datatables/jquery.dataTables.min.js') ?>';
-            document.head.appendChild(dtScript);
-        }
-    </script>
 
     <?= $this->renderSection('scripts') ?>
 
