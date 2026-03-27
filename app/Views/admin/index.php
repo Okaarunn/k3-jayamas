@@ -1,6 +1,6 @@
  <?= $this->extend('templates/index'); ?>
 
- <?php $this->section('page-content'); ?>
+ <?php $this->section('dashboard-content'); ?>
  <!-- Begin Page Content -->
  <div class="container-fluid">
      <!-- Page Heading -->
