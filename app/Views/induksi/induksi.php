@@ -540,7 +540,7 @@
             lengthMenu: [10, 25, 50],
             order: [
                 [1, 'desc']
-            ], // urutkan tanggal terbaru
+            ],
             language: {
                 search: '',
                 searchPlaceholder: 'Cari data induksi...',
@@ -559,7 +559,7 @@
             }]
         });
 
-        // Preview modal — tampilkan gambar saja
+        // Preview modal
         $(document).on('click', '.preview-trigger', function() {
             const url = $(this).data('url');
             const name = $(this).data('name');
