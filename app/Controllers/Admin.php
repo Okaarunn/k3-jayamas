@@ -30,11 +30,7 @@ class Admin extends BaseController
         return $builder->get()->getResult();
     }
 
-    public function index()
-    {
-        $data = ['title' => 'Administrator | Dashboard'];
-        return view('admin/index', $data);
-    }
+
 
     // create users
     public function create()

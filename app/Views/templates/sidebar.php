@@ -10,7 +10,7 @@
 <ul class="navbar-nav bg-sidebar sidebar sidebar-dark accordion" id="accordionSidebar">
 
     <!-- Sidebar - Brand -->
-    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= base_url('dashboard') ?>">
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="<?= base_url('/') ?>">
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-hard-hat"></i>
         </div>
@@ -22,7 +22,7 @@
     <!-- Dashboard  -->
     <div class="sidebar-heading mt-2">Dashboard</div>
     <li class="nav-item">
-        <a class="nav-link" href="<?= in_groups('administrator') ? base_url('/admin') : base_url('/') ?>">
+        <a class="nav-link" href="<?= base_url('/') ?>">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>

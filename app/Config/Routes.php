@@ -7,11 +7,14 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 // Dashboard user biasa
-$routes->get('/', 'User::index', ['filter' => 'login']);
+// $routes->get('/', 'User::index', ['filter' => 'login']);
 
-// Dashboard admin
-$routes->get('/admin',       'Admin::index', ['filter' => 'role:administrator']);
-$routes->get('/admin/index', 'Admin::index', ['filter' => 'role:administrator']);
+// // Dashboard admin
+// $routes->get('/admin',       'Admin::index', ['filter' => 'role:administrator']);
+// $routes->get('/admin/index', 'Admin::index', ['filter' => 'role:administrator']);
+
+// Dashboard
+$routes->get('/', 'Dashboard::index', ['filter' => 'login']);
 
 // induksi
 $routes->get('/induksi',              'Induksi::index',  ['filter' => 'login']);
