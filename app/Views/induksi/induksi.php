@@ -330,7 +330,7 @@
     <!-- page header-->
     <div class="page-header">
         <div>
-            <h1><i class="fas fa-user-check mr-2"></i> Data Induksi K3</h1>
+            <h1><i class="fas fa-user-check mr-2"></i> Data Induksi Keselamatan dan Kesehatan Kerja</h1>
             <p>Pencatatan dan manajemen hasil training / induksi Keselamatan dan Kesehatan Kerja</p>
         </div>
         <div class="d-flex" style="gap:10px">

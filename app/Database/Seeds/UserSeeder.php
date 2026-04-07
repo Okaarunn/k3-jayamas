@@ -11,6 +11,16 @@ class UserSeeder extends Seeder
     {
         $groupModel = new GroupModel();
 
+        // get plant krian
+        $plantKrian = $this->db->table('plant')
+            ->where('nama_plant', 'krian')
+            ->get()->getRow();
+
+        if (! $plantKrian) {
+            echo "Error: Plant 'krian' tidak ditemukan. Jalankan PlantSeeder terlebih dahulu.\n";
+            return;
+        }
+
         $users = [
             [
                 'data' => [
@@ -18,6 +28,7 @@ class UserSeeder extends Seeder
                     'username'      => 'admin',
                     'password_hash' => \Myth\Auth\Password::hash('jayamas2026'),
                     'active'        => 1,
+                    'plant_id'      => $plantKrian->id,
                     'created_at'    => date('Y-m-d H:i:s'),
                     'updated_at'    => date('Y-m-d H:i:s'),
                 ],
@@ -29,6 +40,7 @@ class UserSeeder extends Seeder
                     'username'      => 'editor',
                     'password_hash' => \Myth\Auth\Password::hash('editor12345'),
                     'active'        => 1,
+                    'plant_id'      => $plantKrian->id,
                     'created_at'    => date('Y-m-d H:i:s'),
                     'updated_at'    => date('Y-m-d H:i:s'),
                 ],
@@ -40,6 +52,7 @@ class UserSeeder extends Seeder
                     'username'      => 'viewer',
                     'password_hash' => \Myth\Auth\Password::hash('viewer12345'),
                     'active'        => 1,
+                    'plant_id'      => $plantKrian->id,
                     'created_at'    => date('Y-m-d H:i:s'),
                     'updated_at'    => date('Y-m-d H:i:s'),
                 ],
