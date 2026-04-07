@@ -12,5 +12,8 @@ class DatabaseSeeder extends Seeder
         $this->call('AuthPermissionsSeeder');
         $this->call('PlantSeeder');
         $this->call('UserSeeder');
+
+        $this->call('PatrolSeeder');
+        $this->call('InduksiSeeder');
     }
 }
