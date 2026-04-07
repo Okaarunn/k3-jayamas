@@ -3,7 +3,7 @@
 
 <style>
     .edit-header {
-        background: linear-gradient(135deg, #004d40 0%, #00695c 60%, #00897b 100%);
+        background: #283593;
         border-radius: 16px;
         padding: 24px 32px;
         margin-bottom: 28px;
@@ -64,7 +64,7 @@
     .form-card .card-header .section-icon {
         width: 32px;
         height: 32px;
-        background: linear-gradient(135deg, #004d40, #00897b);
+        background: #283593;
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -245,7 +245,7 @@
     }
 
     .btn-save {
-        background: linear-gradient(135deg, #004d40, #00897b);
+        background: #283593;
         color: #fff;
         border: none;
         border-radius: 10px;

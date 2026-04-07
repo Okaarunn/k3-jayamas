@@ -3,7 +3,7 @@
 
 <style>
     .edit-header {
-        background: linear-gradient(135deg, #004d40 0%, #00695c 60%, #00897b 100%);
+        background: #283593;
         border-radius: 16px;
         padding: 24px 32px;
         margin-bottom: 28px;
@@ -64,7 +64,7 @@
     .form-card .card-header .section-icon {
         width: 32px;
         height: 32px;
-        background: linear-gradient(135deg, #004d40, #00897b);
+        background: #283593;
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -208,7 +208,7 @@
     }
 
     .btn-save {
-        background: linear-gradient(135deg, #004d40, #00897b);
+        background: #283593;
         color: #fff;
         border: none;
         border-radius: 10px;
@@ -408,8 +408,45 @@
                             </div>
 
                         </div>
+
+                        <!-- Foto Absensi -->
+                        <div class="mt-5">
+                            <div class="foto-section-label" style="color:#3949ab">
+                                <span class="dot" style="background:#3949ab"></span>
+                                Foto Absensi Peserta
+                            </div>
+
+                            <div class="upload-zone" id="zoneA">
+                                <input type="file" name="dokumentasi_absensi" id="inputA" accept=".jpg,.jpeg,.png">
+                                <i class="fas fa-cloud-upload-alt upload-icon" style="color:#9fa8da"></i>
+                                <div class="upload-text" style="color:#1a237e">
+                                    Upload foto absensi
+                                </div>
+                                <div class="upload-hint">JPG / PNG — Maks. 5MB</div>
+                            </div>
+
+                            <div class="file-preview" id="previewA">
+                                <img src="" class="fp-thumb" id="thumbA" alt="">
+                                <div>
+                                    <div class="fp-name" id="nameA"></div>
+                                    <div class="fp-size" id="sizeA"></div>
+                                </div>
+                                <button type="button" class="fp-remove" id="removeA">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            </div>
+
+                            <?php if (isset($errors['absensi'])) : ?>
+                                <div class="invalid-feedback-k3 mt-1">
+                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                    <?= $errors['absensi'] ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
                     </div>
                 </div>
+
 
                 <div class="divider"></div>
 
@@ -431,6 +468,7 @@
 <?php $this->section('scripts'); ?>
 <script>
     $(document).ready(function() {
+        // Dokumentasi
         setupFoto({
             inputId: 'inputD',
             zoneId: 'zoneD',
@@ -440,6 +478,17 @@
             sizeId: 'sizeD',
             removeId: 'removeD'
         }, '#00897b');
+
+        // Absensi
+        setupFoto({
+            inputId: 'inputA',
+            zoneId: 'zoneA',
+            previewId: 'previewA',
+            thumbId: 'thumbA',
+            nameId: 'nameA',
+            sizeId: 'sizeA',
+            removeId: 'removeA'
+        }, '#3949ab');
     });
 </script>
 

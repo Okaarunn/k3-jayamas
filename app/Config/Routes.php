@@ -19,6 +19,7 @@ $routes->get('/', 'Dashboard::index', ['filter' => 'login']);
 // induksi
 $routes->get('/induksi',              'Induksi::index',  ['filter' => 'login']);
 $routes->get('/induksi/export',       'Induksi::export', ['filter' => 'login']);
+$routes->get('/induksi/exportpdf',        'Induksi::exportPdf',  ['filter' => 'login']);
 
 $routes->get('/induksi/create',       'Induksi::create', ['filter' => 'role:administrator,editor']);
 $routes->post('/induksi/store',        'Induksi::store',  ['filter' => 'role:administrator,editor']);
@@ -30,6 +31,7 @@ $routes->get('/induksi/delete/(:num)', 'Induksi::delete/$1', ['filter' => 'role:
 // patrol
 $routes->get('/patrol',               'Patrol::index',   ['filter' => 'login']);
 $routes->get('/patrol/export',        'Patrol::export',  ['filter' => 'login']);
+$routes->get('/patrol/exportpdf',        'Patrol::exportPdf',  ['filter' => 'login']);
 
 $routes->get('/patrol/create',        'Patrol::create',  ['filter' => 'role:administrator,editor']);
 $routes->post('/patrol/store',         'Patrol::store',   ['filter' => 'role:administrator,editor']);
@@ -46,3 +48,11 @@ $routes->get('/admin/users/edit/(:num)', 'Admin::edit/$1', ['filter' => 'role:ad
 $routes->post('/admin/users/update/(:num)', 'Admin::update/$1', ['filter' => 'role:administrator']);
 $routes->get('/admin/users/delete/(:num)', 'Admin::delete/$1', ['filter' => 'role:administrator']);
 $routes->post('/admin/users/reset-password', 'Admin::resetPassword', ['filter' => 'role:administrator']);
+
+// management plant
+$routes->get('/admin/plant', 'Plant::index', ['filter' => 'role:administrator']);
+$routes->get('/admin/plant/create', 'Plant::create', ['filter' => 'role:administrator']);
+$routes->post('/admin/plant/store', 'Plant::store', ['filter' => 'role:administrator']);
+$routes->get('/admin/plant/edit/(:num)', 'Plant::edit/$1', ['filter' => 'role:administrator']);
+$routes->post('/admin/plant/update/(:num)', 'Plant::update/$1', ['filter' => 'role:administrator']);
+$routes->get('/admin/plant/delete/(:num)', 'Plant::delete/$1', ['filter' => 'role:administrator']);

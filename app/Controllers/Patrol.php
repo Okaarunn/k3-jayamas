@@ -3,7 +3,13 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
-use CodeIgniter\HTTP\ResponseInterface;
+
+// php office
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
+use Dompdf\Options;
+use Dompdf\Dompdf;
 
 class Patrol extends BaseController
 {
@@ -21,18 +27,35 @@ class Patrol extends BaseController
         return 'K3-' . str_pad($id, 4, '0', STR_PAD_LEFT);
     }
 
+    // get user plant
+    private function currentUserPlantId(): ?int
+    {
+        $user = $this->db->table('users')
+            ->select('plant_id')
+            ->where('id', user_id())
+            ->get()->getRow();
+
+        return $user->plant_id;
+    }
     // get data induksi with created by users
     private function getPatrol(int $id = 0)
     {
         $builder = $this->db->table('patrol p');
-        $builder->select('p.*, u.username as created_by_username');
+        $builder->select('p.*, u.username as created_by_username, pl.nama_plant, pl.kode_plant');
         $builder->join('users u', 'u.id = p.created_by', 'left');
+        $builder->join('plant pl', 'pl.id = u.plant_id', 'left');
         $builder->where('p.deleted_at IS NULL');
+
+        if (!in_groups('administrator')) {
+            $builder->where('u.plant_id', $this->currentUserPlantId());
+        }
 
         if ($id > 0) {
             $builder->where('p.id', $id);
             return $builder->get()->getRow();
         }
+
+        $builder->select('p.*, u.username as created_by_username, u.plant_id as creator_plant_id, pl.nama_plant, pl.kode_plant');
 
         return $builder->orderBy('p.tanggal_patrol', 'DESC')->get()->getResult();
     }
@@ -65,13 +88,33 @@ class Patrol extends BaseController
         return [$newName, $origName, $mime, $size];
     }
 
+    // check plant edit/delete data
+    private function canModify(object $row): bool
+    {
+        if (in_groups('administrator')) {
+            return true;
+        }
+
+        $myPlantId = (int) $this->currentUserPlantId();
+
+        $creator = $this->db->table('users')
+            ->select('plant_id')
+            ->where('id', $row->created_by)
+            ->get()->getRow();
+
+        $creatorPlantId = (int) ($creator->plant_id ?? 0);
+
+        return $myPlantId !== 0 && $myPlantId === $creatorPlantId;
+    }
+
 
     // get all patrol 
     public function index()
     {
         $data = [
             'title' => 'Data Patrol K3',
-            'patrol' => $this->getPatrol()
+            'patrol' => $this->getPatrol(),
+            'myPlantId' => $this->currentUserPlantId()
         ];
 
         return view('patrol/patrol', $data);
@@ -166,6 +209,12 @@ class Patrol extends BaseController
             return redirect()->to('/patrol');
         }
 
+        // check access plant
+        if (! $this->canModify($row)) {
+            session()->setFlashdata('error', 'Anda tidak memiliki akses untuk mengedit data patrol dari plant lain.');
+            return redirect()->to('/patrol');
+        }
+
 
         $data = [
             'title'  => 'Edit Laporan Patrol',
@@ -181,6 +230,12 @@ class Patrol extends BaseController
         $row = $this->getPatrol($id);
         if (empty($row)) {
             session()->setFlashdata('error', 'Data patrol tidak ditemukan.');
+            return redirect()->to('/patrol');
+        }
+
+        // check access plant
+        if (! $this->canModify($row)) {
+            session()->setFlashdata('error', 'Anda tidak memiliki akses untuk mengubah data patrol dari plant lain.');
             return redirect()->to('/patrol');
         }
 
@@ -253,6 +308,12 @@ class Patrol extends BaseController
             return redirect()->to('/patrol');
         }
 
+        // check access plant
+        if (! $this->canModify($row)) {
+            session()->setFlashdata('error', 'Anda tidak memiliki akses untuk menghapus data patrol dari plant lain.');
+            return redirect()->to('/patrol');
+        }
+
         $this->db->table('patrol')->where('id', $id)->update([
             'deleted_at' => date('Y-m-d H:i:s'),
         ]);
@@ -261,31 +322,91 @@ class Patrol extends BaseController
         return redirect()->to('/patrol');
     }
 
-    // export csv
+    // export excel
     public function export()
     {
         $data = $this->getPatrol();
 
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="patrol_k3_' . date('Ymd_His') . '.csv"');
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-        $output = fopen('php://output', 'w');
-        fputcsv($output, ['No', 'Kode', 'Nama Petugas', 'Tanggal Patrol', 'Tanggal Penyelesaian', 'Keterangan', 'Dicatat Oleh']);
+        // HEADER
+        $headers = [
+            'No',
+            'Kode',
+            'Nama Petugas',
+            'Tanggal Patrol',
+            'Tanggal Penyelesaian',
+            'Keterangan',
+            'Dicatat Oleh',
+            'Plant'
+        ];
 
-        $i = 1;
-        foreach ($data as $row) {
-            fputcsv($output, [
-                $i++,
-                $row->kode,
-                $row->nama_petugas,
-                $row->tanggal_patrol,
-                $row->tanggal_penyelesaian ?? '-',
-                $row->keterangan,
-                $row->created_by_username ?? '-',
-            ]);
+        $col = 'A';
+        foreach ($headers as $header) {
+            $sheet->setCellValue($col . '1', $header);
+            $col++;
         }
 
-        fclose($output);
+        // STYLE HEADER (bold)
+        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+
+        // DATA
+        $rowNum = 2;
+        $no = 1;
+
+        foreach ($data as $row) {
+            $sheet->setCellValue('A' . $rowNum, $no++);
+            $sheet->setCellValue('B' . $rowNum, $row->kode);
+            $sheet->setCellValue('C' . $rowNum, $row->nama_petugas);
+            $sheet->setCellValue('D' . $rowNum, $row->tanggal_patrol);
+            $sheet->setCellValue('E' . $rowNum, $row->tanggal_penyelesaian ?? '-');
+            $sheet->setCellValue('F' . $rowNum, $row->keterangan);
+            $sheet->setCellValue('G' . $rowNum, $row->created_by_username ?? '-');
+            $sheet->setCellValue('H' . $rowNum, $row->nama_plant ?? '-');
+
+            $rowNum++;
+        }
+
+        // AUTO SIZE COLUMN
+        foreach (range('A', 'H') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // FILE NAME
+        $filename = 'patrol_k3_' . date('Ymd_His') . '.xlsx';
+
+        // HEADER DOWNLOAD
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
         exit;
+    }
+
+    // export pdf
+    public function exportPdf()
+    {
+        $data = $this->getPatrol();
+
+        $html = view('patrol/export_pdf', [
+            'data' => $data
+        ]);
+
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isLocalFileEnabled', true);
+
+        $dompdf = new Dompdf($options);
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
+
+        $dompdf->stream('patrol_k3_' . date('Ymd_His') . '.pdf', [
+            'Attachment' => true
+        ]);
     }
 }

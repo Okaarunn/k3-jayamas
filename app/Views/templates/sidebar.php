@@ -2,7 +2,6 @@
     .bg-sidebar {
         background: linear-gradient(135deg, #1a237e 0%, #283593 60%, #3949ab 100%);
         display: flex;
-        justify-content: space-between;
         box-shadow: 0 8px 32px rgba(26, 35, 126, 0.18);
     }
 </style>
@@ -50,6 +49,13 @@
             <a class="nav-link" href="<?= base_url('admin/users') ?>">
                 <i class="fas fa-fw fa-users"></i>
                 <span>User</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" href="<?= base_url('admin/plant') ?>">
+                <i class="fa fa-map-marker"></i>
+                <span>Plant</span>
             </a>
         </li>
     <?php endif; ?>

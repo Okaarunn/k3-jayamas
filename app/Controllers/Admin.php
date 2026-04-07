@@ -15,12 +15,14 @@ class Admin extends BaseController
     }
 
 
+    // get user roles and plants
     private function getUserWithRole(int $id = 0)
     {
         $builder = $this->db->table('users');
-        $builder->select('users.id as userid, username, email, active, name');
+        $builder->select('users.id as userid, users.username, users.email, users.active, users.plant_id, auth_groups.name, plant.nama_plant, plant.kode_plant');
         $builder->join('auth_groups_users', 'auth_groups_users.user_id = users.id', 'left');
         $builder->join('auth_groups', 'auth_groups.id = auth_groups_users.group_id', 'left');
+        $builder->join('plant', 'plant.id = users.plant_id', 'left');
 
         if ($id > 0) {
             $builder->where('users.id', $id);
@@ -30,7 +32,13 @@ class Admin extends BaseController
         return $builder->get()->getResult();
     }
 
-
+    // get user plants
+    private function getPlants(): array
+    {
+        return $this->db->table('plant')
+            ->orderBy('nama_plant', 'ASC')
+            ->get()->getResult();
+    }
 
     // create users
     public function create()
@@ -38,6 +46,7 @@ class Admin extends BaseController
         $data = [
             'title'  => 'Administrator | Tambah User',
             'errors' => session()->getFlashdata('errors') ?? [],
+            'plants' => $this->getPlants(),
         ];
         return view('admin/user/create', $data);
     }
@@ -53,6 +62,7 @@ class Admin extends BaseController
                     'is_unique' => 'Username sudah digunakan.',
                 ],
             ],
+
             'email' => [
                 'label' => 'Email',
                 'rules' => 'required|valid_email|is_unique[users.email]',
@@ -75,6 +85,14 @@ class Admin extends BaseController
                 'label' => 'Role',
                 'rules' => 'required|in_list[administrator,editor,viewer]',
             ],
+            'plant_id' => [
+                'label'  => 'Plant',
+                'rules'  => 'required|integer',
+                'errors' => [
+                    'required' => 'Plant wajib dipilih.',
+                    'integer'  => 'Plant tidak valid.',
+                ],
+            ],
         ];
 
         if (! $this->validate($rules)) {
@@ -87,6 +105,7 @@ class Admin extends BaseController
         $password = $this->request->getPost('password');
         $role     = $this->request->getPost('role');
         $isActive = $this->request->getPost('is_active') ? 1 : 0;
+        $plantId = (int) $this->request->getPost('plant_id');
 
         // Simpan user baru
         $this->db->table('users')->insert([
@@ -94,6 +113,7 @@ class Admin extends BaseController
             'email'         => $email,
             'password_hash' => \Myth\Auth\Password::hash($password),
             'active'        => $isActive,
+            'plant_id'      => $plantId,
             'created_at'    => date('Y-m-d H:i:s'),
             'updated_at'    => date('Y-m-d H:i:s'),
         ]);
@@ -141,11 +161,11 @@ class Admin extends BaseController
             'title'  => 'Administrator | Edit User',
             'user'   => $user,
             'errors' => session()->getFlashdata('errors') ?? [],
+            'plants' => $this->getPlants(),
         ];
 
         return view('admin/user/edit', $data);
     }
-
 
     // update users
     public function update(int $id = 0)
@@ -170,6 +190,14 @@ class Admin extends BaseController
                 'label' => 'Role',
                 'rules' => 'required|in_list[administrator,editor,viewer]',
             ],
+            'plant_id' => [
+                'label'  => 'Plant',
+                'rules'  => 'required|integer',
+                'errors' => [
+                    'required' => 'Plant wajib dipilih.',
+                    'integer'  => 'Plant tidak valid.',
+                ],
+            ],
         ];
 
         if (! $this->validate($rules)) {
@@ -181,16 +209,18 @@ class Admin extends BaseController
         $email     = $this->request->getPost('email');
         $role      = $this->request->getPost('role');
         $isActive  = $this->request->getPost('is_active') ? 1 : 0;
+        $plantId = (int) $this->request->getPost('plant_id');
 
-        // ------ Update tabel users ------
+
+        // update table users
         $this->db->table('users')->where('id', $id)->update([
             'username'   => $username,
             'email'      => $email,
             'active'     => $isActive,
+            'plant_id'   => $plantId,
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
-        // ------ Update role di auth_groups_users ------
         // Cari group id berdasarkan nama role
         $group = $this->db->table('auth_groups')
             ->where('name', $role)

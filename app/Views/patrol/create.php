@@ -3,7 +3,7 @@
 <?php $this->section('styles'); ?>
 <style>
     .edit-header {
-        background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 60%, #7b1fa2 100%);
+        background: #283593;
         border-radius: 16px;
         padding: 24px 32px;
         margin-bottom: 28px;
@@ -55,7 +55,7 @@
 
     .form-card .card-header {
         background: #f9f4ff;
-        border-bottom: 1px solid #e1bee7;
+        border-bottom: 1px solid #283593;
         padding: 18px 28px;
         display: flex;
         align-items: center;
@@ -65,7 +65,7 @@
     .form-card .card-header .section-icon {
         width: 32px;
         height: 32px;
-        background: linear-gradient(135deg, #4a148c, #7b1fa2);
+        background: #283593;
         border-radius: 8px;
         display: flex;
         align-items: center;
@@ -106,8 +106,8 @@
     }
 
     .form-control-k3:focus {
-        border-color: #7b1fa2;
-        box-shadow: 0 0 0 3px rgba(123, 31, 162, .1);
+        border-color: #3949ab;
+        box-shadow: 0 0 0 3px rgba(57, 73, 171, .1);
         outline: none;
     }
 
@@ -232,7 +232,7 @@
     }
 
     .btn-save {
-        background: linear-gradient(135deg, #4a148c, #7b1fa2);
+        background: #283593;
         color: #fff;
         border: none;
         border-radius: 10px;

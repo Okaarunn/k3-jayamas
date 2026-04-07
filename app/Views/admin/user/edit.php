@@ -325,6 +325,22 @@
         background: #f0f0f0;
         margin: 24px 0;
     }
+
+    select.form-control-k3 {
+        appearance: none;
+        -webkit-appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%239e9e9e' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        padding-right: 36px;
+        cursor: pointer;
+    }
+
+    select.form-control-k3:focus {
+        border-color: #3949ab;
+        box-shadow: 0 0 0 3px rgba(57, 73, 171, .1);
+        outline: none;
+    }
 </style>
 
 <div class="container-fluid pb-4">
@@ -395,6 +411,28 @@
                                     placeholder="nama@perusahaan.com" required>
                                 <?php if (isset($errors['email'])) : ?>
                                     <div class="invalid-feedback-k3"><i class="fas fa-exclamation-circle mr-1"></i><?= $errors['email'] ?></div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <!-- Plant -->
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label-k3">Plant</label>
+                                <select name="plant_id"
+                                    class="form-control-k3 <?= isset($errors['plant_id']) ? 'is-invalid' : '' ?>">
+                                    <option value="">— Pilih Plant —</option>
+                                    <?php foreach ($plants as $plant) : ?>
+                                        <option value="<?= $plant->id ?>"
+                                            <?= old('plant_id', $user->plant_id) == $plant->id ? 'selected' : '' ?>>
+                                            <?= esc($plant->kode_plant) ?> — <?= esc($plant->nama_plant) ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                                <?php if (isset($errors['plant_id'])) : ?>
+                                    <div class="invalid-feedback-k3">
+                                        <i class="fas fa-exclamation-circle mr-1"></i><?= $errors['plant_id'] ?>
+                                    </div>
                                 <?php endif; ?>
                             </div>
                         </div>

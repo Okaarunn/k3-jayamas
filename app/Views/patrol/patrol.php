@@ -3,7 +3,7 @@
 <?php $this->section('styles'); ?>
 <style>
     .page-header {
-        background: linear-gradient(135deg, #4a148c 0%, #6a1b9a 60%, #7b1fa2 100%);
+        background: #283593;
         border-radius: 16px;
         padding: 28px 32px;
         margin-bottom: 28px;
@@ -29,7 +29,7 @@
 
     .btn-add {
         background: #fff;
-        color: #4a148c;
+        color: #283593;
         border: none;
         border-radius: 10px;
         padding: 10px 22px;
@@ -46,24 +46,26 @@
 
     .btn-add:hover {
         background: #f3e5f5;
-        color: #4a148c;
+        color: #283593;
         transform: translateY(-1px);
         text-decoration: none;
     }
 
     .btn-export {
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        background: #fff;
+        color: #283593;
+        border: none;
         border-radius: 10px;
-        padding: 10px 18px;
-        font-weight: 600;
-        font-size: .82rem;
-        display: inline-flex;
+        padding: 10px 22px;
+        font-weight: 700;
+        font-size: 0.875rem;
+        display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
+        transition: all .2s;
         text-decoration: none;
-        transition: all .15s;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
 
     .btn-export:hover {
@@ -131,7 +133,7 @@
 
     #patrolTable thead th {
         background: #f9f4ff;
-        color: #6a1b9a;
+        color: #5c6bc0;
         font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -162,8 +164,8 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        background: #f3e5f5;
-        color: #6a1b9a;
+        background: #e8eaf6;
+        color: #3949ab;
         border-radius: 8px;
         padding: 4px 10px;
         font-size: .78rem;
@@ -277,16 +279,17 @@
         font-size: 0.85rem;
     }
 
-    .dataTables_paginate .paginate_button.current,
-    .dataTables_paginate .paginate_button.current:hover {
-        background: #7b1fa2 !important;
+
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+        background: #3949ab !important;
         color: #fff !important;
         border: none !important;
         border-radius: 8px !important;
     }
 
     .dataTables_paginate .paginate_button:hover {
-        background: #f3e5f5 !important;
+        background: #3949ab !important;
         color: #6a1b9a !important;
         border: none !important;
         border-radius: 8px !important;
@@ -307,8 +310,13 @@
             <p>Dokumentasi kegiatan patrol lapangan dengan foto Sebelum &amp; Sesudah</p>
         </div>
         <div class="d-flex" style="gap:10px">
+
+            <a href="<?= base_url('patrol/exportpdf') ?>" class="btn-export">
+                <i class="fas fa-file-download"></i> Export Pdf
+            </a>
+
             <a href="<?= base_url('patrol/export') ?>" class="btn-export">
-                <i class="fas fa-file-download"></i> Export
+                <i class="fas fa-file-download"></i> Export Excel
             </a>
             <?php if (in_groups(['administrator', 'editor'])) : ?>
                 <a href="<?= base_url('patrol/create') ?>" class="btn-add">
@@ -348,17 +356,42 @@
     <div class="card card-main">
         <div class="card-body">
             <div class="table-wrapper">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <select id="filterPlant" class="form-control" style="min-width:200px">
+                            <option value="">Semua Plant</option>
+                            <?php
+                            $plants = [];
+                            foreach ($patrol as $p) {
+                                if (!empty($p->nama_plant)) {
+                                    $plants[$p->nama_plant] = $p->nama_plant;
+                                }
+                            }
+                            ksort($plants);
+                            foreach ($plants as $plant) :
+                            ?>
+                                <option value="<?= esc($plant) ?>">
+                                    <?= esc(ucwords(strtolower($plant))) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+
                 <table id="patrolTable" class="table" style="width:100%">
+
                     <thead>
                         <tr>
-                            <th style="width:40px">#</th>
-                            <th style="width:110px">Kode</th>
+                            <th style="width:15px">#</th>
+                            <th style="width:90zpx">Kode</th>
                             <th>Petugas</th>
                             <th>Tgl Patrol</th>
                             <th>Tgl Selesai</th>
                             <th>Keterangan</th>
                             <th style="width:100px">Foto</th>
                             <th>Dicatat</th>
+                            <th>Plant</th>
                             <th style="width:90px">Aksi</th>
                         </tr>
                     </thead>
@@ -366,8 +399,10 @@
                         <?php $i = 1;
                         foreach ($patrol as $row) : ?>
                             <tr>
+                                <!-- no -->
                                 <td class="text-muted" style="font-size:.8rem"><?= $i++ ?></td>
 
+                                <!-- code -->
                                 <td>
                                     <span class="kode-badge">
                                         <i class="fas fa-hashtag" style="font-size:.65rem"></i>
@@ -375,16 +410,19 @@
                                     </span>
                                 </td>
 
+                                <!-- petugas -->
                                 <td>
                                     <div style="font-weight:600;color:#212121;font-size:.875rem"><?= esc($row->nama_petugas) ?></div>
 
                                 </td>
 
+                                <!-- tanggal patrol -->
                                 <td>
                                     <div style="font-weight:600;color:#212121"><?= date('d M Y', strtotime($row->tanggal_patrol)) ?></div>
                                     <div style="font-size:.72rem;color:#9e9e9e"><?= date('l', strtotime($row->tanggal_patrol)) ?></div>
                                 </td>
 
+                                <!-- tanggal selesai -->
                                 <td>
                                     <?php if (! empty($row->tanggal_penyelesaian)) : ?>
                                         <span class="status-selesai">
@@ -399,12 +437,14 @@
                                     <?php endif; ?>
                                 </td>
 
+                                <!-- keterangan -->
                                 <td style="max-width:200px">
                                     <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:.82rem; line-clamp: [none];">
                                         <?= esc($row->keterangan ?? '-') ?>
                                     </div>
                                 </td>
 
+                                <!-- foto -->
                                 <td>
                                     <div class="d-flex" style="gap:6px">
                                         <!-- Foto Before -->
@@ -437,22 +477,35 @@
                                     </div>
                                 </td>
 
+                                <!-- dicatat -->
                                 <td style="font-size:.82rem;color:#616161">
                                     <?= esc($row->created_by_username ?? '-') ?>
                                 </td>
 
+                                <!-- plant -->
+                                <td>
+                                    <?php if (! empty($row->nama_plant)) : ?>
+                                        <span style="background:#f3e5f5;color:#6a1b9a;border-radius:8px;padding:3px 10px;font-size:.75rem;font-weight:600">
+                                            <?= esc(ucwords(strtolower($row->nama_plant))) ?>
+                                        </span>
+                                    <?php else : ?>
+                                        <span style="color:#bdbdbd;font-size:.78rem">—</span>
+                                    <?php endif; ?>
+                                </td>
+
+                                <!-- action -->
                                 <td>
                                     <div class="d-flex" style="gap:6px">
-                                        <?php if (in_groups(['administrator', 'editor'])) : ?>
-                                            <a href="<?= base_url('patrol/edit/' . $row->id) ?>"
-                                                class="btn-action edit" title="Edit">
+                                        <?php
+                                        $canModify = in_groups('administrator') || ($myPlantId == $row->creator_plant_id);
+                                        ?>
+
+                                        <?php if (in_groups(['administrator', 'editor']) && $canModify) : ?>
+                                            <a href="<?= base_url('patrol/edit/' . $row->id) ?>" class="btn-action edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="#" class="btn-action del"
-                                                data-toggle="modal" data-target="#deleteModal"
-                                                data-id="<?= $row->id ?>"
-                                                data-kode="<?= esc($row->kode) ?>"
-                                                title="Hapus">
+                                            <a href="#" class="btn-action del" data-toggle="modal" data-target="#deleteModal"
+                                                data-id="<?= $row->id ?>" data-kode="<?= esc($row->kode) ?>">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         <?php endif; ?>
@@ -512,9 +565,9 @@
 <script>
     $(document).ready(function() {
         // DataTable
-        $('#patrolTable').DataTable({
-            pageLength: 10,
-            lengthMenu: [10, 25, 50],
+        var table = $('#patrolTable').DataTable({
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
             order: [
                 [3, 'desc']
             ],
@@ -532,19 +585,26 @@
             },
             columnDefs: [{
                 orderable: false,
-                targets: [6, 7]
+                targets: [6, 8, 9]
             }]
         });
 
-        // Preview foto
+        // filter data with plant
+        $('#filterPlant').on('change', function() {
+            var val = $(this).val();
+
+            table.column(8).search(val).draw();
+        });
+
+        // preview photo
         $(document).on('click', '.preview-trigger', function() {
             const url = $(this).data('url');
             const label = $(this).data('label');
             $('#previewLabel').text(label);
-            $('#previewContent').html('<img src="' + url + '" style="max-width:100%;border-radius:12px">');
+            $('#previewContent').html('<img src="' + url + '" style="max-width:60%;border-radius:12px">');
         });
 
-        // Delete modal
+        // show delete modal
         $('#deleteModal').on('show.bs.modal', function(e) {
             const btn = $(e.relatedTarget);
             const id = btn.data('id');

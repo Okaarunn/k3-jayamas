@@ -3,7 +3,7 @@
 <?php $this->section('styles'); ?>
 <style>
     .page-header {
-        background: linear-gradient(135deg, #1a237e 0%, #283593 60%, #3949ab 100%);
+        background: #283593;
         border-radius: 16px;
         padding: 28px 32px;
         margin-bottom: 28px;
@@ -310,8 +310,8 @@
         font-size: 0.85rem;
     }
 
-    .dataTables_paginate .paginate_button.current,
-    .dataTables_paginate .paginate_button.current:hover {
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
         background: #3949ab !important;
         color: #fff !important;
         border: none !important;
@@ -319,8 +319,8 @@
     }
 
     .dataTables_paginate .paginate_button:hover {
-        background: #e8eaf6 !important;
-        color: #3949ab !important;
+        background: #3949ab !important;
+        color: #6a1b9a !important;
         border: none !important;
         border-radius: 8px !important;
     }
@@ -552,8 +552,8 @@
 
         // ── DataTable ──────────────────────────────────────────────────
         $('#usersTable').DataTable({
-            pageLength: 10,
-            lengthMenu: [10, 25, 50],
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
             language: {
                 search: '',
                 searchPlaceholder: 'Cari pengguna...',
@@ -594,14 +594,14 @@
         // ── Password toggle ────────────────────────────────────────────
         $('#toggleNewPassword').on('click', function() {
             const input = $('#newPasswordInput');
-            const icon  = $('#toggleNewIcon');
+            const icon = $('#toggleNewIcon');
             input.attr('type', input.attr('type') === 'password' ? 'text' : 'password');
             icon.toggleClass('fa-eye fa-eye-slash');
         });
 
         $('#toggleConfirmPassword').on('click', function() {
             const input = $('#confirmPasswordInput');
-            const icon  = $('#toggleConfirmIcon');
+            const icon = $('#toggleConfirmIcon');
             input.attr('type', input.attr('type') === 'password' ? 'text' : 'password');
             icon.toggleClass('fa-eye fa-eye-slash');
         });

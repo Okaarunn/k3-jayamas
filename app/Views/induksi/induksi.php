@@ -3,7 +3,7 @@
 
 <style>
     .page-header {
-        background: linear-gradient(135deg, #004d40 0%, #00695c 60%, #00897b 100%);
+        background: #283593;
         border-radius: 16px;
         padding: 28px 32px;
         margin-bottom: 28px;
@@ -29,7 +29,7 @@
 
     .btn-add {
         background: #fff;
-        color: #004d40;
+        color: #283593;
         border: none;
         border-radius: 10px;
         padding: 10px 22px;
@@ -46,7 +46,7 @@
 
     .btn-add:hover {
         background: #e0f2f1;
-        color: #004d40;
+        color: #283593;
         transform: translateY(-1px);
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         text-decoration: none;
@@ -113,7 +113,7 @@
 
     #induksiTable thead th {
         background: #f0faf9;
-        color: #00695c;
+        color: #5c6bc0;
         font-size: 0.7rem;
         font-weight: 700;
         text-transform: uppercase;
@@ -239,9 +239,9 @@
         font-size: 0.85rem;
     }
 
-    .dataTables_paginate .paginate_button.current,
-    .dataTables_paginate .paginate_button.current:hover {
-        background: #00897b !important;
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+        background: #3949ab !important;
         color: #fff !important;
         border: none !important;
         border-radius: 8px !important;
@@ -256,22 +256,24 @@
 
     /* Export btn */
     .btn-export {
-        background: #e0f2f1;
-        color: #00695c;
+        background: #fff;
+        color: #283593;
         border: none;
         border-radius: 10px;
-        padding: 8px 18px;
-        font-weight: 600;
-        font-size: .82rem;
-        display: inline-flex;
+        padding: 10px 22px;
+        font-weight: 700;
+        font-size: 0.875rem;
+        display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
+        transition: all .2s;
         text-decoration: none;
-        transition: all .15s;
+        white-space: nowrap;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
 
     .btn-export:hover {
-        background: #00695c;
+        background: rgba(255, 255, 255, 0.25);
         color: #fff;
         text-decoration: none;
     }
@@ -332,9 +334,15 @@
             <p>Pencatatan dan manajemen hasil training / induksi Keselamatan dan Kesehatan Kerja</p>
         </div>
         <div class="d-flex" style="gap:10px">
+
+            <!-- export pdf -->
+            <a href="<?= base_url('induksi/exportpdf') ?>" class="btn-export">
+                <i class="fas fa-file-download"></i> Export PDF
+            </a>
+
             <!-- button export -->
             <a href="<?= base_url('induksi/export') ?>" class="btn-export">
-                <i class="fas fa-file-download"></i> Export
+                <i class="fas fa-file-download"></i> Export Excel
             </a>
             <!-- button add data induksi -->
             <?php if (in_groups(['administrator', 'editor'])) : ?>
@@ -375,26 +383,51 @@
     <div class="card card-main">
         <div class="card-body">
             <div class="table-wrapper">
+
+                <!-- FILTER PLANT -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <select id="filterPlant" class="form-control" style="min-width:200px">
+                            <option value="">Semua Plant</option>
+                            <?php
+                            $plants = [];
+                            foreach ($induksi as $i) {
+                                if (!empty($i->nama_plant)) {
+                                    $plants[$i->nama_plant] = $i->nama_plant;
+                                }
+                            }
+                            ksort($plants);
+                            foreach ($plants as $plant) :
+                            ?>
+                                <option value="<?= esc($plant) ?>">
+                                    <?= esc(ucwords(strtolower($plant))) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
                 <table id="induksiTable" class="table" style="width:100%">
                     <thead>
                         <tr>
-                            <th style="width:50px">#</th>
+                            <th>#</th>
                             <th>Tanggal</th>
                             <th>Keterangan</th>
                             <th>Peserta</th>
                             <th>Dokumentasi</th>
-                            <th>Dicatat Oleh</th>
-                            <th style="width:110px">Aksi</th>
+                            <th>Dicatat</th>
+                            <th>Plant</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php $i = 1;
                         foreach ($induksi as $row) : ?>
                             <tr>
-                                <td class="text-muted" style="font-size:.8rem"><?= $i++ ?></td>
+                                <td><?= $i++ ?></td>
 
                                 <td>
-                                    <div style="font-weight:600;color:#212121">
+                                    <div style="font-weight:600">
                                         <?= date('d M Y', strtotime($row->tanggal_induksi)) ?>
                                     </div>
                                     <div style="font-size:.72rem;color:#9e9e9e">
@@ -402,40 +435,60 @@
                                     </div>
                                 </td>
 
-                                <td style="max-width:220px">
-                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; line-clamp: [none]">
+                                <td style="max-width:200px">
+                                    <div style="-webkit-line-clamp:2;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden; line-clamp: 2;">
                                         <?= esc($row->keterangan ?? '-') ?>
                                     </div>
                                 </td>
 
                                 <td>
                                     <span class="peserta-badge">
-                                        <i class="fas fa-users" style="font-size:.65rem"></i>
-                                        <?= number_format($row->jumlah_peserta) ?> orang
+                                        <?= number_format($row->jumlah_peserta) ?>
                                     </span>
                                 </td>
 
+                                <!-- DOKUMENTASI -->
                                 <td>
                                     <?php if (!empty($row->dokumentasi_filename)) : ?>
                                         <?php
-                                        $isImage = in_array($row->dokumentasi_mime, ['image/jpeg', 'image/jpg', 'image/png']);
-                                        $docUrl  = base_url('uploads/induksi/' . $row->dokumentasi_filename);
+                                        $url = base_url('uploads/induksi/' . $row->dokumentasi_filename);
+                                        $isImage = str_contains($row->dokumentasi_mime, 'image');
                                         ?>
 
                                         <?php if ($isImage) : ?>
-                                            <img src="<?= $docUrl ?>"
+                                            <img src="<?= $url ?>"
                                                 class="foto-thumb preview-trigger"
-                                                data-url="<?= $docUrl ?>"
-                                                data-name="<?= esc($row->dokumentasi_original_name) ?>"
-                                                data-toggle="modal" data-target="#previewModal"
-                                                title="Lihat Dokumentasi">
+                                                data-url="<?= $url ?>"
+                                                data-label="Dokumentasi"
+                                                data-toggle="modal" data-target="#previewModal">
                                         <?php else : ?>
-                                            <a href="<?= $docUrl ?>" target="_blank" class="doc-chip">
-                                                <i class="fas fa-file-pdf"></i>
+                                            <a href="<?= $url ?>" target="_blank" class="doc-chip">
                                                 <?= esc($row->dokumentasi_original_name) ?>
                                             </a>
                                         <?php endif; ?>
+                                    <?php else : ?>
+                                        <div class="foto-placeholder">
+                                            <i class="fas fa-image"></i>
+                                        </div>
+                                    <?php endif; ?>
 
+                                    <?php if (!empty($row->dokumentasi_absensi_filename)) : ?>
+                                        <?php
+                                        $url = base_url('uploads/induksi/' . $row->dokumentasi_absensi_filename);
+                                        $isImage = str_contains($row->dokumentasi_absensi_mime, 'image');
+                                        ?>
+
+                                        <?php if ($isImage) : ?>
+                                            <img src="<?= $url ?>"
+                                                class="foto-thumb preview-trigger"
+                                                data-url="<?= $url ?>"
+                                                data-label="Dokumentasi"
+                                                data-toggle="modal" data-target="#previewModal">
+                                        <?php else : ?>
+                                            <a href="<?= $url ?>" target="_blank" class="doc-chip">
+                                                <?= esc($row->dokumentasi_absensi_original_name) ?>
+                                            </a>
+                                        <?php endif; ?>
                                     <?php else : ?>
                                         <div class="foto-placeholder">
                                             <i class="fas fa-image"></i>
@@ -443,40 +496,44 @@
                                     <?php endif; ?>
                                 </td>
 
-                                <td style="font-size:.82rem;color:#616161">
-                                    <?= esc($row->created_by_username ?? '-') ?>
+
+
+                                <td><?= esc($row->created_by_username ?? '-') ?></td>
+
+                                <!-- PLANT -->
+                                <td>
+                                    <?php if (!empty($row->nama_plant)) : ?>
+                                        <span style="background:#f3e5f5;color:#6a1b9a;border-radius:8px;padding:3px 10px;font-size:.75rem">
+                                            <?= esc($row->nama_plant) ?>
+                                        </span>
+                                    <?php else : ?>
+                                        -
+                                    <?php endif; ?>
                                 </td>
 
+                                <!-- AKSI -->
                                 <td>
                                     <div class="d-flex" style="gap:6px">
-                                        <!-- Preview — semua role -->
-                                        <?php if (!empty($row->dokumentasi_filename)) : ?>
-                                            <a href="#" class="btn-action preview preview-trigger"
-                                                data-url="<?= base_url('uploads/induksi/' . $row->dokumentasi_filename) ?>"
-                                                data-mime="<?= $row->dokumentasi_mime ?>"
-                                                data-name="<?= esc($row->dokumentasi_original_name) ?>"
-                                                data-toggle="modal" data-target="#previewModal"
-                                                title="Lihat Dokumentasi">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        <?php endif; ?>
+                                        <?php
+                                        $canModify = in_groups('administrator') || ($myPlantId == $row->creator_plant_id);
+                                        ?>
 
-                                        <!-- Edit & Hapus — hanya administrator & editor -->
-                                        <?php if (in_groups(['administrator', 'editor'])) : ?>
-                                            <a href="<?= base_url('induksi/edit/' . $row->id) ?>"
-                                                class="btn-action edit" title="Edit">
+                                        <?php if ($canModify && in_groups(['administrator', 'editor'])) : ?>
+                                            <a href="<?= base_url('induksi/edit/' . $row->id) ?>" class="btn-action edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+
                                             <a href="#" class="btn-action del"
-                                                data-toggle="modal" data-target="#deleteModal"
+                                                data-toggle="modal"
+                                                data-target="#deleteModal"
                                                 data-id="<?= $row->id ?>"
-                                                data-keterangan="<?= esc(substr($row->keterangan ?? '', 0, 40)) ?>"
-                                                title="Hapus">
+                                                data-keterangan="<?= esc($row->keterangan) ?>">
                                                 <i class="fas fa-trash"></i>
                                             </a>
                                         <?php endif; ?>
                                     </div>
                                 </td>
+
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -493,7 +550,7 @@
             <div style="background:linear-gradient(135deg,#004d40,#00897b);padding:18px 24px;display:flex;align-items:center;justify-content:space-between">
                 <div>
                     <h6 style="color:#fff;margin:0;font-weight:700"><i class="fas fa-file-image mr-2"></i>Pratinjau Dokumentasi</h6>
-                    <div style="color:rgba(255,255,255,.65);font-size:.78rem;margin-top:2px" id="previewFileName"></div>
+                    <div style="color:rgba(255,255,255,.65);font-size:.78rem;margin-top:2px" id="previewLabel"></div>
                 </div>
                 <button type="button" data-dismiss="modal"
                     style="background:rgba(255,255,255,.15);border:none;border-radius:8px;width:32px;height:32px;color:#fff;cursor:pointer">
@@ -501,7 +558,6 @@
                 </button>
             </div>
             <div class="modal-body p-4 text-center" id="previewContent">
-                <!-- diisi oleh JS -->
             </div>
 
         </div>
@@ -531,48 +587,55 @@
 
 
 <?php $this->section('scripts'); ?>
-
 <script>
     $(document).ready(function() {
 
-        $('#induksiTable').DataTable({
-            pageLength: 10,
-            lengthMenu: [10, 25, 50],
+        var table = $('#induksiTable').DataTable({
+            pageLength: 5,
+            lengthMenu: [5, 10, 25, 50],
             order: [
                 [1, 'desc']
             ],
+            columnDefs: [{
+                orderable: false,
+                targets: [4, 6, 7]
+            }],
             language: {
                 search: '',
                 searchPlaceholder: 'Cari data induksi...',
-                lengthMenu: 'Tampilkan _MENU_ data',
-                info: 'Menampilkan _START_–_END_ dari _TOTAL_ data',
                 paginate: {
                     previous: '‹',
                     next: '›'
                 },
+
                 zeroRecords: 'Tidak ada data ditemukan',
                 emptyTable: 'Belum ada data induksi'
-            },
-            columnDefs: [{
-                orderable: false,
-                targets: [4, 6]
-            }]
+            }
         });
 
-        // Preview modal
+        $('#filterPlant').on('change', function() {
+            var val = $(this).val();
+
+            table.column(6).search(val).draw();
+        });
+
+
+        // preview photo
         $(document).on('click', '.preview-trigger', function() {
             const url = $(this).data('url');
-            const name = $(this).data('name');
-            $('#previewFileName').text(name);
-            $('#previewContent').html('<img src="' + url + '" style="max-width:50%;border-radius:12px">');
+            const label = $(this).data('label');
+
+            $('#previewLabel').text(label);
+            $('#previewContent').html('<img src="' + url + '" style="max-width:60%">');
         });
 
-        // Delete modal
+        // show delete modal
         $('#deleteModal').on('show.bs.modal', function(e) {
             const btn = $(e.relatedTarget);
             const id = btn.data('id');
             const ket = btn.data('keterangan');
-            $('#deleteInfo').text('Data induksi "' + (ket || '#' + id) + '" akan dihapus permanen.');
+
+            $('#deleteInfo').text('Data "' + (ket || id) + '" akan dihapus.');
             $('#confirmDeleteBtn').attr('href', '<?= base_url("induksi/delete/") ?>' + id);
         });
 
