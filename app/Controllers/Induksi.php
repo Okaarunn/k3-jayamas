@@ -6,6 +6,10 @@ use App\Controllers\BaseController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+// image excel
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+
+
 use Dompdf\Options;
 use Dompdf\Dompdf;
 
@@ -295,6 +299,8 @@ class Induksi extends BaseController
             'Dicatat Oleh',
             'Plant',
             'Dibuat',
+            'Dokumentasi',
+            'Dokumentasi Absensi'
         ];
 
         foreach ($headers as $col => $label) {
@@ -303,14 +309,16 @@ class Induksi extends BaseController
         }
 
         // Style header
-        $sheet->getStyle('A1:G1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:G1')->getFill()
+        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:I1')->getFill()
             ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
             ->getStartColor()->setARGB('FFE8EAF6');
 
         // Isi data
         $rowNum = 2;
         $no     = 1;
+        $imgHeight = 100;
+        $rowHeight = $imgHeight * 0.80;
 
         foreach ($data as $row) {
             $sheet->setCellValue('A' . $rowNum, $no++);
@@ -320,6 +328,38 @@ class Induksi extends BaseController
             $sheet->setCellValue('E' . $rowNum, $row->created_by_username ?? '-');
             $sheet->setCellValue('F' . $rowNum, ucwords(strtolower($row->nama_plant ?? '-')));
             $sheet->setCellValue('G' . $rowNum, $row->created_at);
+
+            $sheet->getRowDimension($rowNum)->setRowHeight($rowHeight);
+
+            // dokumentasi
+            if (! empty($row->dokumentasi_filename)) {
+                $pathBefore = FCPATH . 'uploads/induksi/' . $row->dokumentasi_filename;
+
+                if (file_exists($pathBefore)) {
+                    $drawing = new Drawing();
+                    $drawing->setPath($pathBefore);
+                    $drawing->setHeight($imgHeight);
+                    $drawing->setCoordinates('H' . $rowNum);
+                    $drawing->setOffsetX(2);
+                    $drawing->setOffsetY(2);
+                    $drawing->setWorksheet($sheet);
+                }
+            }
+
+            if (! empty($row->dokumentasi_absensi_filename)) {
+                $pathBefore = FCPATH . 'uploads/induksi/' . $row->dokumentasi_absensi_filename;
+
+                if (file_exists($pathBefore)) {
+                    $drawing = new Drawing();
+                    $drawing->setPath($pathBefore);
+                    $drawing->setHeight($imgHeight);
+                    $drawing->setCoordinates('I' . $rowNum);
+                    $drawing->setOffsetX(2);
+                    $drawing->setOffsetY(2);
+                    $drawing->setWorksheet($sheet);
+                }
+            }
+
             $rowNum++;
         }
 
@@ -328,6 +368,9 @@ class Induksi extends BaseController
             $colLetter = chr(65 + $col);
             $sheet->getColumnDimension($colLetter)->setAutoSize(true);
         }
+
+        $sheet->getColumnDimension('H')->setWidth(20);
+        $sheet->getColumnDimension('I')->setWidth(20);
 
         // Wrap text kolom keterangan
         $sheet->getStyle('D2:D' . $rowNum)

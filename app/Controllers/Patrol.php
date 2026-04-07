@@ -8,6 +8,9 @@ use App\Controllers\BaseController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
+// image excel
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+
 use Dompdf\Options;
 use Dompdf\Dompdf;
 
@@ -339,7 +342,9 @@ class Patrol extends BaseController
             'Tanggal Penyelesaian',
             'Keterangan',
             'Dicatat Oleh',
-            'Plant'
+            'Plant',
+            'Foto Before',
+            'Foto After',
         ];
 
         $col = 'A';
@@ -349,11 +354,13 @@ class Patrol extends BaseController
         }
 
         // STYLE HEADER (bold)
-        $sheet->getStyle('A1:H1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
 
         // DATA
         $rowNum = 2;
         $no = 1;
+        $imgHeight = 70; // px — samakan dengan setHeight()
+        $rowHeight = $imgHeight * 0.75; // konversi px ke points (1pt ≈ 1.33px)
 
         foreach ($data as $row) {
             $sheet->setCellValue('A' . $rowNum, $no++);
@@ -365,6 +372,39 @@ class Patrol extends BaseController
             $sheet->setCellValue('G' . $rowNum, $row->created_by_username ?? '-');
             $sheet->setCellValue('H' . $rowNum, $row->nama_plant ?? '-');
 
+            // Set tinggi baris agar gambar tidak bertumpuk
+            $sheet->getRowDimension($rowNum)->setRowHeight($rowHeight);
+
+            // Foto Before
+            if (! empty($row->foto_before_filename)) {
+                $pathBefore = FCPATH . 'uploads/patrol/' . $row->foto_before_filename;
+
+                if (file_exists($pathBefore)) {
+                    $drawing = new Drawing();
+                    $drawing->setPath($pathBefore);
+                    $drawing->setHeight($imgHeight);
+                    $drawing->setCoordinates('I' . $rowNum);
+                    $drawing->setOffsetX(2);   // jarak dari tepi kiri cell
+                    $drawing->setOffsetY(2);   // jarak dari tepi atas cell
+                    $drawing->setWorksheet($sheet);
+                }
+            }
+
+            // Foto After
+            if (! empty($row->foto_after_filename)) {
+                $pathAfter = FCPATH . 'uploads/patrol/' . $row->foto_after_filename;
+
+                if (file_exists($pathAfter)) {
+                    $drawing = new Drawing();
+                    $drawing->setPath($pathAfter);
+                    $drawing->setHeight($imgHeight);
+                    $drawing->setCoordinates('J' . $rowNum);
+                    $drawing->setOffsetX(2);
+                    $drawing->setOffsetY(2);
+                    $drawing->setWorksheet($sheet);
+                }
+            }
+
             $rowNum++;
         }
 
@@ -372,6 +412,9 @@ class Patrol extends BaseController
         foreach (range('A', 'H') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
+
+        $sheet->getColumnDimension('I')->setWidth(20);
+        $sheet->getColumnDimension('J')->setWidth(20);
 
         // FILE NAME
         $filename = 'patrol_k3_' . date('Ymd_His') . '.xlsx';
