@@ -114,6 +114,8 @@ class Admin extends BaseController
             'password_hash' => \Myth\Auth\Password::hash($password),
             'active'        => $isActive,
             'plant_id'      => $plantId,
+            'created_by'    => user_id(),
+            'updated_by'    => user_id(),
             'created_at'    => date('Y-m-d H:i:s'),
             'updated_at'    => date('Y-m-d H:i:s'),
         ]);
@@ -218,6 +220,7 @@ class Admin extends BaseController
             'email'      => $email,
             'active'     => $isActive,
             'plant_id'   => $plantId,
+            'updated_by' => user_id(),
             'updated_at' => date('Y-m-d H:i:s'),
         ]);
 
@@ -293,6 +296,7 @@ class Admin extends BaseController
 
         $this->db->table('users')->where('id', $userId)->update([
             'password_hash' => \Myth\Auth\Password::hash($newPassword),
+            'updated_by'    => user_id(),
             'updated_at'    => date('Y-m-d H:i:s'),
         ]);
 

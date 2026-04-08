@@ -10,7 +10,7 @@ class PatrolSeeder extends Seeder
     {
         // get data user
         $user = $this->db->table('users')
-            ->where('username', 'editor')
+            ->where('username', 'editormojoagung')
             ->get()
             ->getRow();
 
