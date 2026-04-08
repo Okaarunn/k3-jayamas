@@ -384,28 +384,31 @@
         <div class="card-body">
             <div class="table-wrapper">
 
-                <!-- FILTER PLANT -->
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <select id="filterPlant" class="form-control" style="min-width:200px">
-                            <option value="">Semua Plant</option>
-                            <?php
-                            $plants = [];
-                            foreach ($induksi as $i) {
-                                if (!empty($i->nama_plant)) {
-                                    $plants[$i->nama_plant] = $i->nama_plant;
+                <!-- filter plant admin only -->
+                <?php if (in_groups('administrator')) : ?>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <select id="filterPlant" class="form-control" style="min-width:200px">
+                                <option value="">Semua Plant</option>
+                                <?php
+                                $plants = [];
+                                foreach ($induksi as $i) {
+                                    if (!empty($i->nama_plant)) {
+                                        $plants[$i->nama_plant] = $i->nama_plant;
+                                    }
                                 }
-                            }
-                            ksort($plants);
-                            foreach ($plants as $plant) :
-                            ?>
-                                <option value="<?= esc($plant) ?>">
-                                    <?= esc(ucwords(strtolower($plant))) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                                ksort($plants);
+                                foreach ($plants as $plant) :
+                                ?>
+                                    <option value="<?= esc($plant) ?>">
+                                        <?= esc(ucwords(strtolower($plant))) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
+
 
                 <table id="induksiTable" class="table" style="width:100%">
                     <thead>

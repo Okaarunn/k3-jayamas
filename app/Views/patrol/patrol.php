@@ -356,27 +356,33 @@
     <div class="card card-main">
         <div class="card-body">
             <div class="table-wrapper">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <select id="filterPlant" class="form-control" style="min-width:200px">
-                            <option value="">Semua Plant</option>
-                            <?php
-                            $plants = [];
-                            foreach ($patrol as $p) {
-                                if (!empty($p->nama_plant)) {
-                                    $plants[$p->nama_plant] = $p->nama_plant;
+
+                <!-- filter plant admin only -->
+                <?php if (in_groups('administrator')) : ?>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <select id="filterPlant" class="form-control" style="min-width:200px">
+                                <option value="">Semua Plant</option>
+                                <?php
+                                $plants = [];
+                                foreach ($patrol as $p) {
+                                    if (!empty($p->nama_plant)) {
+                                        $plants[$p->nama_plant] = $p->nama_plant;
+                                    }
                                 }
-                            }
-                            ksort($plants);
-                            foreach ($plants as $plant) :
-                            ?>
-                                <option value="<?= esc($plant) ?>">
-                                    <?= esc(ucwords(strtolower($plant))) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                                ksort($plants);
+                                foreach ($plants as $plant) :
+                                ?>
+                                    <option value="<?= esc($plant) ?>">
+                                        <?= esc(ucwords(strtolower($plant))) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
+
 
 
                 <table id="patrolTable" class="table" style="width:100%">
