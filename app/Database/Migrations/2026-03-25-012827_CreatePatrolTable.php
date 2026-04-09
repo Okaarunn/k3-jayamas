@@ -26,6 +26,13 @@ class CreatePatrolTable extends Migration
                 'constraint' => 100,
                 'null'       => false,
             ],
+
+            'lokasi' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 100,
+                'null'       => false,
+            ],
+
             'tanggal_patrol' => [
                 'type' => 'DATE',
                 'null' => false,

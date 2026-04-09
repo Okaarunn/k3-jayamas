@@ -431,7 +431,7 @@
                     next: '›'
                 },
                 zeroRecords: 'Tidak ada data ditemukan',
-                emptyTable: 'Belum ada pengguna terdaftar'
+                emptyTable: 'Belum ada action pengguna'
             },
             columnDefs: [{
                 orderable: false,

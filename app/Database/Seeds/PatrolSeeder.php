@@ -23,6 +23,7 @@ class PatrolSeeder extends Seeder
             [
                 'kode' => 'K3-0001',
                 'nama_petugas' => 'Agum',
+                'lokasi' => 'kantor',
 
                 'tanggal_patrol' => '2026-04-07',
                 'temuan' => 'tinta basah jatuh',
@@ -31,11 +32,11 @@ class PatrolSeeder extends Seeder
                 'penyelesaian' => 'sudah di pel dan dibersihkan',
                 'status_patrol' => 1,
 
-                'foto_before_filename' => '1775547271_c0ee1aeb584b9f446134.jpg',
+                'foto_before_filename' => '1775719908_521e723f6b14b0f7ea2c.jpg',
                 'foto_before_original_name' => 'FB_IMG_1728743467909.jpg',
                 'foto_before_mime' => 'image/jpeg',
                 'foto_before_size' => 45461,
-                'foto_after_filename' => '1775547271_2ea8cbc9034cfee49aa1.jpg',
+                'foto_after_filename' => '1775719908_b8c44c47049d28167405.jpg',
                 'foto_after_original_name' => 'FB_IMG_1730463733655.jpg',
                 'foto_after_mime' => 'image/jpeg',
                 'foto_after_size' => 70607,
@@ -50,19 +51,20 @@ class PatrolSeeder extends Seeder
             [
                 'kode' => 'K3-0002',
                 'nama_petugas' => 'Agum',
+                'lokasi' => 'kantor',
 
                 'tanggal_patrol' => '2026-04-07',
-                'temuan' => 'tinta basah jatuh',
+                'temuan' => 'cat tumpah',
 
                 'tanggal_penyelesaian' => '2026-04-08',
-                'penyelesaian' => 'sudah di pel dan dibersihkan',
+                'penyelesaian' => 'sudah dibersihkan',
                 'status_patrol' => 1,
 
-                'foto_before_filename' => '1775547271_c0ee1aeb584b9f446134.jpg',
+                'foto_before_filename' => '1775719908_521e723f6b14b0f7ea2c.jpg',
                 'foto_before_original_name' => 'FB_IMG_1728743467909.jpg',
                 'foto_before_mime' => 'image/jpeg',
                 'foto_before_size' => 45461,
-                'foto_after_filename' => '1775547271_2ea8cbc9034cfee49aa1.jpg',
+                'foto_after_filename' => '1775719908_b8c44c47049d28167405.jpg',
                 'foto_after_original_name' => 'FB_IMG_1730463733655.jpg',
                 'foto_after_mime' => 'image/jpeg',
                 'foto_after_size' => 70607,

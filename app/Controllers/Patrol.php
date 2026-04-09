@@ -157,9 +157,11 @@ class Patrol extends BaseController
         // data validation
         $rules = [
             'nama_petugas'         => 'required|max_length[100]',
+            'lokasi'         => 'required|max_length[100]',
             'tanggal_patrol'       => 'required|valid_date[Y-m-d]',
             'tanggal_penyelesaian' => 'permit_empty|valid_date[Y-m-d]',
-            'keterangan'           => 'permit_empty|max_length[2000]',
+            'temuan'               => 'permit_empty|max_length[2000]',
+            'penyelesaian'         => 'permit_empty|max_length[2000]',
             'foto_before'          => 'permit_empty|uploaded[foto_before]|max_size[foto_before,5120]|ext_in[foto_before,jpg,jpeg,png]',
             'foto_after'           => 'permit_empty|uploaded[foto_after]|max_size[foto_after,5120]|ext_in[foto_after,jpg,jpeg,png]',
         ];
@@ -178,10 +180,12 @@ class Patrol extends BaseController
         // insert data induksi
         $this->db->table('patrol')->insert([
             'nama_petugas'              => $this->request->getPost('nama_petugas'),
+            'lokasi'                    => $this->request->getPost('lokasi'),
             'tanggal_patrol'            => $this->request->getPost('tanggal_patrol'),
             'tanggal_penyelesaian'      => $this->request->getPost('tanggal_penyelesaian') ?: null,
             'status_patrol'             => $statusPatrol,
-            'keterangan'                => $this->request->getPost('keterangan'),
+            'temuan'                    => $this->request->getPost('temuan'),
+            'penyelesaian'              => $this->request->getPost('penyelesaian'),
             'foto_before_filename'      => $beforeFile,
             'foto_before_original_name' => $beforeOrig,
             'foto_before_mime'          => $beforeMime,
@@ -254,9 +258,11 @@ class Patrol extends BaseController
         // data validation
         $rules = [
             'nama_petugas'         => 'required|max_length[100]',
+            'lokasi'         => 'required|max_length[100]',
             'tanggal_patrol'       => 'required|valid_date[Y-m-d]',
             'tanggal_penyelesaian' => 'permit_empty|valid_date[Y-m-d]',
-            'keterangan'           => 'permit_empty|max_length[2000]',
+            'temuan'               => 'permit_empty|max_length[2000]',
+            'penyelesaian'         => 'permit_empty|max_length[2000]',
             'foto_before'          => 'permit_empty|uploaded[foto_before]|max_size[foto_before,5120]|ext_in[foto_before,jpg,jpeg,png]',
             'foto_after'           => 'permit_empty|uploaded[foto_after]|max_size[foto_after,5120]|ext_in[foto_after,jpg,jpeg,png]',
         ];
@@ -272,10 +278,12 @@ class Patrol extends BaseController
         // update data patrol
         $updateData = [
             'nama_petugas'         => $this->request->getPost('nama_petugas'),
+            'lokasi'               => $this->request->getPost('lokasi'),
             'tanggal_patrol'       => $this->request->getPost('tanggal_patrol'),
             'tanggal_penyelesaian' => $this->request->getPost('tanggal_penyelesaian') ?: null,
             'status_patrol'        => $statusPatrol,
-            'keterangan'           => $this->request->getPost('keterangan'),
+            'temuan'               => $this->request->getPost('temuan'),
+            'penyelesaian'         => $this->request->getPost('penyelesaian'),
             'updated_by'           => user_id(),
             'updated_at'           => date('Y-m-d H:i:s'),
         ];
@@ -351,11 +359,13 @@ class Patrol extends BaseController
             'No',
             'Kode',
             'Nama Petugas',
+            'Lokasi',
             'Tanggal Patrol',
             'Tanggal Penyelesaian',
-            'Keterangan',
-            'Dicatat Oleh',
+            'Temuan',
+            'Penyelesaian',
             'Plant',
+            'Dicatat Oleh',
             'Foto Before',
             'Foto After',
         ];
@@ -367,7 +377,7 @@ class Patrol extends BaseController
         }
 
         // STYLE HEADER (bold)
-        $sheet->getStyle('A1:J1')->getFont()->setBold(true);
+        $sheet->getStyle('A1:L1')->getFont()->setBold(true);
 
         // DATA
         $rowNum = 2;
@@ -379,11 +389,13 @@ class Patrol extends BaseController
             $sheet->setCellValue('A' . $rowNum, $no++);
             $sheet->setCellValue('B' . $rowNum, $row->kode);
             $sheet->setCellValue('C' . $rowNum, $row->nama_petugas);
-            $sheet->setCellValue('D' . $rowNum, $row->tanggal_patrol);
-            $sheet->setCellValue('E' . $rowNum, $row->tanggal_penyelesaian ?? '-');
-            $sheet->setCellValue('F' . $rowNum, $row->keterangan);
-            $sheet->setCellValue('G' . $rowNum, $row->created_by_username ?? '-');
-            $sheet->setCellValue('H' . $rowNum, $row->nama_plant ?? '-');
+            $sheet->setCellValue('D' . $rowNum, $row->lokasi);
+            $sheet->setCellValue('E' . $rowNum, $row->tanggal_patrol);
+            $sheet->setCellValue('F' . $rowNum, $row->tanggal_penyelesaian ?? '-');
+            $sheet->setCellValue('G' . $rowNum, $row->temuan ?? '-');
+            $sheet->setCellValue('H' . $rowNum, $row->penyelesaian ?? '-');
+            $sheet->setCellValue('I' . $rowNum, $row->nama_plant ?? '-');
+            $sheet->setCellValue('J' . $rowNum, $row->created_by_username ?? '-');
 
             // Set tinggi baris agar gambar tidak bertumpuk
             $sheet->getRowDimension($rowNum)->setRowHeight($rowHeight);
@@ -396,7 +408,7 @@ class Patrol extends BaseController
                     $drawing = new Drawing();
                     $drawing->setPath($pathBefore);
                     $drawing->setHeight($imgHeight);
-                    $drawing->setCoordinates('I' . $rowNum);
+                    $drawing->setCoordinates('K' . $rowNum);
                     $drawing->setOffsetX(2);   // jarak dari tepi kiri cell
                     $drawing->setOffsetY(2);   // jarak dari tepi atas cell
                     $drawing->setWorksheet($sheet);
@@ -411,7 +423,7 @@ class Patrol extends BaseController
                     $drawing = new Drawing();
                     $drawing->setPath($pathAfter);
                     $drawing->setHeight($imgHeight);
-                    $drawing->setCoordinates('J' . $rowNum);
+                    $drawing->setCoordinates('L' . $rowNum);
                     $drawing->setOffsetX(2);
                     $drawing->setOffsetY(2);
                     $drawing->setWorksheet($sheet);
@@ -422,12 +434,12 @@ class Patrol extends BaseController
         }
 
         // AUTO SIZE COLUMN
-        foreach (range('A', 'H') as $columnID) {
+        foreach (range('A', 'J') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        $sheet->getColumnDimension('I')->setWidth(20);
-        $sheet->getColumnDimension('J')->setWidth(20);
+        $sheet->getColumnDimension('K')->setWidth(20);
+        $sheet->getColumnDimension('L')->setWidth(20);
 
         // FILE NAME
         $filename = 'patrol_k3_' . date('Ymd_His') . '.xlsx';

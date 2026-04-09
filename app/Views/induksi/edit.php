@@ -301,205 +301,298 @@
     .char-counter.over {
         color: #c62828;
     }
+
+    .file-preview-multi {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .file-item {
+        position: relative;
+        width: 100px;
+        height: 100px;
+    }
+
+    .file-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .file-item button {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: #e53935;
+        color: #fff;
+        border: none;
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        font-size: 12px;
+        cursor: pointer;
+    }
+
+    .file-item button:hover {
+        background: #c62828;
+    }
+
+    .section-title {
+        font-size: .85rem;
+        font-weight: 700;
+        color: #283593;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    .upload-zone {
+        margin-top: 10px;
+    }
 </style>
 
 <div class="container-fluid pb-4">
 
-    <?php if (!empty($errors)) : ?>
-        <div style="background:#fce4ec;color:#c62828;border-radius:12px;padding:14px 18px;margin-bottom:20px">
-            <strong><i class="fas fa-exclamation-circle mr-1"></i>Terdapat kesalahan:</strong>
-            <ul style="margin:8px 0 0;padding-left:20px">
-                <?php foreach ($errors as $e) : ?>
-                    <li style="font-size:.875rem"><?= esc($e) ?></li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
-    <?php endif; ?>
-
-    <!-- Header -->
+    <!-- HEADER -->
     <div class="edit-header">
         <a href="<?= base_url('induksi') ?>" class="back-btn">
             <i class="fas fa-arrow-left"></i>
         </a>
         <div>
             <h1>Edit Data Induksi</h1>
-            <p>Mengubah data induksi tanggal <strong style="color:#fff"><?= date('d M Y', strtotime($induksi->tanggal_induksi)) ?></strong></p>
+            <p>Mengubah data induksi tanggal <?= date('d M Y', strtotime($induksi->tanggal_induksi)) ?></p>
         </div>
     </div>
 
     <div class="card form-card">
+
         <div class="card-header">
             <div class="section-icon"><i class="fas fa-edit"></i></div>
             <h6>Form Edit Induksi</h6>
         </div>
+
         <div class="card-body">
             <form action="<?= base_url('induksi/update/' . $induksi->id) ?>" method="post" enctype="multipart/form-data">
                 <?= csrf_field() ?>
 
                 <div class="row">
-                    <!-- Tanggal -->
                     <div class="col-md-4 mb-4">
-                        <label class="form-label-k3">Tanggal Induksi <span style="color:#c62828">*</span></label>
+                        <label class="form-label-k3">Tanggal</label>
                         <input type="date" name="tanggal_induksi"
-                            class="form-control-k3 <?= isset($errors['tanggal_induksi']) ? 'is-invalid' : '' ?>"
-                            value="<?= old('tanggal_induksi', $induksi->tanggal_induksi) ?>"
-                            max="<?= date('Y-m-d') ?>" required>
-                        <?php if (isset($errors['tanggal_induksi'])) : ?>
-                            <div class="invalid-feedback-k3"><i class="fas fa-exclamation-circle mr-1"></i><?= $errors['tanggal_induksi'] ?></div>
-                        <?php endif; ?>
+                            class="form-control-k3"
+                            value="<?= old('tanggal_induksi', $induksi->tanggal_induksi) ?>">
                     </div>
 
-                    <!-- Jumlah Peserta -->
                     <div class="col-md-4 mb-4">
-                        <label class="form-label-k3">Jumlah Peserta <span style="color:#c62828">*</span></label>
-                        <input type="number" name="jumlah_peserta" min="1"
-                            class="form-control-k3 <?= isset($errors['jumlah_peserta']) ? 'is-invalid' : '' ?>"
-                            value="<?= old('jumlah_peserta', $induksi->jumlah_peserta) ?>"
-                            placeholder="Contoh: 25" required>
-                        <?php if (isset($errors['jumlah_peserta'])) : ?>
-                            <div class="invalid-feedback-k3"><i class="fas fa-exclamation-circle mr-1"></i><?= $errors['jumlah_peserta'] ?></div>
-                        <?php endif; ?>
+                        <label class="form-label-k3">Jumlah Peserta</label>
+                        <input type="number" name="jumlah_peserta"
+                            class="form-control-k3"
+                            value="<?= old('jumlah_peserta', $induksi->jumlah_peserta) ?>">
                     </div>
                 </div>
 
-                <!-- Keterangan -->
+                <!-- KETERANGAN -->
                 <div class="mb-4">
-                    <label class="form-label-k3">Keterangan / Materi</label>
+                    <label class="form-label-k3">Keterangan</label>
                     <textarea name="keterangan" id="keteranganInput" rows="4"
-                        class="form-control-k3 <?= isset($errors['keterangan']) ? 'is-invalid' : '' ?>"
-                        placeholder="Deskripsi materi, tujuan, atau catatan pelaksanaan induksi..."
-                        maxlength="1000"><?= old('keterangan', $induksi->keterangan) ?></textarea>
-                    <div class="char-counter" id="charCounter">0 / 1000 karakter</div>
+                        class="form-control-k3"><?= old('keterangan', $induksi->keterangan) ?></textarea>
+                    <div class="char-counter" id="charCounter"></div>
                 </div>
 
-                <!-- Dokumentasi saat ini -->
-                <div class="mb-4">
-                    <label class="form-label-k3">Dokumentasi</label>
 
-                    <?php if (!empty($induksi->dokumentasi_filename)) : ?>
-                        <div class="current-doc">
-                            <?php $isImg = str_contains($induksi->dokumentasi_mime ?? '', 'image'); ?>
-                            <i class="fas <?= $isImg ? 'fa-image' : 'fa-file-pdf' ?> cd-icon"
-                                style="color:<?= $isImg ? '#00695c' : '#c62828' ?>"></i>
-                            <div>
-                                <div class="cd-name"><?= esc($induksi->dokumentasi_original_name) ?></div>
-                                <div class="cd-hint">File saat ini — kosongkan input di bawah untuk mempertahankan</div>
-                            </div>
-                            <a href="<?= base_url('uploads/induksi/' . $induksi->dokumentasi_filename) ?>"
-                                target="_blank" class="cd-preview">
-                                <i class="fas fa-external-link-alt mr-1"></i>Lihat
-                            </a>
-                        </div>
-                    <?php else : ?>
-                        <div style="font-size:.8rem;color:#bdbdbd;margin-bottom:8px;font-style:italic">
-                            <i class="fas fa-minus mr-1"></i>Belum ada dokumentasi
-                        </div>
-                    <?php endif; ?>
 
-                    <div class="upload-zone" id="uploadZone">
-                        <input type="file" name="dokumentasi" id="dokumentasiInput" accept=".jpg,.jpeg,.png,.pdf">
+
+                <div class="mt-4">
+
+                    <div class="section-title">Foto Dokumentasi</div>
+                    <div style="margin-bottom:8px;font-size:.78rem;color:#616161;">
+                        Klik tombol × untuk menghapus gambar
+                    </div>
+
+                    <!-- SATU CONTAINER -->
+                    <div class="file-preview-multi mb-3" id="dokumentasiContainer">
+
+                        <!-- GAMBAR LAMA -->
+                        <?php if (!empty($documentations)) : ?>
+                            <?php foreach ($documentations as $documentation) : ?>
+                                <div class="file-item existing-file" data-id="<?= $documentation->id ?>">
+                                    <img src="<?= base_url('uploads/induksi/' . $documentation->filename) ?>">
+                                    <button type="button" class="remove-existing-file">×</button>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                    </div>
+
+                    <!-- UPLOAD -->
+                    <div class="upload-zone">
+                        <input type="file" name="dokumentasi[]" id="inputD" multiple accept=".jpg,.jpeg,.png">
                         <i class="fas fa-cloud-upload-alt upload-icon"></i>
-                        <div class="upload-text">Unggah file baru (opsional)</div>
-                        <div class="upload-hint">Format: JPG, PNG, PDF — Maksimal 5MB. Akan menggantikan file lama.</div>
+                        <div class="upload-text">Upload dokumentasi</div>
                     </div>
-                    <div class="file-preview" id="filePreview">
-                        <i class="fas fa-file fp-icon" id="fpIcon"></i>
-                        <div>
-                            <div class="fp-name" id="fpName"></div>
-                            <div class="fp-size" id="fpSize"></div>
-                        </div>
-                        <button type="button" class="fp-remove" id="fpRemove">
-                            <i class="fas fa-times-circle"></i>
-                        </button>
-                    </div>
-                    <?php if (isset($errors['dokumentasi'])) : ?>
-                        <div class="invalid-feedback-k3 mt-1"><i class="fas fa-exclamation-circle mr-1"></i><?= $errors['dokumentasi'] ?></div>
-                    <?php endif; ?>
+
                 </div>
 
-                <div class="divider"></div>
+                <!-- ABSENSI -->
+                <div class="mt-4">
 
-                <div class="d-flex align-items-center" style="gap:12px">
-                    <button type="submit" class="btn-save">
-                        <i class="fas fa-save mr-2"></i>Simpan Perubahan
-                    </button>
-                    <a href="<?= base_url('induksi') ?>" class="btn-cancel">Batal</a>
+                    <div class="section-title">Foto Absensi</div>
+                    <div style="margin-bottom:8px;font-size:.78rem;color:#616161;">
+                        Klik tombol × untuk menghapus gambar
+                    </div>
+
+                    <!-- SATU CONTAINER -->
+                    <div class="file-preview-multi mb-3" id="absensiContainer">
+
+                        <!-- GAMBAR LAMA -->
+                        <?php if (!empty($absensi)) : ?>
+                            <?php foreach ($absensi as $documentation) : ?>
+                                <div class="file-item existing-file" data-id="<?= $documentation->id ?>">
+                                    <img src="<?= base_url('uploads/induksi/' . $documentation->filename) ?>">
+                                    <button type="button" class="remove-existing-file">×</button>
+                                </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                    </div>
+
+                    <!-- UPLOAD -->
+                    <div class="upload-zone">
+                        <input type="file" name="absensi[]" id="inputA" multiple accept=".jpg,.jpeg,.png">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <div class="upload-text">Upload absensi</div>
+                    </div>
+
                 </div>
+
+                <button class="btn-save mt-2">Simpan</button>
 
             </form>
         </div>
     </div>
 </div>
+<?php $this->endSection(); ?>
 
+
+<?php $this->section('scripts'); ?>
 <script>
     $(document).ready(function() {
 
-        // Char counter — init
-        const initLen = $('#keteranganInput').val().length;
-        $('#charCounter').text(initLen + ' / 1000 karakter');
+        function setupMultiPreview(inputId, containerId) {
+            const input = document.getElementById(inputId);
+            const container = document.getElementById(containerId);
 
-        $('#keteranganInput').on('input', function() {
-            const len = $(this).val().length;
-            const counter = $('#charCounter');
-            counter.text(len + ' / 1000 karakter');
-            counter.removeClass('warn over');
-            if (len > 900) counter.addClass('over');
-            else if (len > 750) counter.addClass('warn');
-        });
+            let fileStore = [];
 
-        // File preview
-        $('#dokumentasiInput').on('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            showPreview(file);
-        });
+            input.addEventListener('change', function(e) {
+                fileStore = Array.from(e.target.files);
+                renderPreview();
+            });
 
-        const zone = document.getElementById('uploadZone');
-        zone.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            $(this).addClass('dragover');
-        });
-        zone.addEventListener('dragleave', function() {
-            $(this).removeClass('dragover');
-        });
-        zone.addEventListener('drop', function(e) {
-            e.preventDefault();
-            $(this).removeClass('dragover');
-            const file = e.dataTransfer.files[0];
-            if (file) {
-                $('#dokumentasiInput')[0].files = e.dataTransfer.files;
-                showPreview(file);
+            function renderPreview() {
+
+                // ambil existing dulu
+                const existing = container.querySelectorAll('.existing-file');
+
+                // reset container
+                container.innerHTML = '';
+
+                // balikin existing
+                existing.forEach(el => container.appendChild(el));
+
+                // tambahkan file baru
+                fileStore.forEach((file, index) => {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        const wrapper = document.createElement('div');
+                        wrapper.classList.add('file-item');
+
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+
+                        const btn = document.createElement('button');
+                        btn.innerHTML = '×';
+
+                        btn.onclick = function() {
+                            fileStore.splice(index, 1);
+                            updateInputFiles();
+                            renderPreview();
+                        };
+
+                        wrapper.appendChild(img);
+                        wrapper.appendChild(btn);
+                        container.appendChild(wrapper);
+                    };
+
+                    reader.readAsDataURL(file);
+                });
             }
-        });
 
-        function showPreview(file) {
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Ukuran file melebihi 5MB.');
-                $('#dokumentasiInput').val('');
-                return;
+            function updateInputFiles() {
+                const dt = new DataTransfer();
+                fileStore.forEach(f => dt.items.add(f));
+                input.files = dt.files;
             }
-            const isImage = file.type.startsWith('image/');
-            $('#fpIcon').removeClass().addClass('fas fp-icon ' + (isImage ? 'fa-image' : 'fa-file-pdf'));
-            $('#fpIcon').css('color', isImage ? '#00695c' : '#c62828');
-            $('#fpName').text(file.name);
-            $('#fpSize').text((file.size / (1024 * 1024)).toFixed(2) + ' MB');
-            $('#filePreview').addClass('show');
-            $('#uploadZone').css({
-                'border-color': '#00897b',
-                'background': '#e0f2f1'
+        }
+
+        setupMultiPreview('inputD', 'dokumentasiContainer');
+        setupMultiPreview('inputA', 'absensiContainer');
+
+        const dokumentasiContainer = document.getElementById('dokumentasiContainer');
+
+        if (dokumentasiContainer) {
+            dokumentasiContainer.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('remove-existing-file')) return;
+
+                const fileItem = e.target.closest('.file-item');
+                const fileId = fileItem?.dataset?.id;
+
+                if (!fileId) return;
+
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'delete_dokumentasi_ids[]';
+                hidden.value = fileId;
+                document.querySelector('form').appendChild(hidden);
+
+                fileItem.remove();
             });
         }
 
-        $('#fpRemove').on('click', function() {
-            $('#dokumentasiInput').val('');
-            $('#filePreview').removeClass('show');
-            $('#uploadZone').css({
-                'border-color': '#b2dfdb',
-                'background': '#f9fdfc'
-            });
-        });
+        const absensiContainer = document.getElementById('absensiContainer');
 
+        if (absensiContainer) {
+            absensiContainer.addEventListener('click', function(e) {
+                if (!e.target.classList.contains('remove-existing-file')) return;
+
+                const fileItem = e.target.closest('.file-item');
+                const fileId = fileItem?.dataset?.id;
+
+                if (!fileId) return;
+
+                const hidden = document.createElement('input');
+                hidden.type = 'hidden';
+                hidden.name = 'delete_absensi_ids[]';
+                hidden.value = fileId;
+                document.querySelector('form').appendChild(hidden);
+
+                fileItem.remove();
+            });
+        }
+
+        // char counter
+        const textarea = $('#keteranganInput');
+        const counter = $('#charCounter');
+
+        function updateCounter() {
+            const len = textarea.val().length;
+            counter.text(len + ' / 1000');
+        }
+
+        textarea.on('input', updateCounter);
+        updateCounter();
     });
 </script>
-
 <?php $this->endSection(); ?>

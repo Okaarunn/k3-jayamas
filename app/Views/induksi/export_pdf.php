@@ -155,13 +155,13 @@ function imgToBase64(string $path): string
             foreach ($induksi as $row) :
 
                 $induksiDocumentation = '';
-                if (!empty($row->dokumentasi_filename)) {
-                    $induksiDocumentation = imgToBase64($uploadDir . $row->dokumentasi_filename);
+                if (!empty($row->dokumentasi) && isset($row->dokumentasi[0])) {
+                    $induksiDocumentation = imgToBase64($uploadDir . $row->dokumentasi[0]->filename);
                 }
 
                 $induksiAbsensi = '';
-                if (!empty($row->dokumentasi_absensi_filename)) {
-                    $induksiAbsensi = imgToBase64($uploadDir . $row->dokumentasi_absensi_filename);
+                if (!empty($row->absensi) && isset($row->absensi[0])) {
+                    $induksiAbsensi = imgToBase64($uploadDir . $row->absensi[0]->filename);
                 }
             ?>
 

@@ -86,15 +86,19 @@ function imgToBase64(string $path): string
         }
 
         .col-petugas {
-            width: 10%;
+            width: 8%;
+        }
+
+        .col-lokasi {
+            width: 8%;
         }
 
         .col-tgl {
-            width: 9%;
+            width: 7%;
         }
 
         .col-ket {
-            width: 18%;
+            width: 15%;
             text-align: left;
         }
 
@@ -139,15 +143,15 @@ function imgToBase64(string $path): string
                 <th class="col-no">No</th>
                 <th class="col-kode">Kode</th>
                 <th class="col-petugas">Petugas</th>
+                <th class="col-lokasi">Lokasi</th>
                 <th class="col-tgl">Tgl Patrol</th>
                 <th class="col-tgl">Tgl Selesai</th>
-                <th class="col-ket">Keterangan</th>
+                <th class="col-ket">Temuan</th>
+                <th class="col-ket">Penyelesaian</th>
+                <th class="col-plant">Plant</th>
+                <th class="col-dicatat">Dicatat</th>
                 <th class="col-foto">Foto Sebelum</th>
                 <th class="col-foto">Foto Sesudah</th>
-                <th class="col-dicatat">Dicatat</th>
-                <th class="col-plant">Plant</th>
-
-
             </tr>
         </thead>
         <tbody>
@@ -171,9 +175,13 @@ function imgToBase64(string $path): string
                     <td class="col-no"><?= $no++ ?></td>
                     <td class="col-kode"><?= esc($row->kode) ?></td>
                     <td class="col-petugas"><?= esc($row->nama_petugas) ?></td>
+                    <td class="col-lokasi"><?= esc($row->lokasi) ?></td>
                     <td class="col-tgl"><?= esc($row->tanggal_patrol) ?></td>
                     <td class="col-tgl"><?= esc($row->tanggal_penyelesaian ?? '-') ?></td>
-                    <td class="col-ket"><?= esc($row->keterangan) ?></td>
+                    <td class="col-ket"><?= esc($row->temuan) ?></td>
+                    <td class="col-ket"><?= esc($row->penyelesaian) ?></td>
+                    <td class="col-plant"><?= esc($row->nama_plant ?? '-') ?></td>
+                    <td class="col-dicatat"><?= esc($row->created_by_username ?? '-') ?></td>
 
                     <!-- image before -->
                     <td class="col-foto">
@@ -192,9 +200,6 @@ function imgToBase64(string $path): string
                             <span class="no-foto">-</span>
                         <?php endif; ?>
                     </td>
-
-                    <td class="col-dicatat"><?= esc($row->created_by_username ?? '-') ?></td>
-                    <td class="col-plant"><?= esc($row->nama_plant ?? '-') ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

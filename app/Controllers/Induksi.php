@@ -5,14 +5,9 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-// image excel
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-
-
 use Dompdf\Options;
 use Dompdf\Dompdf;
-
 
 class Induksi extends BaseController
 {
@@ -23,7 +18,6 @@ class Induksi extends BaseController
         $this->db = \Config\Database::connect();
     }
 
-    //    get plant user id
     private function currentUserPlantId(): ?int
     {
         $user = $this->db->table('users')
@@ -34,17 +28,26 @@ class Induksi extends BaseController
         return $user->plant_id ?? null;
     }
 
-    // get data induksi where plant id
+    // JOIN dengan tabel absensi
     private function getInduksi(int $id = 0)
     {
         $builder = $this->db->table('induksi i');
-        $builder->select('i.*, u.username as created_by_username, u.plant_id as creator_plant_id, pl.nama_plant, pl.kode_plant');
+        $builder->select('
+            i.*, 
+            u.username as created_by_username, 
+            u.plant_id as creator_plant_id, 
+            pl.nama_plant, 
+            GROUP_CONCAT(ia.filename) as absensi_files
+        ');
         $builder->join('users u', 'u.id = i.created_by', 'left');
         $builder->join('plant pl', 'pl.id = u.plant_id', 'left');
-        $builder->where('i.deleted_at IS NULL');
 
-        // non-admin hanya lihat data dari plant sendiri
-        if (! in_groups('administrator')) {
+
+        $builder->join('induksi_absensi ia', 'ia.induksi_id = i.id', 'left');
+        $builder->where('i.deleted_at IS NULL');
+        $builder->groupBy('i.id');
+
+        if (!in_groups('administrator')) {
             $builder->where('u.plant_id', $this->currentUserPlantId());
         }
 
@@ -53,344 +56,361 @@ class Induksi extends BaseController
             return $builder->get()->getRow();
         }
 
-        return $builder->orderBy('i.tanggal_induksi', 'DESC')->get()->getResult();
+        $result = $builder->orderBy('i.tanggal_induksi', 'DESC')->get()->getResult();
+
+        // ambil absensi per induksi
+        foreach ($result as $row) {
+            // absensi
+            $row->absensi = $this->db->table('induksi_absensi')
+                ->where('induksi_id', $row->id)
+                ->get()
+                ->getResult();
+
+            // dokumentasi
+            $row->dokumentasi = $this->db->table('induksi_dokumentasi')
+                ->where('induksi_id', $row->id)
+                ->get()
+                ->getResult();
+        }
+
+        return $result;
     }
 
-    // can modify if user is admin or creator from same plant
     private function canModify(object $row): bool
     {
-        if (in_groups('administrator')) {
-            return true;
-        }
+        if (in_groups('administrator')) return true;
 
-        $myPlantId      = (int) $this->currentUserPlantId();
-        $creator        = $this->db->table('users')
-            ->select('plant_id')
-            ->where('id', $row->created_by)
-            ->get()->getRow();
-        $creatorPlantId = (int) ($creator->plant_id ?? 0);
-
-        return $myPlantId !== 0 && $myPlantId === $creatorPlantId;
+        $myPlantId = (int) $this->currentUserPlantId();
+        return $myPlantId === (int) $row->creator_plant_id;
     }
 
-
-    // upload file
-    private function uploadFile(string $fieldName, string $uploadDir = 'uploads/induksi/'): array
+    private function uploadFile(string $fieldName, string $uploadDir = 'uploads/induksi/')
     {
-        $file = $this->request->getFile($fieldName);
+        $files = $this->request->getFiles();
+        $results = [];
 
-        if (! $file || ! $file->isValid() || $file->hasMoved()) {
-            return [null, null, null, null];
+        if (!isset($files[$fieldName])) return [];
+
+        foreach ($files[$fieldName] as $file) {
+            if (!$file->isValid() || $file->hasMoved()) continue;
+
+            $uploadPath = FCPATH . $uploadDir;
+            if (!is_dir($uploadPath)) mkdir($uploadPath, 0755, true);
+
+            $newName = $file->getRandomName();
+            $file->move($uploadPath, $newName);
+
+            $results[] = [
+                'filename' => $newName,
+                'original' => $file->getClientName(),
+                'mime'     => $file->getClientMimeType(),
+                'size'     => $file->getSize()
+            ];
         }
 
-        $uploadPath = FCPATH . $uploadDir;
-        if (! is_dir($uploadPath)) {
-            mkdir($uploadPath, 0755, true);
-        }
-
-        $origName = $file->getClientName();
-        $mime     = $file->getClientMimeType(); // sebelum move()
-        $size     = $file->getSize();
-        $newName  = $file->getRandomName();
-
-        $file->move($uploadPath, $newName);
-
-        return [$newName, $origName, $mime, $size];
+        return $results;
     }
 
-
-    // delete file
-    private function deleteFile(?string $filename, string $uploadDir = 'uploads/induksi/'): void
+    private function deleteFile(?string $filename)
     {
-        if (empty($filename)) return;
+        if (!$filename) return;
 
-        $path = FCPATH . $uploadDir . $filename;
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        $path = FCPATH . 'uploads/induksi/' . $filename;
+        if (file_exists($path)) unlink($path);
     }
 
-
-    // send data induksi to view
     public function index()
     {
-        $data = [
+        return view('induksi/induksi', [
             'title'     => 'Data Induksi K3',
             'induksi'   => $this->getInduksi(),
             'myPlantId' => $this->currentUserPlantId(),
-        ];
-        return view('induksi/induksi', $data);
+        ]);
     }
 
-
-    // form create
     public function create()
     {
-        $data = [
+        return view('induksi/create', [
             'title'  => 'Tambah Induksi',
             'errors' => session()->getFlashdata('errors') ?? [],
-        ];
-        return view('induksi/create', $data);
+        ]);
     }
 
-
-    // insert data induksi
     public function store()
     {
-        $rules = [
-            'tanggal_induksi' => 'required|valid_date[Y-m-d]',
-            'jumlah_peserta'  => 'required|integer|greater_than[0]',
-            'keterangan'      => 'permit_empty|max_length[1000]',
-        ];
-        // UPLOAD FILE
-        [$filename, $origName, $mime, $size] = $this->uploadFile('dokumentasi');
-        [$absensiFilename, $absensiOrigName, $absensiMime, $absensiSize] = $this->uploadFile('dokumentasi_absensi');
+        $this->db->transStart();
 
-        // INSERT
+        // insert induksi utama
         $this->db->table('induksi')->insert([
-            'tanggal_induksi'                   => $this->request->getPost('tanggal_induksi'),
-            'jumlah_peserta'                    => (int) $this->request->getPost('jumlah_peserta'),
-            'keterangan'                        => $this->request->getPost('keterangan'),
-
-            'dokumentasi_filename'              => $filename,
-            'dokumentasi_original_name'         => $origName,
-            'dokumentasi_mime'                  => $mime,
-            'dokumentasi_size'                  => $size,
-
-            'dokumentasi_absensi_filename'      => $absensiFilename,
-            'dokumentasi_absensi_original_name' => $absensiOrigName,
-            'dokumentasi_absensi_mime'          => $absensiMime,
-            'dokumentasi_absensi_size'          => $absensiSize,
-
-            'created_by' => user_id(),
-            'updated_by' => user_id(),
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
-        ]);
-
-        session()->setFlashdata('success', 'Data induksi berhasil ditambahkan.');
-        return redirect()->to('/induksi');
-    }
-
-    // form edit
-    public function edit(int $id = 0)
-    {
-        $row = $this->getInduksi($id);
-
-        if (empty($row)) {
-            session()->setFlashdata('error', 'Data induksi tidak ditemukan.');
-            return redirect()->to('/induksi');
-        }
-
-        if (! $this->canModify($row)) {
-            session()->setFlashdata('error', 'Anda tidak memiliki akses untuk mengedit data dari plant lain.');
-            return redirect()->to('/induksi');
-        }
-
-        $data = [
-            'title'   => 'Edit Induksi',
-            'induksi' => $row,
-            'errors'  => session()->getFlashdata('errors') ?? [],
-        ];
-        return view('induksi/edit', $data);
-    }
-
-    // update data induksi
-    public function update(int $id = 0)
-    {
-        $row = $this->getInduksi($id);
-
-        if (empty($row)) {
-            session()->setFlashdata('error', 'Data induksi tidak ditemukan.');
-            return redirect()->to('/induksi');
-        }
-
-        if (! $this->canModify($row)) {
-            session()->setFlashdata('error', 'Anda tidak memiliki akses untuk mengubah data dari plant lain.');
-            return redirect()->to('/induksi');
-        }
-
-        $rules = [
-            'tanggal_induksi'     => 'required|valid_date[Y-m-d]',
-            'jumlah_peserta'      => 'required|integer|greater_than[0]',
-            'keterangan'          => 'permit_empty|max_length[1000]',
-            'dokumentasi'         => 'permit_empty|uploaded[dokumentasi]|max_size[dokumentasi,5120]|ext_in[dokumentasi,jpg,jpeg,png,pdf]',
-            'dokumentasi_absensi' => 'permit_empty|uploaded[dokumentasi_absensi]|max_size[dokumentasi_absensi,5120]|ext_in[dokumentasi_absensi,jpg,jpeg,png,pdf]',
-        ];
-
-        if (! $this->validate($rules)) {
-            session()->setFlashdata('errors', $this->validator->getErrors());
-            return redirect()->back()->withInput();
-        }
-
-        $updateData = [
             'tanggal_induksi' => $this->request->getPost('tanggal_induksi'),
             'jumlah_peserta'  => (int) $this->request->getPost('jumlah_peserta'),
             'keterangan'      => $this->request->getPost('keterangan'),
+            'created_by'      => user_id(),
             'updated_by'      => user_id(),
+            'created_at'      => date('Y-m-d H:i:s'),
             'updated_at'      => date('Y-m-d H:i:s'),
-        ];
+        ]);
 
-        // Dokumentasi utama — ganti jika ada upload baru
-        $file = $this->request->getFile('dokumentasi');
-        if ($file && $file->isValid() && ! $file->hasMoved()) {
-            $this->deleteFile($row->dokumentasi_filename);
-            [$f, $o, $m, $s] = $this->uploadFile('dokumentasi');
-            $updateData['dokumentasi_filename']      = $f;
-            $updateData['dokumentasi_original_name'] = $o;
-            $updateData['dokumentasi_mime']          = $m;
-            $updateData['dokumentasi_size']          = $s;
+        $induksiId = $this->db->insertID();
+
+        // dokumentasi
+        $dokumentasi = $this->uploadFile('dokumentasi');
+
+        foreach ($dokumentasi as $f) {
+            $this->db->table('induksi_dokumentasi')->insert([
+                'induksi_id'   => $induksiId,
+                'filename'     => $f['filename'],
+                'original_name' => $f['original'],
+                'mime'         => $f['mime'],
+                'size'         => $f['size'],
+            ]);
         }
 
-        // Dokumentasi absensi — ganti jika ada upload baru
-        $fileAbsensi = $this->request->getFile('dokumentasi_absensi');
-        if ($fileAbsensi && $fileAbsensi->isValid() && ! $fileAbsensi->hasMoved()) {
-            $this->deleteFile($row->dokumentasi_absensi_filename);
-            [$f, $o, $m, $s] = $this->uploadFile('dokumentasi_absensi');
-            $updateData['dokumentasi_absensi_filename']      = $f;
-            $updateData['dokumentasi_absensi_original_name'] = $o;
-            $updateData['dokumentasi_absensi_mime']          = $m;
-            $updateData['dokumentasi_absensi_size']          = $s;
+        // absensi
+        $absensi = $this->uploadFile('absensi');
+        foreach ($absensi as $f) {
+            $this->db->table('induksi_absensi')->insert([
+                'induksi_id'   => $induksiId,
+                'filename'     => $f['filename'],
+                'original_name' => $f['original'],
+                'mime'         => $f['mime'],
+                'size'         => $f['size'],
+            ]);
         }
+        $this->db->transComplete();
 
-        $this->db->table('induksi')->where('id', $id)->update($updateData);
-
-        session()->setFlashdata('success', 'Data induksi berhasil diperbarui.');
-        return redirect()->to('/induksi');
+        return redirect()->to('/induksi')->with('success', 'Data berhasil ditambahkan');
     }
 
-    // delete induksi soft delete
-    public function delete(int $id = 0)
+    public function edit($id)
     {
         $row = $this->getInduksi($id);
 
-        if (empty($row)) {
-            session()->setFlashdata('error', 'Data tidak ditemukan.');
-            return redirect()->to('/induksi');
+        if (!$row || !$this->canModify($row)) {
+            return redirect()->to('/induksi')->with('error', 'Tidak ada akses');
         }
 
-        if (! $this->canModify($row)) {
-            session()->setFlashdata('error', 'Anda tidak memiliki akses untuk menghapus data dari plant lain.');
-            return redirect()->to('/induksi');
+        $documentations = $this->db->table('induksi_dokumentasi')
+            ->where('induksi_id', $id)
+            ->get()
+            ->getResult();
+
+        $absensi = $this->db->table('induksi_absensi')
+            ->where('induksi_id', $id)
+            ->get()
+            ->getResult();
+
+        return view('induksi/edit', [
+            'induksi' => $row,
+            'documentations'   => $documentations,
+            'absensi' => $absensi,
+            'title'   => 'Edit Induksi'
+        ]);
+    }
+
+    public function update($id)
+    {
+        $row = $this->getInduksi($id);
+
+        if (!$row || !$this->canModify($row)) {
+            return redirect()->to('/induksi')->with('error', 'Tidak ada akses');
+        }
+
+        $this->db->transStart();
+
+        $this->db->table('induksi')->where('id', $id)->update([
+            'tanggal_induksi' => $this->request->getPost('tanggal_induksi'),
+            'jumlah_peserta'  => $this->request->getPost('jumlah_peserta'),
+            'keterangan'      => $this->request->getPost('keterangan'),
+            'updated_by'      => user_id(),
+            'updated_at'      => date('Y-m-d H:i:s'),
+        ]);
+
+        $deleteIds = $this->request->getPost('delete_absensi_ids');
+        if (!empty($deleteIds)) {
+            if (!is_array($deleteIds)) {
+                $deleteIds = [$deleteIds];
+            }
+
+            foreach ($deleteIds as $deleteId) {
+                $fileRow = $this->db->table('induksi_absensi')
+                    ->select('filename')
+                    ->where('id', $deleteId)
+                    ->where('induksi_id', $id)
+                    ->get()
+                    ->getRow();
+
+                if ($fileRow) {
+                    $this->deleteFile($fileRow->filename);
+                    $this->db->table('induksi_absensi')->where('id', $deleteId)->delete();
+                }
+            }
+        }
+
+        $deleteDocIds = $this->request->getPost('delete_dokumentasi_ids');
+        if (!empty($deleteDocIds)) {
+            if (!is_array($deleteDocIds)) {
+                $deleteDocIds = [$deleteDocIds];
+            }
+
+            foreach ($deleteDocIds as $deleteId) {
+                $fileRow = $this->db->table('induksi_dokumentasi')
+                    ->select('filename')
+                    ->where('id', $deleteId)
+                    ->where('induksi_id', $id)
+                    ->get()
+                    ->getRow();
+
+                if ($fileRow) {
+                    $this->deleteFile($fileRow->filename);
+                    $this->db->table('induksi_dokumentasi')->where('id', $deleteId)->delete();
+                }
+            }
+        }
+
+        // upload tambahan absensi baru (tidak hapus lama)
+        $files = $this->uploadFile('absensi');
+
+        foreach ($files as $f) {
+            $this->db->table('induksi_absensi')->insert([
+                'induksi_id'   => $id,
+                'filename'     => $f['filename'],
+                'original_name' => $f['original'],
+                'mime'         => $f['mime'],
+                'size'         => $f['size'],
+            ]);
+        }
+
+        // upload tambahan dokumentasi baru (tidak hapus lama)
+        $docFiles = $this->uploadFile('dokumentasi');
+
+        foreach ($docFiles as $f) {
+            $this->db->table('induksi_dokumentasi')->insert([
+                'induksi_id'   => $id,
+                'filename'     => $f['filename'],
+                'original_name' => $f['original'],
+                'mime'         => $f['mime'],
+                'size'         => $f['size'],
+            ]);
+        }
+
+        $this->db->transComplete();
+
+        return redirect()->to('/induksi')->with('success', 'Data berhasil diupdate');
+    }
+
+    public function delete($id)
+    {
+        $row = $this->getInduksi($id);
+
+        if (!$row || !$this->canModify($row)) {
+            return redirect()->to('/induksi')->with('error', 'Tidak ada akses');
         }
 
         $this->db->table('induksi')->where('id', $id)->update([
-            'deleted_at' => date('Y-m-d H:i:s'),
+            'deleted_at' => date('Y-m-d H:i:s')
         ]);
 
-        session()->setFlashdata('success', 'Data induksi berhasil dihapus.');
-        return redirect()->to('/induksi');
+        return redirect()->to('/induksi')->with('success', 'Data dihapus');
     }
 
-    // export excel
     public function export()
     {
         $data = $this->getInduksi();
 
         $spreadsheet = new Spreadsheet();
-        $sheet       = $spreadsheet->getActiveSheet();
+        $sheet = $spreadsheet->getActiveSheet();
 
-        // Header kolom
-        $headers = [
-            'No',
-            'Tanggal Induksi',
-            'Jumlah Peserta',
-            'Keterangan',
-            'Dicatat Oleh',
-            'Plant',
-            'Dibuat',
-            'Dokumentasi',
-            'Dokumentasi Absensi'
-        ];
+        $sheet->setCellValue('A1', 'No');
+        $sheet->setCellValue('B1', 'Tanggal');
+        $sheet->setCellValue('C1', 'Peserta');
+        $sheet->setCellValue('D1', 'Keterangan');
+        $sheet->setCellValue('E1', 'Dicatat Oleh');
+        $sheet->setCellValue('F1', 'Dokumentasi');
+        $sheet->setCellValue('G1', 'Absensi');
 
-        foreach ($headers as $col => $label) {
-            $colLetter = chr(65 + $col); // Convert 0-6 to A-G
-            $sheet->setCellValue($colLetter . '1', $label);
-        }
+        // STYLE HEADER (bold)
+        $sheet->getStyle('A1:F1')->getFont()->setBold(true);
 
-        // Style header
-        $sheet->getStyle('A1:I1')->getFont()->setBold(true);
-        $sheet->getStyle('A1:I1')->getFill()
-            ->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)
-            ->getStartColor()->setARGB('FFE8EAF6');
-
-        // Isi data
         $rowNum = 2;
-        $no     = 1;
-        $imgHeight = 100;
-        $rowHeight = $imgHeight * 0.80;
+        $no = 1;
+        $imgHeight = 60; // smaller for multiple images
+        $offsetIncrement = 65; // space between images
 
         foreach ($data as $row) {
             $sheet->setCellValue('A' . $rowNum, $no++);
-            $sheet->setCellValue('B' . $rowNum, date('d-m-Y', strtotime($row->tanggal_induksi)));
+            $sheet->setCellValue('B' . $rowNum, $row->tanggal_induksi);
             $sheet->setCellValue('C' . $rowNum, $row->jumlah_peserta);
-            $sheet->setCellValue('D' . $rowNum, $row->keterangan ?? '-');
+            $sheet->setCellValue('D' . $rowNum, $row->keterangan);
             $sheet->setCellValue('E' . $rowNum, $row->created_by_username ?? '-');
-            $sheet->setCellValue('F' . $rowNum, ucwords(strtolower($row->nama_plant ?? '-')));
-            $sheet->setCellValue('G' . $rowNum, $row->created_at);
 
+            // height row
+            $rowHeight = 50;
             $sheet->getRowDimension($rowNum)->setRowHeight($rowHeight);
 
-            // dokumentasi
-            if (! empty($row->dokumentasi_filename)) {
-                $pathBefore = FCPATH . 'uploads/induksi/' . $row->dokumentasi_filename;
-
-                if (file_exists($pathBefore)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($pathBefore);
-                    $drawing->setHeight($imgHeight);
-                    $drawing->setCoordinates('H' . $rowNum);
-                    $drawing->setOffsetX(2);
-                    $drawing->setOffsetY(2);
-                    $drawing->setWorksheet($sheet);
+            // Dokumentasi - all images
+            $offsetY = 2;
+            if (!empty($row->dokumentasi)) {
+                foreach ($row->dokumentasi as $doc) {
+                    $path = FCPATH . 'uploads/induksi/' . $doc->filename;
+                    if (file_exists($path)) {
+                        $drawing = new Drawing();
+                        $drawing->setPath($path);
+                        $drawing->setHeight($imgHeight);
+                        $drawing->setCoordinates('E' . $rowNum);
+                        $drawing->setOffsetX(2);
+                        $drawing->setOffsetY($offsetY);
+                        $drawing->setWorksheet($sheet);
+                        $offsetY += $offsetIncrement;
+                    }
                 }
             }
 
-            if (! empty($row->dokumentasi_absensi_filename)) {
-                $pathBefore = FCPATH . 'uploads/induksi/' . $row->dokumentasi_absensi_filename;
-
-                if (file_exists($pathBefore)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($pathBefore);
-                    $drawing->setHeight($imgHeight);
-                    $drawing->setCoordinates('I' . $rowNum);
-                    $drawing->setOffsetX(2);
-                    $drawing->setOffsetY(2);
-                    $drawing->setWorksheet($sheet);
+            // Absensi - all images in flex layout
+            if (!empty($row->absensi)) {
+                $count = count($row->absensi);
+                foreach ($row->absensi as $index => $abs) {
+                    $path = FCPATH . 'uploads/induksi/' . $abs->filename;
+                    if (file_exists($path)) {
+                        $drawing = new Drawing();
+                        $drawing->setPath($path);
+                        $drawing->setHeight($imgHeight);
+                        $drawing->setCoordinates('F' . $rowNum);
+                        // Flex layout: 2 per row
+                        $col = $index % 2;
+                        $rowOffset = floor($index / 2);
+                        $drawing->setOffsetX(2 + $col * $offsetIncrement);
+                        $drawing->setOffsetY(2 + $rowOffset * $offsetIncrement);
+                        $drawing->setWorksheet($sheet);
+                    }
                 }
             }
 
             $rowNum++;
         }
 
-        // Auto size semua kolom
-        for ($col = 0; $col < count($headers); $col++) {
-            $colLetter = chr(65 + $col);
-            $sheet->getColumnDimension($colLetter)->setAutoSize(true);
+        // AUTO SIZE COLUMN
+        foreach (range('A', 'E') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-        $sheet->getColumnDimension('H')->setWidth(20);
-        $sheet->getColumnDimension('I')->setWidth(20);
+        $sheet->getColumnDimension('F')->setWidth(20);
+        $sheet->getColumnDimension('G')->setWidth(20);
 
-        // Wrap text kolom keterangan
-        $sheet->getStyle('D2:D' . $rowNum)
-            ->getAlignment()->setWrapText(true);
+        $writer = new Xlsx($spreadsheet);
 
-        // Freeze baris header
-        $sheet->freezePane('A2');
-
+        // FILE NAME
         $filename = 'induksi_k3_' . date('Ymd_His') . '.xlsx';
 
+        // HEADER DOWNLOAD
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
 
-        $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
         exit;
     }
 
-    // export pdf
     public function exportPdf()
     {
         $data = $this->getInduksi();
@@ -398,15 +418,11 @@ class Induksi extends BaseController
         $html = view('induksi/export_pdf', ['induksi' => $data]);
 
         $options = new Options();
-        $options->set('isRemoteEnabled', true);
-        $options->set('isLocalFileEnabled', true);
-
         $dompdf = new Dompdf($options);
 
         $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->setPaper('A4', 'potrait');
         $dompdf->render();
-
         $dompdf->stream('induksi_k3_' . date('Ymd_His') . '.pdf', [
             'Attachment' => true
         ]);

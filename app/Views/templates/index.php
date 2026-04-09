@@ -8,6 +8,8 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
 
+    <link rel="stylesheet" href="/css/style.css">
+
     <title><?= $title; ?></title>
 
 
