@@ -40,6 +40,53 @@ class Admin extends BaseController
             ->get()->getResult();
     }
 
+    // log user action to user_logs table
+    private function logUserAction(
+        string $action,
+        int $targetUserId,
+        string $description,
+        ?string $targetName = null,
+        ?int $actorId = null
+    ) {
+        $this->db->table('user_logs')->insert([
+            'actor_id'       => $actorId ?? user_id(),
+            'actor_name'     => user()->username ?? 'System',
+            'target_user_id' => $targetUserId,
+            'target_name'    => $targetName,
+            'action'         => $action,
+            'description'    => $description,
+            'created_at'     => date('Y-m-d H:i:s'),
+        ]);
+    }
+
+    // set format status
+    private function formatStatus($isActive)
+    {
+        return $isActive ? 'aktif' : 'tidak aktif';
+    }
+
+    // get plant name
+    private function getPlantName(int $plantId): string
+    {
+        $plant = $this->db->table('plant')
+            ->select('nama_plant')
+            ->where('id', $plantId)
+            ->get()
+            ->getRow();
+
+        return $plant->nama_plant ?? '-';
+    }
+
+    // get data users
+    public function index()
+    {
+        $data = [
+            'title' => 'Administrator | Data Users',
+            'users' => $this->getUserWithRole(),
+        ];
+        return view('admin/user/users', $data);
+    }
+
     // create users
     public function create()
     {
@@ -134,19 +181,18 @@ class Admin extends BaseController
             ]);
         }
 
+        // create user logs
+        // get plant name
+        $plantName = $this->getPlantName($plantId);
+
+        $this->logUserAction(
+            'INSERT',
+            $newUserId,
+            "Berhasil membuat akun {$username} dengan peran sebagai {$role} dan terdaftar pada plant {$plantName}.",
+            $username
+        );
         session()->setFlashdata('success', "Pengguna \"{$username}\" berhasil ditambahkan.");
         return redirect()->to('/admin/users');
-    }
-
-
-    // data users
-    public function users()
-    {
-        $data = [
-            'title' => 'Administrator | Data Users',
-            'users' => $this->getUserWithRole(),
-        ];
-        return view('admin/user/users', $data);
     }
 
     // form edit user
@@ -247,6 +293,19 @@ class Admin extends BaseController
             }
         }
 
+        // create logs
+        // get plant name
+        $plantName = $this->getPlantName($plantId);
+        // format status to text
+        $status = $this->formatStatus($isActive);
+        // create logs
+        $this->logUserAction(
+            'UPDATE',
+            $id,
+            "Berhasil memperbarui akun {$username} dengan peran sebagai {$role}, terdaftar pada plant {$plantName}, serta dalam kondisi {$status}.",
+            $username
+        );
+
         session()->setFlashdata('success', "Data pengguna \"{$username}\" berhasil diperbarui.");
         return redirect()->to('/admin/users');
     }
@@ -261,16 +320,23 @@ class Admin extends BaseController
             return redirect()->to('/admin/users');
         }
 
-        // Jangan hapus diri sendiri
         if ($id === user_id()) {
             session()->setFlashdata('error', 'Anda tidak dapat menghapus akun sendiri.');
             return redirect()->to('/admin/users');
         }
 
-        // Hapus relasi group dulu
+        // logs data
+        $this->logUserAction(
+            'DELETE',
+            $id,
+            "Menghapus akun {$user->username}.",
+            $user->username
+        );
+
+        // delete from groups
         $this->db->table('auth_groups_users')->where('user_id', $id)->delete();
 
-        // Hapus user
+        // delete users
         $this->db->table('users')->where('id', $id)->delete();
 
         session()->setFlashdata('success', "Pengguna \"{$user->username}\" berhasil dihapus.");
@@ -300,7 +366,28 @@ class Admin extends BaseController
             'updated_at'    => date('Y-m-d H:i:s'),
         ]);
 
+        $this->logUserAction(
+            'UPDATE',
+            $userId,
+            "Mereset password akun {$userId}.",
+            null
+        );
+
         session()->setFlashdata('success', 'Password berhasil direset.');
         return redirect()->to('/admin/users');
+    }
+
+    // user logs
+    public function userlogs()
+    {
+        $builder = $this->db->table('user_logs');
+        $builder->orderBy('created_at', 'DESC');
+
+        $data = [
+            'title' => 'Administrator | Data User Logs',
+            'userlogs' => $builder->get()->getResult(),
+        ];
+
+        return view('admin/user/user_logs', $data);
     }
 }

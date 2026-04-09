@@ -45,27 +45,26 @@
     }
 
     .btn-add:hover {
-        background: #f3e5f5;
+        background: #e8eaf6;
         color: #283593;
         transform: translateY(-1px);
         text-decoration: none;
     }
 
     .btn-export {
-        background: #fff;
-        color: #283593;
-        border: none;
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 10px;
-        padding: 10px 22px;
-        font-weight: 700;
-        font-size: 0.875rem;
-        display: flex;
+        padding: 10px 18px;
+        font-weight: 600;
+        font-size: .82rem;
+        display: inline-flex;
         align-items: center;
-        gap: 8px;
-        transition: all .2s;
+        gap: 6px;
         text-decoration: none;
+        transition: all .15s;
         white-space: nowrap;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
 
     .btn-export:hover {
@@ -85,6 +84,7 @@
         padding: 0;
     }
 
+    /* Stats strip */
     .stats-strip {
         display: flex;
         border-bottom: 1px solid #f0f0f0;
@@ -116,7 +116,7 @@
     }
 
     .stat-item.s1 .stat-num {
-        color: #6a1b9a;
+        color: #3949ab;
     }
 
     .stat-item.s2 .stat-num {
@@ -127,19 +127,63 @@
         color: #f57c00;
     }
 
+    /* Table wrapper */
     .table-wrapper {
         padding: 20px 24px 24px;
+        overflow-x: auto;
+    }
+
+    /* Filter bar */
+    .filter-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .filter-bar label {
+        font-size: .78rem;
+        font-weight: 600;
+        color: #616161;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        white-space: nowrap;
+        margin: 0;
+    }
+
+    .filter-bar select {
+        border: 1.5px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: .82rem;
+        color: #424242;
+        background: #fff;
+        min-width: 180px;
+        outline: none;
+        transition: border .2s;
+    }
+
+    .filter-bar select:focus {
+        border-color: #3949ab;
+    }
+
+    /* Table */
+    #patrolTable {
+        width: 100% !important;
     }
 
     #patrolTable thead th {
-        background: #f9f4ff;
+        background: #f8f9ff;
         color: #5c6bc0;
-        font-size: 0.7rem;
+        font-size: .68rem;
         font-weight: 700;
         text-transform: uppercase;
-        letter-spacing: 1px;
+        letter-spacing: .8px;
         border: none;
-        padding: 14px 16px;
+        padding: 12px 10px;
+        white-space: nowrap;
     }
 
     #patrolTable tbody tr {
@@ -152,10 +196,10 @@
     }
 
     #patrolTable tbody td {
-        padding: 14px 16px;
+        padding: 10px;
         vertical-align: middle;
         border: none;
-        font-size: 0.875rem;
+        font-size: .82rem;
         color: #424242;
     }
 
@@ -168,13 +212,14 @@
         color: #3949ab;
         border-radius: 8px;
         padding: 4px 10px;
-        font-size: .78rem;
+        font-size: .75rem;
         font-weight: 700;
         font-family: monospace;
         letter-spacing: .5px;
+        white-space: nowrap;
     }
 
-    /* Status penyelesaian */
+    /* Status */
     .status-selesai {
         background: #e8f5e9;
         color: #388e3c;
@@ -185,6 +230,7 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
+        white-space: nowrap;
     }
 
     .status-proses {
@@ -197,44 +243,48 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
+        white-space: nowrap;
     }
 
     /* Foto thumbnail */
     .foto-thumb {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
         object-fit: cover;
         cursor: pointer;
         border: 2px solid #e0e0e0;
         transition: border .15s;
+        display: block;
     }
 
     .foto-thumb:hover {
-        border-color: #6a1b9a;
+        border-color: #3949ab;
     }
 
     .foto-placeholder {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
+        width: 36px;
+        height: 36px;
+        border-radius: 6px;
         background: #f5f5f5;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         color: #bdbdbd;
         font-size: .75rem;
+        border: 2px dashed #e0e0e0;
     }
 
+    /* Action buttons */
     .btn-action {
-        width: 32px;
-        height: 32px;
-        border-radius: 8px;
+        width: 30px;
+        height: 30px;
+        border-radius: 7px;
         border: none;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         transition: all .15s;
         text-decoration: none;
     }
@@ -259,6 +309,15 @@
         color: #fff;
     }
 
+    /* Teks terpotong */
+    .text-clamp {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    /* DataTable overrides */
     div.dataTables_wrapper div.dataTables_filter input {
         border: 1.5px solid #e0e0e0;
         border-radius: 8px;
@@ -269,7 +328,7 @@
     }
 
     div.dataTables_wrapper div.dataTables_filter input:focus {
-        border-color: #7b1fa2;
+        border-color: #3949ab;
     }
 
     div.dataTables_wrapper div.dataTables_length select {
@@ -278,7 +337,6 @@
         padding: 4px 8px;
         font-size: 0.85rem;
     }
-
 
     div.dataTables_wrapper .dataTables_paginate .paginate_button.current,
     div.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
@@ -289,8 +347,8 @@
     }
 
     .dataTables_paginate .paginate_button:hover {
-        background: #3949ab !important;
-        color: #6a1b9a !important;
+        background: #e8eaf6 !important;
+        color: #3949ab !important;
         border: none !important;
         border-radius: 8px !important;
     }
@@ -306,17 +364,15 @@
     <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1><i class="fas fa-route mr-2"></i> Data Patrol Keselamatan dan Kesehatan Kerja</h1>
+            <h1><i class="fas fa-route mr-2"></i> Data Patrol K3</h1>
             <p>Dokumentasi kegiatan patrol lapangan dengan foto Sebelum &amp; Sesudah</p>
         </div>
-        <div class="d-flex" style="gap:10px">
-
+        <div class="d-flex align-items-center" style="gap:8px">
             <a href="<?= base_url('patrol/exportpdf') ?>" class="btn-export">
-                <i class="fas fa-file-download"></i> Export Pdf
+                <i class="fas fa-file-pdf"></i> PDF
             </a>
-
             <a href="<?= base_url('patrol/export') ?>" class="btn-export">
-                <i class="fas fa-file-download"></i> Export Excel
+                <i class="fas fa-file-excel"></i> Excel
             </a>
             <?php if (in_groups(['administrator', 'editor'])) : ?>
                 <a href="<?= base_url('patrol/create') ?>" class="btn-add">
@@ -331,10 +387,10 @@
         <div class="card-body">
             <div class="stats-strip">
                 <?php
-                $totalPatrol  = count($patrol);
-                $bulanIni     = date('Y-m');
-                $patrolBulan  = count(array_filter((array) $patrol, fn($p) => substr($p->tanggal_patrol, 0, 7) === $bulanIni));
-                $selesai      = count(array_filter((array) $patrol, fn($p) => ! empty($p->tanggal_penyelesaian)));
+                $totalPatrol = count($patrol);
+                $bulanIni    = date('Y-m');
+                $patrolBulan = count(array_filter((array) $patrol, fn($p) => substr($p->tanggal_patrol, 0, 7) === $bulanIni));
+                $selesai     = count(array_filter((array) $patrol, fn($p) => $p->status_patrol == 1));
                 ?>
                 <div class="stat-item s1">
                     <div class="stat-num"><?= $totalPatrol ?></div>
@@ -346,7 +402,7 @@
                 </div>
                 <div class="stat-item s3">
                     <div class="stat-num"><?= $patrolBulan ?></div>
-                    <div class="stat-label">Patrol Bulan Ini</div>
+                    <div class="stat-label">Bulan Ini</div>
                 </div>
             </div>
         </div>
@@ -357,124 +413,125 @@
         <div class="card-body">
             <div class="table-wrapper">
 
-                <!-- filter plant admin only -->
+                <!-- Filter plant — admin only -->
                 <?php if (in_groups('administrator')) : ?>
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div>
-                            <select id="filterPlant" class="form-control" style="min-width:200px">
-                                <option value="">Semua Plant</option>
-                                <?php
-                                $plants = [];
-                                foreach ($patrol as $p) {
-                                    if (!empty($p->nama_plant)) {
-                                        $plants[$p->nama_plant] = $p->nama_plant;
-                                    }
-                                }
-                                ksort($plants);
-                                foreach ($plants as $plant) :
-                                ?>
-                                    <option value="<?= esc($plant) ?>">
-                                        <?= esc(ucwords(strtolower($plant))) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                    <div class="filter-bar">
+                        <label>Filter Plant</label>
+                        <select id="filterPlant">
+                            <option value="">Semua Plant</option>
+                            <?php
+                            $plants = [];
+                            foreach ($patrol as $p) {
+                                if (!empty($p->nama_plant)) $plants[$p->nama_plant] = $p->nama_plant;
+                            }
+                            ksort($plants);
+                            foreach ($plants as $plant) : ?>
+                                <option value="<?= esc($plant) ?>">
+                                    <?= esc(ucwords(strtolower($plant))) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 <?php endif; ?>
 
-
-
-                <table id="patrolTable" class="table" style="width:100%">
-
+                <table id="patrolTable" class="table">
                     <thead>
                         <tr>
-                            <th style="width:15px">#</th>
-                            <th style="width:90zpx">Kode</th>
+                            <th>#</th>
+                            <th>Kode</th>
                             <th>Petugas</th>
                             <th>Tgl Patrol</th>
+                            <th>Temuan</th>
                             <th>Tgl Selesai</th>
-                            <th>Keterangan</th>
-                            <th style="width:100px">Foto</th>
+                            <th>Penyelesaian</th>
+                            <th>Status</th>
+                            <th>Foto</th>
                             <th>Dicatat</th>
                             <th>Plant</th>
-                            <th style="width:90px">Aksi</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php $i = 1;
-                        foreach ($patrol as $row) : ?>
+                        foreach ($patrol as $row) :
+                            $canModify = in_groups('administrator') || ($myPlantId == $row->creator_plant_id);
+                        ?>
                             <tr>
-                                <!-- no -->
-                                <td class="text-muted" style="font-size:.8rem"><?= $i++ ?></td>
+                                <td class="text-muted" style="font-size:.75rem"><?= $i++ ?></td>
 
-                                <!-- code -->
                                 <td>
                                     <span class="kode-badge">
-                                        <i class="fas fa-hashtag" style="font-size:.65rem"></i>
+                                        <i class="fas fa-hashtag" style="font-size:.6rem"></i>
                                         <?= esc($row->kode) ?>
                                     </span>
                                 </td>
 
-                                <!-- petugas -->
                                 <td>
-                                    <div style="font-weight:600;color:#212121;font-size:.875rem"><?= esc($row->nama_petugas) ?></div>
-
+                                    <div style="font-weight:600;color:#212121"><?= esc($row->nama_petugas) ?></div>
                                 </td>
 
-                                <!-- tanggal patrol -->
                                 <td>
-                                    <div style="font-weight:600;color:#212121"><?= date('d M Y', strtotime($row->tanggal_patrol)) ?></div>
-                                    <div style="font-size:.72rem;color:#9e9e9e"><?= date('l', strtotime($row->tanggal_patrol)) ?></div>
+                                    <div style="font-weight:600;color:#212121;white-space:nowrap"><?= date('d M Y', strtotime($row->tanggal_patrol)) ?></div>
+                                    <div style="font-size:.7rem;color:#9e9e9e"><?= date('D', strtotime($row->tanggal_patrol)) ?></div>
                                 </td>
 
-                                <!-- tanggal selesai -->
                                 <td>
-                                    <?php if (! empty($row->tanggal_penyelesaian)) : ?>
+                                    <div class="text-clamp" title="<?= esc($row->temuan ?? '') ?>">
+                                        <?= esc($row->temuan ?? '-') ?>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <?php if (!empty($row->tanggal_penyelesaian)) : ?>
+                                        <div style="font-weight:600;color:#212121;white-space:nowrap"><?= date('d M Y', strtotime($row->tanggal_penyelesaian)) ?></div>
+                                        <div style="font-size:.7rem;color:#9e9e9e"><?= date('D', strtotime($row->tanggal_penyelesaian)) ?></div>
+                                    <?php else : ?>
+                                        <span style="color:#bdbdbd">—</span>
+                                    <?php endif; ?>
+                                </td>
+
+                                <td>
+                                    <div class="text-clamp" title="<?= esc($row->penyelesaian ?? '') ?>">
+                                        <?= esc($row->penyelesaian ?? '-') ?>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <?php if ($row->status_patrol == 1) : ?>
                                         <span class="status-selesai">
-                                            <i class="fas fa-check-circle" style="font-size:.65rem"></i>
-                                            <?= date('d M Y', strtotime($row->tanggal_penyelesaian)) ?>
+                                            <i class="fas fa-check-circle" style="font-size:.6rem"></i>
+                                            Selesai
                                         </span>
                                     <?php else : ?>
                                         <span class="status-proses">
-                                            <i class="fas fa-clock" style="font-size:.65rem"></i>
-                                            Belum selesai
+                                            <i class="fas fa-clock" style="font-size:.6rem"></i>
+                                            Proses
                                         </span>
                                     <?php endif; ?>
                                 </td>
 
-                                <!-- keterangan -->
-                                <td style="max-width:200px">
-                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;font-size:.82rem; line-clamp: [none];">
-                                        <?= esc($row->keterangan ?? '-') ?>
-                                    </div>
-                                </td>
-
-                                <!-- foto -->
                                 <td>
-                                    <div class="d-flex" style="gap:6px">
-                                        <!-- Foto Before -->
-                                        <?php if (! empty($row->foto_before_filename)) : ?>
+                                    <div class="d-flex" style="gap:4px">
+                                        <?php if (!empty($row->foto_before_filename)) : ?>
                                             <img src="<?= base_url('uploads/patrol/' . $row->foto_before_filename) ?>"
                                                 class="foto-thumb preview-trigger"
                                                 data-url="<?= base_url('uploads/patrol/' . $row->foto_before_filename) ?>"
                                                 data-label="Foto Before — <?= esc($row->kode) ?>"
                                                 data-toggle="modal" data-target="#previewModal"
-                                                title="Lihat Foto Before">
+                                                title="Before">
                                         <?php else : ?>
                                             <div class="foto-placeholder" title="Belum ada foto before">
                                                 <i class="fas fa-image"></i>
                                             </div>
                                         <?php endif; ?>
 
-                                        <!-- Foto After -->
-                                        <?php if (! empty($row->foto_after_filename)) : ?>
+                                        <?php if (!empty($row->foto_after_filename)) : ?>
                                             <img src="<?= base_url('uploads/patrol/' . $row->foto_after_filename) ?>"
                                                 class="foto-thumb preview-trigger"
                                                 data-url="<?= base_url('uploads/patrol/' . $row->foto_after_filename) ?>"
                                                 data-label="Foto After — <?= esc($row->kode) ?>"
                                                 data-toggle="modal" data-target="#previewModal"
-                                                title="Lihat Foto After">
+                                                title="After">
                                         <?php else : ?>
                                             <div class="foto-placeholder" title="Belum ada foto after">
                                                 <i class="fas fa-image"></i>
@@ -483,15 +540,13 @@
                                     </div>
                                 </td>
 
-                                <!-- dicatat -->
-                                <td style="font-size:.82rem;color:#616161">
+                                <td style="font-size:.78rem;color:#616161">
                                     <?= esc($row->created_by_username ?? '-') ?>
                                 </td>
 
-                                <!-- plant -->
                                 <td>
-                                    <?php if (! empty($row->nama_plant)) : ?>
-                                        <span style="background:#f3e5f5;color:#6a1b9a;border-radius:8px;padding:3px 10px;font-size:.75rem;font-weight:600">
+                                    <?php if (!empty($row->nama_plant)) : ?>
+                                        <span style="background:#e8eaf6;color:#3949ab;border-radius:8px;padding:3px 8px;font-size:.72rem;font-weight:600;white-space:nowrap">
                                             <?= esc(ucwords(strtolower($row->nama_plant))) ?>
                                         </span>
                                     <?php else : ?>
@@ -499,23 +554,21 @@
                                     <?php endif; ?>
                                 </td>
 
-                                <!-- action -->
                                 <td>
-                                    <div class="d-flex" style="gap:6px">
-                                        <?php
-                                        $canModify = in_groups('administrator') || ($myPlantId == $row->creator_plant_id);
-                                        ?>
-
-                                        <?php if (in_groups(['administrator', 'editor']) && $canModify) : ?>
-                                            <a href="<?= base_url('patrol/edit/' . $row->id) ?>" class="btn-action edit">
+                                    <?php if (in_groups(['administrator', 'editor']) && $canModify) : ?>
+                                        <div class="d-flex" style="gap:5px">
+                                            <a href="<?= base_url('patrol/edit/' . $row->id) ?>" class="btn-action edit" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="#" class="btn-action del" data-toggle="modal" data-target="#deleteModal"
-                                                data-id="<?= $row->id ?>" data-kode="<?= esc($row->kode) ?>">
+                                            <a href="#" class="btn-action del"
+                                                data-toggle="modal" data-target="#deleteModal"
+                                                data-id="<?= $row->id ?>"
+                                                data-kode="<?= esc($row->kode) ?>"
+                                                title="Hapus">
                                                 <i class="fas fa-trash"></i>
                                             </a>
-                                        <?php endif; ?>
-                                    </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -530,7 +583,7 @@
 <div class="modal fade" id="previewModal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content" style="border:none;border-radius:16px;overflow:hidden">
-            <div style="background:linear-gradient(135deg,#4a148c,#7b1fa2);padding:18px 24px;display:flex;align-items:center;justify-content:space-between">
+            <div style="background:#283593;padding:18px 24px;display:flex;align-items:center;justify-content:space-between">
                 <div>
                     <h6 style="color:#fff;margin:0;font-weight:700"><i class="fas fa-camera mr-2"></i>Pratinjau Foto Patrol</h6>
                     <div style="color:rgba(255,255,255,.65);font-size:.78rem;margin-top:2px" id="previewLabel"></div>
@@ -570,13 +623,14 @@
 <?php $this->section('scripts'); ?>
 <script>
     $(document).ready(function() {
-        // DataTable
+
         var table = $('#patrolTable').DataTable({
-            pageLength: 5,
-            lengthMenu: [5, 10, 25, 50],
+            pageLength: 10,
+            lengthMenu: [10, 25, 50],
             order: [
                 [3, 'desc']
             ],
+            autoWidth: true,
             language: {
                 search: '',
                 searchPlaceholder: 'Cari data patrol...',
@@ -590,27 +644,42 @@
                 emptyTable: 'Belum ada laporan patrol'
             },
             columnDefs: [{
-                orderable: false,
-                targets: [6, 8, 9]
-            }]
+                    orderable: false,
+                    targets: [8, 11]
+                },
+                {
+                    width: '40px',
+                    targets: [0]
+                },
+                {
+                    width: '95px',
+                    targets: [1]
+                },
+                {
+                    width: '90px',
+                    targets: [8]
+                },
+                {
+                    width: '75px',
+                    targets: [11]
+                },
+            ]
         });
 
-        // filter data with plant
+        // Filter plant
         $('#filterPlant').on('change', function() {
-            var val = $(this).val();
-
-            table.column(8).search(val).draw();
+            table.column(10).search($(this).val()).draw();
         });
 
-        // preview photo
+        // Preview foto
         $(document).on('click', '.preview-trigger', function() {
             const url = $(this).data('url');
             const label = $(this).data('label');
             $('#previewLabel').text(label);
-            $('#previewContent').html('<img src="' + url + '" style="max-width:60%;border-radius:12px">');
+            $('#previewContent').html('<img src="' + url + '" style="max-width:100%;border-radius:12px">');
         });
 
-        // show delete modal
+        // Delete modal
         $('#deleteModal').on('show.bs.modal', function(e) {
             const btn = $(e.relatedTarget);
             const id = btn.data('id');

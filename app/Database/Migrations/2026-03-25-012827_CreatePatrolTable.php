@@ -30,14 +30,28 @@ class CreatePatrolTable extends Migration
                 'type' => 'DATE',
                 'null' => false,
             ],
+
+            'temuan' => [
+                'type' => 'TEXT',
+                'null' => true,
+            ],
+
             'tanggal_penyelesaian' => [
                 'type' => 'DATE',
                 'null' => true,
             ],
-            'keterangan' => [
+
+            'penyelesaian' => [
                 'type' => 'TEXT',
                 'null' => true,
             ],
+
+            'status_patrol' => [
+                'type' => 'TINYINT',
+                'constraint' => 1,
+                'default' => 0,
+            ],
+
             'foto_before_filename' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,

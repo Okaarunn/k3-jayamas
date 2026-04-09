@@ -10,7 +10,8 @@ class CreateTableUsersLogs extends Migration
     {
         $this->forge->addField([
             'id' => [
-                'type' => 'BIGINT',
+                'type' => 'INT',
+                'constraint' => 11,
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
@@ -22,10 +23,25 @@ class CreateTableUsersLogs extends Migration
                 'null' => true,
             ],
 
+            // actor name who create action
+            'actor_name' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
+                'null' => true,
+            ],
+
             // user who get affected by action
             'target_user_id' => [
                 'type' => 'INT',
                 'unsigned' => true,
+                'null' => true,
+            ],
+
+
+            // target name
+            'target_name' => [
+                'type' => 'VARCHAR',
+                'constraint' => 100,
                 'null' => true,
             ],
 
@@ -48,14 +64,14 @@ class CreateTableUsersLogs extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->addForeignKey('actor_id', 'users', 'id', 'SET NULL', 'CASCADE');
-        $this->forge->addForeignKey('target_user_id', 'users', 'id', 'SET NULL', 'CASCADE');
+        $this->forge->addForeignKey('actor_id', 'users', 'id', 'SET NULL', 'SET NULL');
+        $this->forge->addForeignKey('target_user_id', 'users', 'id', 'SET NULL', 'SET NULL');
 
         $this->forge->createTable('user_logs');
     }
 
     public function down()
     {
-        $this->forge->dropTable('users_log');
+        $this->forge->dropTable('user_logs');
     }
 }

@@ -416,6 +416,7 @@
                     </div>
                 </div>
 
+                <!-- tanggal -->
                 <div class="row">
                     <div class="col-md-4 mb-4">
                         <label class="form-label-k3">Tanggal Patrol <span style="color:#c62828">*</span></label>
@@ -432,11 +433,21 @@
                     </div>
                 </div>
 
+                <!-- temuan -->
                 <div class="mb-0">
-                    <label class="form-label-k3">Keterangan / Temuan</label>
-                    <textarea name="keterangan" id="keteranganInput" rows="4"
+                    <label class="form-label-k3">Temuan</label>
+                    <textarea name="temuan" id="keterangan" rows="4"
                         class="form-control-k3" maxlength="2000"
-                        placeholder="Uraikan temuan dan tindakan perbaikan..."><?= old('keterangan', $patrol->keterangan) ?></textarea>
+                        placeholder="Uraikan temuan lapangan..."><?= old('temuan', $patrol->temuan) ?></textarea>
+                    <div class="char-counter" id="charCounter">0 / 2000 karakter</div>
+                </div>
+
+                <!-- penyelesaian -->
+                <div class="mb-0">
+                    <label class="form-label-k3">Penyelesaian</label>
+                    <textarea name="penyelesaian" id="keterangan" rows="4"
+                        class="form-control-k3" maxlength="2000"
+                        placeholder="Uraikan penyelesaian dan tindakan perbaikan..."><?= old('keterangan', $patrol->penyelesaian) ?></textarea>
                     <div class="char-counter" id="charCounter">0 / 2000 karakter</div>
                 </div>
             </div>
@@ -530,7 +541,7 @@
         const initLen = $('#keteranganInput').val().length;
         $('#charCounter').text(initLen + ' / 2000 karakter');
 
-        $('#keteranganInput').on('input', function() {
+        $('#keterangan').on('input', function() {
             const len = $(this).val().length;
             const c = $('#charCounter');
             c.text(len + ' / 2000 karakter').removeClass('warn over');

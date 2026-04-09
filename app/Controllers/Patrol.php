@@ -40,7 +40,7 @@ class Patrol extends BaseController
 
         return $user->plant_id;
     }
-    // get data induksi with created by users
+    // get data patrol with created by users
     private function getPatrol(int $id = 0)
     {
         $builder = $this->db->table('patrol p');
@@ -110,8 +110,13 @@ class Patrol extends BaseController
         return $myPlantId !== 0 && $myPlantId === $creatorPlantId;
     }
 
+    // get status patrol (0 = belum selesai, 1 = selesai)
+    private function getStatusPatrol($tanggalPenyelesaian): int
+    {
+        return empty($tanggalPenyelesaian) ? 0 : 1;
+    }
 
-    // get all patrol 
+    // get data patrol 
     public function index()
     {
         $data = [
@@ -167,11 +172,15 @@ class Patrol extends BaseController
         [$beforeFile, $beforeOrig, $beforeMime, $beforeSize] = $this->uploadFoto('foto_before');
         [$afterFile,  $afterOrig,  $afterMime,  $afterSize]  = $this->uploadFoto('foto_after');
 
+        $tanggalSelesai = $this->request->getPost('tanggal_penyelesaian') ?: null;
+        $statusPatrol   = $this->getStatusPatrol($tanggalSelesai);
+
         // insert data induksi
         $this->db->table('patrol')->insert([
             'nama_petugas'              => $this->request->getPost('nama_petugas'),
             'tanggal_patrol'            => $this->request->getPost('tanggal_patrol'),
             'tanggal_penyelesaian'      => $this->request->getPost('tanggal_penyelesaian') ?: null,
+            'status_patrol'             => $statusPatrol,
             'keterangan'                => $this->request->getPost('keterangan'),
             'foto_before_filename'      => $beforeFile,
             'foto_before_original_name' => $beforeOrig,
@@ -257,11 +266,15 @@ class Patrol extends BaseController
             return redirect()->back()->withInput();
         }
 
+        $tanggalSelesai = $this->request->getPost('tanggal_penyelesaian') ?: null;
+        $statusPatrol   = $this->getStatusPatrol($tanggalSelesai);
+
         // update data patrol
         $updateData = [
             'nama_petugas'         => $this->request->getPost('nama_petugas'),
             'tanggal_patrol'       => $this->request->getPost('tanggal_patrol'),
             'tanggal_penyelesaian' => $this->request->getPost('tanggal_penyelesaian') ?: null,
+            'status_patrol'        => $statusPatrol,
             'keterangan'           => $this->request->getPost('keterangan'),
             'updated_by'           => user_id(),
             'updated_at'           => date('Y-m-d H:i:s'),

@@ -422,10 +422,20 @@
 
                 <!-- Keterangan -->
                 <div class="mb-0">
-                    <label class="form-label-k3">Keterangan / Temuan</label>
-                    <textarea name="keterangan" id="keteranganInput" rows="4"
+                    <label class="form-label-k3">Temuan</label>
+                    <textarea name="temuan" id="temuan" rows="4"
                         class="form-control-k3"
-                        placeholder="Uraikan temuan lapangan dan tindakan perbaikan yang diambil..."
+                        placeholder="Uraikan temuan lapangan..."
+                        maxlength="2000"><?= old('keterangan') ?></textarea>
+                    <div class="char-counter" id="charCounter">0 / 2000 karakter</div>
+                </div>
+
+                <!-- penyelesaian -->
+                <div class="mb-0">
+                    <label class="form-label-k3">Penyelesaian</label>
+                    <textarea name="penyelesaian" id="penyelesaian" rows="4"
+                        class="form-control-k3"
+                        placeholder="Uraikan penyelesaian lapangan dan tindakan perbaikan yang diambil..."
                         maxlength="2000"><?= old('keterangan') ?></textarea>
                     <div class="char-counter" id="charCounter">0 / 2000 karakter</div>
                 </div>
@@ -510,7 +520,15 @@
     $(document).ready(function() {
 
         // Char counter
-        $('#keteranganInput').on('input', function() {
+        $('#temuan').on('input', function() {
+            const len = $(this).val().length;
+            const c = $('#charCounter');
+            c.text(len + ' / 2000 karakter').removeClass('warn over');
+            if (len > 1800) c.addClass('over');
+            else if (len > 1500) c.addClass('warn');
+        });
+
+        $('#penyelesaian').on('input', function() {
             const len = $(this).val().length;
             const c = $('#charCounter');
             c.text(len + ' / 2000 karakter').removeClass('warn over');
