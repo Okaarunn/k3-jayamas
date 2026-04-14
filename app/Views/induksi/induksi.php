@@ -20,7 +20,7 @@
                 <i class="fas fa-file-download"></i> Export Excel
             </a>
 
-            <?php if (in_groups(['administrator', 'editor'])) : ?>
+            <?php if (has_permission('manage-data')) : ?>
                 <a href="<?= base_url('induksi/create') ?>" class="btn-add">
                     <i class="fas fa-plus"></i> Tambah Induksi
                 </a>
@@ -154,10 +154,11 @@
                                 <!-- AKSI -->
                                 <td>
                                     <?php
-                                    $canModify = in_groups('administrator') || ($myPlantId == $row->creator_plant_id);
+                                    $canModify = has_permission('manage-data') &&
+                                        (in_groups('administrator') || $myPlantId == $row->creator_plant_id);
                                     ?>
 
-                                    <?php if ($canModify && in_groups(['administrator', 'editor'])) : ?>
+                                    <?php if ($canModify): ?>
                                         <a href="<?= base_url('induksi/edit/' . $row->id) ?>" class="btn-action edit">
                                             <i class="fas fa-edit"></i>
                                         </a>

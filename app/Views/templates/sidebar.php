@@ -45,6 +45,15 @@
     <!-- User Management  -->
     <?php if (in_groups('administrator')) : ?>
         <div class="sidebar-heading mt-2">Pengaturan</div>
+
+        <!-- roles -->
+        <li class="nav-item">
+            <a class="nav-link" href="<?= base_url('admin/roles') ?>">
+                <i class="fas fa-fw fa-lock"></i>
+                <span>Roles</span>
+            </a>
+        </li>
+
         <li class="nav-item">
             <a class="nav-link" href="<?= base_url('admin/users') ?>">
                 <i class="fas fa-fw fa-users"></i>

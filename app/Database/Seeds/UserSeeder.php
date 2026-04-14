@@ -57,15 +57,27 @@ class UserSeeder extends Seeder
             ],
             [
                 'data' => [
-                    'email'         => 'editorkrian@jayamas.com',
-                    'username'      => 'editorkrian',
-                    'password_hash' => \Myth\Auth\Password::hash('@editorkrian2134'),
+                    'email'         => 'k3krian@jayamas.com',
+                    'username'      => 'k3krian',
+                    'password_hash' => \Myth\Auth\Password::hash('@k3krian2134'),
                     'active'        => 1,
                     'plant_id'      => $plantKrian->id,
                     'created_at'    => date('Y-m-d H:i:s'),
                     'updated_at'    => date('Y-m-d H:i:s'),
                 ],
-                'role' => 'editor',
+                'role' => 'k3',
+            ],
+            [
+                'data' => [
+                    'email'         => 'p2k3krian@jayamas.com',
+                    'username'      => 'p2k3krian',
+                    'password_hash' => \Myth\Auth\Password::hash('@p2k3krian5453'),
+                    'active'        => 1,
+                    'plant_id'      => $plantKrian->id,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                    'updated_at'    => date('Y-m-d H:i:s'),
+                ],
+                'role' => 'p2k3',
             ],
             [
                 'data' => [
@@ -93,15 +105,28 @@ class UserSeeder extends Seeder
             ],
             [
                 'data' => [
-                    'email'         => 'editormojoagung@jayamas.com',
-                    'username'      => 'editormojoagung',
-                    'password_hash' => \Myth\Auth\Password::hash('!editormojoagung5323'),
+                    'email'         => 'k3mojoagung@jayamas.com',
+                    'username'      => 'k3mojoagung',
+                    'password_hash' => \Myth\Auth\Password::hash('!k3mojoagung5323'),
                     'active'        => 1,
                     'plant_id'      => $plantMojoagung->id,
                     'created_at'    => date('Y-m-d H:i:s'),
                     'updated_at'    => date('Y-m-d H:i:s'),
                 ],
-                'role' => 'editor',
+                'role' => 'k3',
+            ],
+
+            [
+                'data' => [
+                    'email'         => 'p2k3mojoagung@jayamas.com',
+                    'username'      => 'p2k3mojoagung',
+                    'password_hash' => \Myth\Auth\Password::hash('!p2k3mojoagung4242'),
+                    'active'        => 1,
+                    'plant_id'      => $plantMojoagung->id,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                    'updated_at'    => date('Y-m-d H:i:s'),
+                ],
+                'role' => 'p2k3',
             ],
             [
                 'data' => [
@@ -131,16 +156,30 @@ class UserSeeder extends Seeder
             ],
             [
                 'data' => [
-                    'email'         => 'editorbatang@jayamas.com',
-                    'username'      => 'editorbatang',
-                    'password_hash' => \Myth\Auth\Password::hash('#editorbatang2745'),
+                    'email'         => 'k3batang@jayamas.com',
+                    'username'      => 'k3batang',
+                    'password_hash' => \Myth\Auth\Password::hash('#k3batang2745'),
                     'active'        => 1,
                     'plant_id'      => $plantBatang->id,
                     'created_at'    => date('Y-m-d H:i:s'),
                     'updated_at'    => date('Y-m-d H:i:s'),
                 ],
-                'role' => 'editor',
+                'role' => 'k3',
             ],
+
+            [
+                'data' => [
+                    'email'         => 'p2k3batang@jayamas.com',
+                    'username'      => 'p2k3batang',
+                    'password_hash' => \Myth\Auth\Password::hash('#p2k3batang2324'),
+                    'active'        => 1,
+                    'plant_id'      => $plantBatang->id,
+                    'created_at'    => date('Y-m-d H:i:s'),
+                    'updated_at'    => date('Y-m-d H:i:s'),
+                ],
+                'role' => 'p2k3',
+            ],
+
             [
                 'data' => [
                     'email'         => 'viewerbatang@jayamas.com',

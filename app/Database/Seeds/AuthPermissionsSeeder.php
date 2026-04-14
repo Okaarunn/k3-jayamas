@@ -11,6 +11,7 @@ class AuthPermissionsSeeder extends Seeder
         $permissions = [
             ['name' => 'manage-users',  'description' => 'Kelola pengguna'],
             ['name' => 'manage-data',   'description' => 'CRUD data'],
+            ['name' => 'manage-approval',   'description' => 'Persetujuan data'],
             ['name' => 'export-report', 'description' => 'Export laporan'],
         ];
 
@@ -21,8 +22,9 @@ class AuthPermissionsSeeder extends Seeder
         }
 
         $groupPermissions = [
-            'administrator' => ['manage-users', 'manage-data', 'export-report'],
-            'editor'        => ['manage-data', 'export-report'],
+            'administrator' => ['manage-users', 'manage-data', 'export-report', 'manage-approval'],
+            'k3'        => ['manage-data', 'export-report', 'manage-approval'],
+            'p2k3'        => ['export-report', 'manage-approval'],
             'viewer'        => ['export-report'],
         ];
 

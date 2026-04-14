@@ -130,7 +130,7 @@ class Admin extends BaseController
             ],
             'role' => [
                 'label' => 'Role',
-                'rules' => 'required|in_list[administrator,editor,viewer]',
+                'rules' => 'required|in_list[administrator,k3,p2k3,viewer]',
             ],
             'plant_id' => [
                 'label'  => 'Plant',
@@ -236,7 +236,7 @@ class Admin extends BaseController
             ],
             'role' => [
                 'label' => 'Role',
-                'rules' => 'required|in_list[administrator,editor,viewer]',
+                'rules' => 'required|in_list[administrator,k3,p2k3,viewer]',
             ],
             'plant_id' => [
                 'label'  => 'Plant',

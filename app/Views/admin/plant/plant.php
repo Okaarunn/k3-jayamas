@@ -356,7 +356,7 @@
     <div class="page-header">
         <div>
             <h1><i class="fa fa-map-marker mr-2"></i>Manajemen Plant</h1>
-            <p>Kelola Plant</p>
+            <p>Kelola lokasi plant untuk pengguna</p>
         </div>
         <a href="<?= base_url('admin/plant/create') ?>" class="btn-add-user">
             <i class="fa fa-map-marker"></i> Tambah Plant

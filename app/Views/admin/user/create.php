@@ -103,8 +103,13 @@
         background: linear-gradient(135deg, #1a237e, #3949ab);
     }
 
-    .avatar-preview.editor {
+    .avatar-preview.k3 {
         background: linear-gradient(135deg, #00695c, #00897b);
+    }
+
+    .avatar-preview.p2k3 {
+        background: linear-gradient(135deg, #C62828, #C62812);
+
     }
 
     .avatar-preview.viewer {
@@ -167,7 +172,6 @@
         margin-top: 4px;
     }
 
-    /* Tambahkan ini di dalam <style> yang sudah ada */
     .password-wrapper {
         position: relative;
         display: block;
@@ -258,8 +262,13 @@
         background: linear-gradient(135deg, #1a237e, #3949ab);
     }
 
-    .role-icon.editor-icon {
+    .role-icon.k3-icon {
         background: linear-gradient(135deg, #00695c, #00897b);
+    }
+
+    .role-icon.p2k3-icon {
+        background: linear-gradient(135deg, #C62828, #C62812);
+
     }
 
     .role-icon.viewer-icon {
@@ -573,13 +582,23 @@
                                     </div>
                                 </label>
 
-                                <input type="radio" name="role" id="role_editor" class="role-option"
-                                    value="editor" <?= old('role') === 'editor' ? 'checked' : '' ?>>
-                                <label for="role_editor">
-                                    <span class="role-icon editor-icon"><i class="fas fa-pen"></i></span>
+                                <input type="radio" name="role" id="role_k3" class="role-option"
+                                    value="k3" <?= old('role') === 'k3' ? 'checked' : '' ?>>
+                                <label for="role_k3">
+                                    <span class="role-icon k3-icon"><i class="fas fa-pen"></i></span>
                                     <div>
-                                        <div>Editor</div>
+                                        <div>K3</div>
                                         <div style="font-size:.72rem;font-weight:400;color:#9e9e9e">CRUD data</div>
+                                    </div>
+                                </label>
+
+                                <input type="radio" name="role" id="role_p2k3" class="role-option"
+                                    value="p2k3" <?= old('role') === 'p2k3' ? 'checked' : '' ?>>
+                                <label for="role_p2k3">
+                                    <span class="role-icon p2k3-icon"><i class="fa fa-check"></i></span>
+                                    <div>
+                                        <div>P2K3</div>
+                                        <div style="font-size:.72rem;font-weight:400;color:#9e9e9e">Approval data</div>
                                     </div>
                                 </label>
 
@@ -653,10 +672,11 @@
             const role = $(this).val();
             const labels = {
                 administrator: 'Administrator',
-                editor: 'Editor',
+                k3: 'K3',
+                p2k3: 'P2k3',
                 viewer: 'Viewer'
             };
-            $('#avatarPreview').removeClass('default administrator editor viewer').addClass(role);
+            $('#avatarPreview').removeClass('default administrator k3 p2k3 viewer').addClass(role);
             $('#roleLabel').text(labels[role] || role);
         });
 
@@ -665,7 +685,8 @@
         if (checkedRole) {
             const labels = {
                 administrator: 'Administrator',
-                editor: 'Editor',
+                k3: 'K3',
+                p2k3: 'P2k3',
                 viewer: 'Viewer'
             };
             $('#avatarPreview').removeClass('default').addClass(checkedRole);

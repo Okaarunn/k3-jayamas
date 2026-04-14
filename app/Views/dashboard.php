@@ -326,7 +326,7 @@
             </div>
         </div>
 
-        <?php if (in_groups('administrator') && $totalUsers !== null) : ?>
+        <?php if (has_permission('manage-users') && $totalUsers !== null) : ?>
             <div class="stat-card">
                 <div class="stat-icon icon-users">
                     <i class="fas fa-users"></i>

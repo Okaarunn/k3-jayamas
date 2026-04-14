@@ -9,7 +9,7 @@ class InduksiSeeder extends Seeder
     public function run()
     {
         $user = $this->db->table('users')
-            ->where('username', 'editormojoagung')
+            ->where('username', 'k3mojoagung')
             ->get()
             ->getRow();
 

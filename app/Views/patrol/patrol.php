@@ -24,7 +24,7 @@
             <a href="<?= base_url('patrol/export') ?>" class="btn-export">
                 <i class="fas fa-file-download"></i> Export Excel
             </a>
-            <?php if (in_groups(['administrator', 'editor'])) : ?>
+            <?php if (has_permission('manage-data')) : ?>
                 <a href="<?= base_url('patrol/create') ?>" class="btn-add">
                     <i class="fas fa-plus"></i> Tambah Patrol
                 </a>
@@ -184,13 +184,23 @@
                                 </td>
 
                                 <td>
-                                    <?php if (in_groups(['administrator', 'editor']) && $canModify) : ?>
+                                    <?php
+                                    $canModify = has_permission('manage-data') &&
+                                        (in_groups('administrator') || $myPlantId == $row->creator_plant_id);
+                                    ?>
+
+                                    <?php if ($canModify): ?>
                                         <div class="d-flex" style="gap:5px">
-                                            <a href="<?= base_url('patrol/edit/' . $row->id) ?>" class="btn-action edit" title="Edit">
+                                            <a href="<?= base_url('patrol/edit/' . $row->id) ?>"
+                                                class="btn-action edit"
+                                                title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="#" class="btn-action del"
-                                                data-toggle="modal" data-target="#deleteModal"
+
+                                            <a href="#"
+                                                class="btn-action del"
+                                                data-toggle="modal"
+                                                data-target="#deleteModal"
                                                 data-id="<?= $row->id ?>"
                                                 data-kode="<?= esc($row->kode) ?>"
                                                 title="Hapus">

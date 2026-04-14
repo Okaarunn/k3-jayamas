@@ -99,8 +99,12 @@
         color: #1a237e;
     }
 
-    .stat-item.editor .stat-num {
+    .stat-item.k3 .stat-num {
         color: #00897b;
+    }
+
+    .stat-item.p2k3 .stat-num {
+        color: red;
     }
 
     .stat-item.viewer .stat-num {
@@ -156,8 +160,12 @@
         background: linear-gradient(135deg, #1a237e, #3949ab);
     }
 
-    .avatar-editor {
+    .avatar-k3 {
         background: linear-gradient(135deg, #00695c, #00897b);
+    }
+
+    .avatar-p2k3 {
+        background: linear-gradient(135deg, #C62828, #C62812);
     }
 
     .avatar-viewer {
@@ -198,9 +206,14 @@
         color: #3949ab;
     }
 
-    .role-badge.editor {
+    .role-badge.k3 {
         background: #e0f2f1;
         color: #00695c;
+    }
+
+    .role-badge.p2k3 {
+        background: #FCE4EC;
+        color: #C62828;
     }
 
     .role-badge.viewer {
@@ -376,7 +389,8 @@
                 <?php
                 $total   = count($users);
                 $cAdmin  = count(array_filter($users, fn($u) => $u->name === 'administrator'));
-                $cEditor = count(array_filter($users, fn($u) => $u->name === 'editor'));
+                $cK3 = count(array_filter($users, fn($u) => $u->name === 'k3'));
+                $cP2k3 = count(array_filter($users, fn($u) => $u->name === 'p2k3'));
                 $cViewer = count(array_filter($users, fn($u) => $u->name === 'viewer'));
                 ?>
                 <div class="stat-item">
@@ -387,10 +401,16 @@
                     <div class="stat-num"><?= $cAdmin ?></div>
                     <div class="stat-label">Administrator</div>
                 </div>
-                <div class="stat-item editor">
-                    <div class="stat-num"><?= $cEditor ?></div>
-                    <div class="stat-label">Editor</div>
+                <div class="stat-item k3">
+                    <div class="stat-num"><?= $cK3 ?></div>
+                    <div class="stat-label">K3</div>
                 </div>
+
+                <div class="stat-item p2k3">
+                    <div class="stat-num"><?= $cP2k3 ?></div>
+                    <div class="stat-label">P2K3</div>
+                </div>
+
                 <div class="stat-item viewer">
                     <div class="stat-num"><?= $cViewer ?></div>
                     <div class="stat-label">Viewer</div>
@@ -437,7 +457,7 @@
                                 <td>
                                     <span class="role-badge <?= $role ?>">
                                         <?php if ($role === 'administrator') : ?><i class="fas fa-shield-alt"></i>
-                                        <?php elseif ($role === 'editor') : ?><i class="fas fa-pen"></i>
+                                        <?php elseif ($role === 'k3') : ?><i class="fas fa-pen"></i>
                                         <?php else : ?><i class="fas fa-eye"></i>
                                         <?php endif; ?>
                                         <?= ucfirst($role) ?>
