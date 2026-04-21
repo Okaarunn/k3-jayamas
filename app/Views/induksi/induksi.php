@@ -5,26 +5,42 @@
 
     <?= $this->include('components/alert') ?>
 
-    <div class="page-header">
-        <div>
-            <h1><i class="fas fa-user-check mr-2"></i> Data Induksi Keselamatan dan Kesehatan Kerja</h1>
-            <p>Pencatatan dan manajemen hasil training / induksi K3</p>
+    <!-- page header -->
+    <div class="flex-column flex-md-row page-header">
+
+        <!-- content -->
+        <div class="mb-3 mb-md-0">
+            <h1 class="mb-1">
+                <i class="fas fa-user-check mr-2"></i>
+                <span class="d-block d-md-inline">
+                    Data Induksi Keselamatan dan Kesehatan Kerja
+                </span>
+            </h1>
+            <p class="mb-0">
+                Pencatatan dan manajemen hasil training / induksi K3
+            </p>
         </div>
-        <div class="d-flex" style="gap:10px">
+
+        <!-- button -->
+        <div class="d-flex flex-wrap header-actions" style="gap:8px">
 
             <a href="<?= base_url('induksi/exportpdf') ?>" class="btn-export">
-                <i class="fas fa-file-download"></i> Export PDF
+                <i class="fas fa-file-pdf mr-1"></i>
+                <span>Export PDF</span>
             </a>
 
             <a href="<?= base_url('induksi/export') ?>" class="btn-export">
-                <i class="fas fa-file-download"></i> Export Excel
+                <i class="fas fa-file-excel mr-1"></i>
+                <span>Export Excel</span>
             </a>
 
             <?php if (has_permission('manage-data')) : ?>
                 <a href="<?= base_url('induksi/create') ?>" class="btn-add">
-                    <i class="fas fa-plus"></i> Tambah Induksi
+                    <i class="fas fa-plus mr-1"></i>
+                    <span>Tambah Induksi</span>
                 </a>
             <?php endif; ?>
+
         </div>
     </div>
 
@@ -82,7 +98,6 @@
                                     </span>
                                 </td>
 
-                                <!-- DOKUMENTASI UTAMA -->
                                 <td>
                                     <?php if (!empty($row->dokumentasi)) : ?>
                                         <div style="display:flex;flex-wrap:wrap;gap:6px">
@@ -111,7 +126,6 @@
                                     <?php endif; ?>
                                 </td>
 
-                                <!-- ABSENSI (MULTIPLE) -->
                                 <td>
                                     <?php if (!empty($row->absensi)) : ?>
                                         <div style="display:flex;flex-wrap:wrap;gap:6px">
@@ -140,18 +154,15 @@
                                     <?php endif; ?>
                                 </td>
 
-                                <!-- DICATAT OLEH -->
                                 <td>
 
                                     <?= esc($row->created_by_username) ?>
                                 </td>
 
-                                <!-- PLANT -->
                                 <td> <span style="background:#e8eaf6;color:#3949ab;border-radius:8px;padding:3px 8px;font-size:.72rem;font-weight:600;white-space:nowrap">
                                         <?= esc(ucwords(strtolower($row->nama_plant))) ?>
                                     </span></td>
 
-                                <!-- AKSI -->
                                 <td>
                                     <?php
                                     $canModify = has_permission('manage-data') &&
@@ -245,6 +256,7 @@
                 zeroRecords: 'Tidak ada data ditemukan',
                 emptyTable: 'Belum ada laporan induksi'
             },
+
             columnDefs: [{
                     orderable: false,
                 },

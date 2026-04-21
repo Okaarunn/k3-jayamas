@@ -2,192 +2,81 @@
 
 <?= $this->section('content'); ?>
 
-<style>
-    body {
-        background: #f4f6f8;
-        min-height: 100vh;
-    }
+<div class="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div class="card shadow border-0" style="max-width:400px; width:100%; border-radius:14px;">
+        <div class="card-body p-4">
 
-    .auth-wrapper {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-    }
-
-    .auth-card {
-        width: 100%;
-        max-width: 400px;
-        border-radius: 14px;
-        padding: 32px 28px;
-        background: #ffffff;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-    }
-
-    /* Logo jadi simple, no gradient */
-    .auth-logo {
-        width: 52px;
-        height: 52px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 12px;
-    }
-
-    .auth-logo i {
-        color: #fff;
-        font-size: 1.2rem;
-    }
-
-    /* Typography lebih soft */
-    .auth-title {
-        text-align: center;
-        font-weight: 600;
-        font-size: 1.05rem;
-        color: #263238;
-    }
-
-    .auth-sub {
-        text-align: center;
-        font-size: .75rem;
-        color: #90a4ae;
-        margin-bottom: 22px;
-    }
-
-    /* Input clean */
-    .form-control-k3 {
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 9px 12px;
-        font-size: .82rem;
-        transition: all .15s;
-        width: 100%;
-        background: #fafafa;
-    }
-
-    .form-control-k3:focus {
-        border-color: #00897b;
-        background: #fff;
-        box-shadow: 0 0 0 2px rgba(0, 137, 123, .08);
-        outline: none;
-    }
-
-    .form-control-k3.is-invalid {
-        border-color: #d32f2f;
-    }
-
-    .invalid-feedback-k3 {
-        font-size: .72rem;
-        color: #d32f2f;
-        margin-top: 4px;
-    }
-
-    /* Button dibuat flat (no gradient) */
-    .btn-login {
-        border: none;
-        border-radius: 8px;
-        padding: 10px;
-        font-weight: 600;
-        font-size: .85rem;
-        color: #fff;
-        transition: all .15s;
-    }
-
-    /* Icon toggle lebih subtle */
-    .password-wrapper {
-        position: relative;
-    }
-
-    .password-toggle {
-        position: absolute;
-        right: 10px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: none;
-        border: none;
-        color: #b0bec5;
-        cursor: pointer;
-    }
-
-    .password-toggle:hover {
-        color: #607d8b;
-    }
-
-    /* Footer */
-    .auth-footer {
-        text-align: center;
-        font-size: .7rem;
-        color: #b0bec5;
-        margin-top: 18px;
-    }
-</style>
-
-<div class="auth-wrapper">
-    <div class="auth-card">
-
-        <div class="auth-logo bg-primary">
-            <i class="fas fa-hard-hat"></i>
-        </div>
-
-        <div class="auth-title">Jayamas K3</div>
-        <div class="auth-sub">Sistem Manajemen Keselamatan</div>
-
-        <?= view('Myth\Auth\Views\_message_block') ?>
-
-        <form action="<?= url_to('login') ?>" method="post" novalidate>
-            <?= csrf_field() ?>
-
-            <!-- LOGIN -->
-            <div class="mb-3">
-                <input type="text"
-                    name="login"
-                    class="form-control-k3 <?= session('errors.login') ? 'is-invalid' : '' ?>"
-                    placeholder="Username / Email"
-                    value="<?= old('login') ?>"
-                    autofocus
-                    required>
-
-                <?php if (session('errors.login')): ?>
-                    <div class="invalid-feedback-k3">
-                        <?= session('errors.login') ?>
-                    </div>
-                <?php endif; ?>
+            <!-- LOGO -->
+            <div class="text-center mb-4">
+                <div class="bg-primary d-inline-flex align-items-center justify-content-center mb-3"
+                    style="width:60px;height:60px;border-radius:12px;">
+                    <i class="fas fa-hard-hat text-white"></i>
+                </div>
+                <h6 class="font-weight-bold text-dark mb-1">Jayamas K3</h6>
+                <small class="text-muted">Sistem Manajemen Keselamatan</small>
             </div>
 
-            <!-- PASSWORD -->
-            <div class="mb-3 password-wrapper">
-                <input type="password"
-                    name="password"
-                    id="passwordInput"
-                    class="form-control-k3 <?= session('errors.password') ? 'is-invalid' : '' ?>"
-                    placeholder="Password"
-                    autocomplete="off"
-                    required>
+            <?= view('Myth\Auth\Views\_message_block') ?>
 
-                <button type="button" class="password-toggle" id="togglePassword">
-                    <i class="fas fa-eye" id="toggleIcon"></i>
+            <form action="<?= url_to('login') ?>" method="post" novalidate>
+                <?= csrf_field() ?>
+
+                <!-- LOGIN -->
+                <div class="form-group">
+                    <label class="text-muted mb-1" style="font-size:12px;">Username/Email</label>
+
+                    <input type="text"
+                        name="login"
+                        class="form-control <?= session('errors.login') ? 'is-invalid' : '' ?>"
+                        placeholder="Username / Email"
+                        value="<?= old('login') ?>"
+                        autofocus
+                        required>
+
+                    <?php if (session('errors.login')): ?>
+                        <div class="invalid-feedback">
+                            <?= session('errors.login') ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="form-group position-relative">
+
+                    <label class="text-muted mb-1" style="font-size:12px;">Password</label>
+
+                    <input type="password"
+                        name="password"
+                        id="passwordInput"
+                        class="form-control pr-5 <?= session('errors.password') ? 'is-invalid' : '' ?>"
+                        placeholder="Masukkan password"
+                        autocomplete="off"
+                        required>
+
+                    <!-- icon di dalam input -->
+                    <span id="togglePassword"
+                        style="position:absolute; right:12px; top:35px; cursor:pointer; color:#6c757d;">
+                        <i class="fas fa-eye" id="toggleIcon"></i>
+                    </span>
+
+                    <?php if (session('errors.password')): ?>
+                        <div class="invalid-feedback d-block">
+                            <?= session('errors.password') ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <!-- SUBMIT -->
+                <button type="submit" class="btn btn-primary btn-block">
+                    Masuk ke Sistem
                 </button>
+            </form>
 
-                <?php if (session('errors.password')): ?>
-                    <div class="invalid-feedback-k3">
-                        <?= session('errors.password') ?>
-                    </div>
-                <?php endif; ?>
+            <div class="text-center text-muted mt-4" style="font-size:12px;">
+                © <?= date('Y') ?> Jayamas IT Department
             </div>
 
-
-            <!-- SUBMIT -->
-            <button type="submit" class="btn-login w-100 btn-primary">
-                Masuk ke Sistem
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            © <?= date('Y') ?> Jayamas IT Department
         </div>
-
     </div>
 </div>
 
@@ -197,14 +86,13 @@
         const input = document.getElementById('passwordInput');
         const icon = document.getElementById('toggleIcon');
 
-        if (toggle) {
-            toggle.addEventListener('click', function() {
-                const isPassword = input.type === 'password';
-                input.type = isPassword ? 'text' : 'password';
-                icon.classList.toggle('fa-eye');
-                icon.classList.toggle('fa-eye-slash');
-            });
-        }
+        toggle.addEventListener('click', function() {
+            const isPassword = input.type === 'password';
+            input.type = isPassword ? 'text' : 'password';
+
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
     });
 </script>
 

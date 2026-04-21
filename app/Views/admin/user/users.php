@@ -2,56 +2,6 @@
 
 <?php $this->section('styles'); ?>
 <style>
-    .page-header {
-        background: #283593;
-        border-radius: 16px;
-        padding: 28px 32px;
-        margin-bottom: 28px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        box-shadow: 0 8px 32px rgba(26, 35, 126, 0.18);
-    }
-
-    .page-header h1 {
-        color: #fff;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0;
-        letter-spacing: 0.3px;
-    }
-
-    .page-header p {
-        color: rgba(255, 255, 255, 0.7);
-        margin: 4px 0 0;
-        font-size: 0.85rem;
-    }
-
-    .btn-add-user {
-        background: #fff;
-        color: #1a237e;
-        border: none;
-        border-radius: 10px;
-        padding: 10px 22px;
-        font-weight: 700;
-        font-size: 0.875rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        transition: all .2s;
-        text-decoration: none;
-        white-space: nowrap;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    }
-
-    .btn-add-user:hover {
-        background: #e8eaf6;
-        color: #1a237e;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-        text-decoration: none;
-    }
-
     .card-users {
         border: none;
         border-radius: 16px;
@@ -369,17 +319,29 @@
 <div class="container-fluid pb-4">
 
     <?= $this->include('components/alert') ?>
-
-
     <!-- Page Header -->
-    <div class="page-header">
-        <div>
-            <h1><i class="fas fa-users mr-2"></i> Manajemen Pengguna</h1>
-            <p>Kelola akun, role, dan hak akses seluruh pengguna sistem K3</p>
+    <div class="flex-column flex-md-row page-header">
+        <!-- content -->
+        <div class="mb-3 mb-md-0">
+            <h1 class="mb-1">
+                <i class="fas fa-user-check mr-2"></i>
+                <span class="d-block d-md-inline">
+                    Data Induksi Keselamatan dan Kesehatan Kerja
+                </span>
+            </h1>
+            <p class="mb-0">
+                Pencatatan dan manajemen hasil training / induksi K3
+            </p>
         </div>
-        <a href="<?= base_url('admin/users/create') ?>" class="btn-add-user">
-            <i class="fas fa-user-plus"></i> Tambah Pengguna
-        </a>
+
+        <!-- button -->
+        <div class="d-flex flex-wrap header-actions" style="gap:8px">
+            <a href="<?= base_url('admin/users/create') ?>" class="btn-add">
+                <i class="fas fa-user-plus"></i>
+                <span>Tambah Pengguna</span>
+            </a>
+
+        </div>
     </div>
 
     <!-- Stats Strip -->

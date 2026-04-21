@@ -14,8 +14,53 @@
         </div>
     <?php endif; ?>
 
+    <style>
+        .create-header {
+            background: #283593;
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 8px 32px rgba(74, 20, 140, 0.18);
+        }
+
+        .create-header .back-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            text-decoration: none;
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .create-header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+        }
+
+        .create-header h1 {
+            color: #fff;
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .create-header p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 0.82rem;
+            margin: 3px 0 0;
+        }
+    </style>
+
     <!-- Header -->
-    <div class="edit-header">
+    <div class="create-header">
         <a href="<?= base_url('patrol') ?>" class="back-btn">
             <i class="fas fa-arrow-left"></i>
         </a>
@@ -175,7 +220,7 @@
             </div>
         </div>
 
-        <div class="d-flex align-items-center" style="gap:12px">
+        <div class="d-flex align-items-center justify-content-end" style="gap:12px">
             <button type="submit" class="btn-save">
                 <i class="fas fa-save mr-2"></i>Simpan Laporan
             </button>

@@ -2,16 +2,27 @@
 <?php $this->section('page-content'); ?>
 <div class="container-fluid">
     <!-- Header -->
-    <div class="page-header">
-        <div>
-            <h1><i class="fas fa-fw fa-lock"></i>Manajemen Roles</h1>
-            <p>Kelola akses role untuk pengguna</p>
-        </div>
-        <div class="page-header-actions">
+    <div class="flex-column flex-md-row page-header">
 
+        <!-- content -->
+        <div class="mb-3 mb-md-0">
+            <h1 class="mb-1">
+                <i class="fas fa-fw fa-lock"></i>
+                <span class="d-block d-md-inline">
+                    Manajemen role pengguna sistem Keselamatan dan Kesehatan Kerja
+                </span>
+            </h1>
+            <p class="mb-0">
+                Kelola akses role untuk pengguna
+            </p>
+        </div>
+
+        <!-- button -->
+        <div class="d-flex flex-wrap header-actions" style="gap:8px">
             <a href="/admin/roles/create" class="btn-add">
                 <i class="fas fa-plus"></i> Tambah Role
             </a>
+
         </div>
     </div>
 
@@ -31,9 +42,9 @@
     <!-- Roles Table Card -->
     <div class="card card-roles">
         <div class="card-body">
-            <div>
+            <div class="table-wrapper">
                 <?php if (!empty($roles)): ?>
-                    <table id="rolesTable" class="table table-hover mb-0">
+                    <table id="rolesTable" class="table" style="width:100%">
                         <thead>
                             <tr>
                                 <th>#</th>
@@ -49,7 +60,7 @@
 
                                 <tr>
                                     <td>
-                                        <span class="badge-role"><?= $i++ ?></span>
+                                        <span><?= $i++ ?></span>
                                     </td>
                                     <td>
                                         <span class="role-name"><?= esc($role->name) ?></span>
@@ -67,10 +78,10 @@
                                     </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="/admin/roles/edit/<?= $role->id ?>" class="btn-sm btn-edit">
+                                            <a href="/admin/roles/edit/<?= $role->id ?>" class="btn-sm btn-action edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <a href="#" class="btn-action delete"
+                                            <a href="#" class="btn-action del"
                                                 data-toggle="modal" data-target="#modalRoleDelete"
                                                 data-id="<?= $role->id ?>"
                                                 data-name="<?= esc($role->name) ?>"

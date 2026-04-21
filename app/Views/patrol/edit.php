@@ -1,9 +1,51 @@
 <?= $this->extend('templates/index'); ?>
-
-
-
-
 <?php $this->section('page-content'); ?>
+
+<style>
+    .edit-header {
+        background: #283593;
+        border-radius: 16px;
+        padding: 24px 32px;
+        margin-bottom: 28px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        box-shadow: 0 8px 32px rgba(0, 77, 64, 0.18);
+    }
+
+    .edit-header .back-btn {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        text-decoration: none;
+        transition: background .2s;
+        flex-shrink: 0;
+    }
+
+    .edit-header .back-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        color: #fff;
+    }
+
+    .edit-header h1 {
+        color: #fff;
+        font-size: 1.35rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .edit-header p {
+        color: rgba(255, 255, 255, .65);
+        font-size: .82rem;
+        margin: 3px 0 0;
+    }
+</style>
+
 <div class="container-fluid pb-4">
 
     <?php if (!empty($errors)) : ?>

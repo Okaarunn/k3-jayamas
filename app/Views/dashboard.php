@@ -268,6 +268,105 @@
         font-size: .7rem;
         font-weight: 600;
     }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+        .stat-cards {
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .dash-header {
+            padding: 18px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .dash-header h1 {
+            font-size: 1.1rem;
+        }
+
+        .stat-cards {
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            padding: 14px 16px;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+
+        .stat-info .stat-value {
+            font-size: 1.4rem;
+        }
+
+        .chart-row {
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .activity-table thead th,
+        .activity-table tbody td {
+            padding: 8px 10px;
+            font-size: .72rem;
+        }
+
+        /* Sembunyikan kolom kurang penting di mobile */
+        .activity-table .col-hide-mobile {
+            display: none;
+        }
+    }
+
+    /* Responsive tambahan */
+    @media (max-width: 480px) {
+        .stat-cards {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card {
+            padding: 12px;
+            gap: 10px;
+            flex-direction: column;
+            /* icon di atas, angka di bawah */
+            align-items: flex-start;
+        }
+
+        .stat-icon {
+            width: 36px;
+            height: 36px;
+            font-size: .9rem;
+        }
+
+        .stat-info .stat-value {
+            font-size: 1.25rem;
+        }
+
+        .stat-info .stat-label {
+            font-size: .62rem;
+        }
+
+        /* Chart lebih pendek di HP kecil */
+        .chart-card-body canvas {
+            max-height: 160px !important;
+        }
+
+        /* Activity table: lebih compact */
+        .activity-table thead th,
+        .activity-table tbody td {
+            padding: 7px 8px;
+            font-size: .68rem;
+        }
+    }
 </style>
 <?php $this->endSection(); ?>
 
@@ -386,10 +485,10 @@
                         <th>#</th>
                         <th>Tipe</th>
                         <th>Tanggal</th>
-                        <th>Deskripsi</th>
+                        <th class="col-hide-mobile">Deskripsi</th>
                         <th>Dicatat Oleh</th>
-                        <th>Plant</th>
-                        <th>Waktu</th>
+                        <th class="col-hide-mobile">Plant</th>
+                        <th class="col-hide-mobile">Waktu</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -413,7 +512,7 @@
                                 <td style="white-space:nowrap">
                                     <?= date('d M Y', strtotime($act->tanggal)) ?>
                                 </td>
-                                <td style="max-width:240px">
+                                <td class="col-hide-mobile" style="max-width:240px">
                                     <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;">
                                         <?= esc($act->deskripsi ?? '-') ?>
                                     </div>
@@ -421,7 +520,7 @@
                                 <td style="font-size:.78rem;color:#616161">
                                     <?= esc($act->username ?? '-') ?>
                                 </td>
-                                <td>
+                                <td class="col-hide-mobile">
                                     <?php if (!empty($act->nama_plant)) : ?>
                                         <span class="plant-badge">
                                             <?= esc(ucwords(strtolower($act->nama_plant))) ?>
@@ -430,7 +529,7 @@
                                         <span style="color:#bdbdbd">—</span>
                                     <?php endif; ?>
                                 </td>
-                                <td style="font-size:.75rem;color:#9e9e9e;white-space:nowrap">
+                                <td class="col-hide-mobile" style="font-size:.75rem;color:#9e9e9e;white-space:nowrap">
                                     <?= date('d M, H:i', strtotime($act->created_at)) ?>
                                 </td>
                             </tr>
