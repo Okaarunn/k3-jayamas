@@ -513,7 +513,7 @@
                                     <?= date('d M Y', strtotime($act->tanggal)) ?>
                                 </td>
                                 <td class="col-hide-mobile" style="max-width:240px">
-                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;">
+                                    <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical; line-clamp:1;">
                                         <?= esc($act->deskripsi ?? '-') ?>
                                     </div>
                                 </td>

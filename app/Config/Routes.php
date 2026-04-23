@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\WorkPermit;
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -15,6 +16,10 @@ use CodeIgniter\Router\RouteCollection;
 
 // Dashboard
 $routes->get('/', 'Dashboard::index', ['filter' => 'login']);
+
+// vendor
+$routes->get('/work-permit-request', 'WorkPermit::index');
+$routes->post('/work-permit-request/store', 'WorkPermit::store');
 
 // induksi
 $routes->get('/induksi',              'Induksi::index',  ['filter' => 'login']);

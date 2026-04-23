@@ -78,7 +78,9 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
-            'login'
+
+            // redirect to login page if not logged in, except for the work permit request page
+            'login' => ['except' => ['work-permit-request', 'work-permit-request' . '/*']],
         ],
         'after' => [
             // 'honeypot',

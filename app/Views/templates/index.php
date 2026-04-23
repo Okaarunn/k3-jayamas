@@ -22,38 +22,6 @@
         .bg-sidebar {
             background: linear-gradient(135deg, #1a237e 0%, #283593 60%, #3949ab 100%) !important;
         }
-
-        /* Sidebar fixed tidak ikut scroll */
-        .sidebar {
-            position: fixed !important;
-            top: 0;
-            left: 0;
-            height: 100vh !important;
-            overflow-y: auto;
-            z-index: 1030;
-        }
-
-        /* Content geser kanan sejauh lebar sidebar — ini yang kurang */
-        #content-wrapper {
-            margin-left: 224px;
-            transition: margin-left 0.3s;
-        }
-
-        /* Saat sidebar di-collapse oleh SB Admin 2 */
-        body.sidebar-toggled #content-wrapper {
-            margin-left: 6.5rem;
-        }
-
-        /* Mobile: sidebar jadi overlay, content full width */
-        @media (max-width: 768px) {
-            #content-wrapper {
-                margin-left: 0 !important;
-            }
-
-            .sidebar {
-                z-index: 1040;
-            }
-        }
     </style>
 
     <?= $this->renderSection('styles') ?>
@@ -67,24 +35,7 @@
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
 
-                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                    <!-- Hamburger — SB Admin 2 handle toggle otomatis -->
-                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
-                        <i class="fa fa-bars"></i>
-                    </button>
-                    <ul class="navbar-nav ml-auto">
-                        <div class="topbar-divider d-none d-sm-block"></div>
-                        <li class="nav-item no-arrow">
-                            <a class="nav-link">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                    <?= user()->username ?>
-                                </span>
-                                <img class="img-profile rounded-circle"
-                                    src="<?= base_url(); ?>/img/undraw_profile.svg" />
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+                <?= $this->include('templates/topbar.php'); ?>
 
                 <?= $this->renderSection('page-content'); ?>
             </div>
@@ -110,6 +61,7 @@
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
     <script>
+        // Scroll to top button
         $(window).scroll(function() {
             $(this).scrollTop() > 100 ? $('.scroll-to-top').fadeIn() : $('.scroll-to-top').fadeOut();
         });
