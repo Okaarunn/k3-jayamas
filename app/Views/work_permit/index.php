@@ -13,6 +13,7 @@
     <link href="<?= base_url(); ?>/css/sb-admin-2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" href="<?= base_url(); ?>/css/style.css" />
+    <link rel="icon" type="image/x-icon" href="/logo.png">
 
     <style>
         /* Tab Styling */
