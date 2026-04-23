@@ -1,6 +1,5 @@
 <?php
 
-use App\Controllers\WorkPermit;
 use CodeIgniter\Router\RouteCollection;
 
 /**

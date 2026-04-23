@@ -451,6 +451,11 @@
         $('#plantTable').DataTable({
             pageLength: 10,
             lengthMenu: [10, 25, 50],
+
+            columnDefs: [{
+                orderable: false,
+                targets: 3
+            }],
             language: {
                 search: '',
                 searchPlaceholder: 'Cari nama plant...',
