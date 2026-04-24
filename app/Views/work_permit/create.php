@@ -3,7 +3,7 @@
 <div class="container-fluid pb-4">
 
     <!-- Header -->
-    <div class="create-header">
+    <div class="create">
         <a href="<?= base_url('work-permit-request') ?>" class="back-btn">
             <i class="fas fa-arrow-left"></i>
         </a>

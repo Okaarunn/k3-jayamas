@@ -806,7 +806,6 @@ div.dataTables_length select:focus {
   }
 }
 
-/* ================= CREATE/EDIT FORM STYLING ================= */
 .create-header {
   background: linear-gradient(135deg, #283593 0%, #3949ab 100%);
   border-radius: 16px;

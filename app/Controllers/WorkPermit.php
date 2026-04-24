@@ -3,14 +3,21 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\PekerjaanModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class WorkPermit extends BaseController
 {
     public function index()
     {
+
+        // pekerjaan
+        $pekerjaanModel = new PekerjaanModel();
+        $pekerjaan = $pekerjaanModel->findAll();
+
         return view('work_permit/index', [
-            'title'     => 'Work Permit Request K3',
+            'title'      => 'Work Permit Request K3',
+            'pekerjaans' => $pekerjaan,
         ]);
     }
 
