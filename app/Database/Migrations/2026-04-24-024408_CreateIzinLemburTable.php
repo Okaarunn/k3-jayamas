@@ -22,6 +22,13 @@ class CreateIzinLemburTable extends Migration
                 'null' => false,
             ],
 
+            'work_permit_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => false,
+            ],
+
             'tanggal_lembur' => [
                 'type' => 'DATE',
                 'null' => false,
@@ -105,8 +112,22 @@ class CreateIzinLemburTable extends Migration
 
         ]);
 
+        // Primary key
         $this->forge->addKey('id', true);
+
+        // Unique
         $this->forge->addUniqueKey('no_lembur');
+
+        $this->forge->addUniqueKey('work_permit_id');
+
+        $this->forge->addForeignKey(
+            'work_permit_id',
+            'work_permit',
+            'id',
+            'CASCADE',
+            'CASCADE'
+        );
+
         $this->forge->createTable('izin_lembur');
     }
 

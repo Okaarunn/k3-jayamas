@@ -27,6 +27,13 @@ class CreateWorkPermitTable extends Migration
                 'null' => false,
             ],
 
+            'plant_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => false,
+            ],
+
             'nama_pengaju' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
@@ -104,21 +111,14 @@ class CreateWorkPermitTable extends Migration
                 'null' => true,
             ],
 
-            'izin_lembur_id' => [
+            'approved_k3_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
                 'null' => true,
             ],
 
-            'approved_k3' => [
-                'type' => 'INT',
-                'constraint' => 11,
-                'unsigned' => true,
-                'null' => true,
-            ],
-
-            'approved_p2k3' => [
+            'approved_p2k3_by' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
@@ -148,12 +148,12 @@ class CreateWorkPermitTable extends Migration
         // foreign key table pekerjaan
         $this->forge->addForeignKey('pekerjaan_id', 'pekerjaan', 'id', 'CASCADE', 'CASCADE');
 
-        // foreign key table izin lembur
-        $this->forge->addForeignKey('izin_lembur_id', 'izin_lembur', 'id', 'SET NULL', 'CASCADE');
+        // foreign key table plant
+        $this->forge->addForeignKey('plant_id', 'plant', 'id', 'CASCADE', 'CASCADE');
 
         // foreign key table user
         $this->forge->addForeignKey(
-            'approved_k3',
+            'approved_k3_by',
             'users',
             'id',
             'SET NULL',
@@ -161,7 +161,7 @@ class CreateWorkPermitTable extends Migration
         );
 
         $this->forge->addForeignKey(
-            'approved_p2k3',
+            'approved_p2k3_by',
             'users',
             'id',
             'SET NULL',

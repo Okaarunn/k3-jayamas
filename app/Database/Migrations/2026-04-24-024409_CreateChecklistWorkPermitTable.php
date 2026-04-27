@@ -141,6 +141,31 @@ class CreateChecklistWorkPermitTable extends Migration
                 'constraint' => 255,
                 'null' => true,
             ],
+
+            // yang mengawasi
+            'pengawasan' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
+            ],
+
+            'bagian_pekerjaan' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
+            ],
+
+            'mengetahui_ak3' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
+            ],
+
+            'penanggung_jawab' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true,
+            ],
         ]);
 
         $this->forge->addKey('id', true);

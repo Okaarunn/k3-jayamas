@@ -75,6 +75,8 @@
         });
     </script>
 
+
+
     <?= $this->renderSection('scripts') ?>
 
 </body>

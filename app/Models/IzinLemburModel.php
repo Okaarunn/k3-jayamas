@@ -14,6 +14,7 @@ class IzinLemburModel extends Model
     protected $protectFields    = true;
     protected $allowedFields = [
         'no_lembur',
+        'work_permit_id',
         'tanggal_lembur',
         'hari',
         'jam_mulai_lembur',

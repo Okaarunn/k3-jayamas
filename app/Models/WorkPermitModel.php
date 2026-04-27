@@ -15,6 +15,7 @@ class WorkPermitModel extends Model
     protected $allowedFields    = [
         'no_wp',
         'tipe_pengaju',
+        'plant_id',
         'nama_pengaju',
         'alamat_vendor',
         'notelp_vendor',
@@ -28,9 +29,8 @@ class WorkPermitModel extends Model
         'jam_mulai',
         'jam_selesai',
         'tipe_approval',
-        'izin_lembur_id',
-        'approved_k3',
-        'approved_p2k3',
+        'approved_k3_by',
+        'approved_p2k3_by',
         'updated_by',
     ];
 
@@ -41,7 +41,7 @@ class WorkPermitModel extends Model
     protected array $castHandlers = [];
 
     // Dates
-    protected $useTimestamps = false;
+    protected $useTimestamps = true;
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';

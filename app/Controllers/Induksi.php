@@ -296,7 +296,8 @@ class Induksi extends BaseController
 
         $this->db->transComplete();
 
-        return redirect()->to('/induksi')->with('success', 'Data berhasil diupdate');
+        session()->setFlashdata('success', 'Berhasil update data induksi');
+        return redirect()->to('/induksi');
     }
 
     public function delete($id)

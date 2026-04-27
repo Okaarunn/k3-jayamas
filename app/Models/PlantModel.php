@@ -4,39 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ChecklistWorkPermitModel extends Model
+class PlantModel extends Model
 {
-    protected $table            = 'checklist_work_permit';
+    protected $table            = 'plant';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [
-        'work_permit_id',
-        'pemeriksaan_bahaya',
-        'penyediaan_apd',
-        'alat_pernapasan',
-        'pemeriksaan_kelayakan',
-        'tanda_peringatan',
-        'perlengkapan_k3',
-        'penaikan_penurunan_peralatan',
-        'peralatan_terhubung_dengan_badan',
-        'pengecekan_alat',
-        'peralatan_mengagetkan',
-        'konfirmasi_pekerja',
-        'monitoring_pekerjaan',
-        'monitoring_kebersihan',
-        'izin_bahan_kimia',
-        'tersedia_apar',
-
-        'penggunaan_apd',
-        'pencegahan_tambahan',
-        'pengawasan',
-        'bagian_pekerjaan',
-        'mengetahui_ak3',
-        'penanggung_jawab'
-    ];
+    protected $allowedFields    = ['kode_plant', 'nama_plant', 'created_at', 'updated_at'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
