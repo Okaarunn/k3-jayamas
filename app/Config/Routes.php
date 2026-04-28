@@ -65,3 +65,6 @@ $routes->post('/admin/plant/store', 'Plant::store', ['filter' => 'permission:man
 $routes->get('/admin/plant/edit/(:num)', 'Plant::edit/$1', ['filter' => 'permission:manage-users']);
 $routes->post('/admin/plant/update/(:num)', 'Plant::update/$1', ['filter' => 'permission:manage-users']);
 $routes->get('/admin/plant/delete/(:num)', 'Plant::delete/$1', ['filter' => 'permission:manage-users']);
+
+// pekerjaan
+$routes->post('/pekerjaan/store', 'Pekerjaan::store');

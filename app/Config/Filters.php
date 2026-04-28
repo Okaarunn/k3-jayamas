@@ -80,7 +80,7 @@ class Filters extends BaseFilters
             // 'invalidchars',
 
             // redirect to login page if not logged in, except for the work permit request page
-            'login' => ['except' => ['work-permit-request', 'work-permit-request' . '/*']],
+            'login' => ['except' => ['work-permit-request', 'work-permit-request' . '/*', 'pekerjaan/store']],
         ],
         'after' => [
             // 'honeypot',

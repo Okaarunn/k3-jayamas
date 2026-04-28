@@ -86,7 +86,7 @@
             </div>
 
             <!-- Validation banner -->
-            <div class="validation-banner" id="validationBanner">
+            <div class="validation-banner mt-3" id="validationBanner">
                 <i class="fas fa-exclamation-circle"></i>
                 <span id="validationMsg">Mohon lengkapi semua field yang wajib diisi sebelum melanjutkan.</span>
             </div>
@@ -100,9 +100,6 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="<?= base_url('js/sb-admin-2.min.js') ?>"></script>
-
-
-
     <script src="<?= base_url('js/work-permit.js') ?>"></script>
 
 </body>

@@ -108,15 +108,12 @@ class WorkPermit extends BaseController
 
             $tipe        = $this->request->getPost('tipe_pengaju');
             $namaPengaju = $this->request->getPost('nama_pengaju');
-
             $departemen  = $tipe === 'internal'
                 ? $namaPengaju
                 : $this->request->getPost('departemen');
 
-            // ===== 1. INSERT KE WORK PERMIT TABLE =====
-            $wpModel = new WorkPermitModel();
-
-            $wpModel->insert([
+            // insert work permit table
+            $workPermitRequest = [
                 'no_wp'                  => $no_wp,
                 'tipe_pengaju'           => $tipe,
                 'plant_id'               => $plantId,
@@ -132,46 +129,47 @@ class WorkPermit extends BaseController
                 'pekerjaan_id'           => $this->request->getPost('pekerjaan_id'),
                 'jam_mulai'              => $this->request->getPost('jam_mulai'),
                 'jam_selesai'            => $this->request->getPost('jam_selesai'),
-            ]);
+            ];
 
-            // Ambil ID yang baru di-insert
+            $wpModel = new WorkPermitModel();
+
+            $wpModel->insert($workPermitRequest);
+
+            // get work permit id
             $workPermitId = $wpModel->getInsertID();
 
-            // ===== 2. INSERT KE CHECKLIST WORK PERMIT TABLE =====
+            // insert checklist work permit tbale
             $checklistModel = new ChecklistWorkPermitModel();
 
-            $checklistModel->insert([
-                'work_permit_id'             => $workPermitId,
-                'pemeriksaan_bahaya'         => (int) ($this->request->getPost('pemeriksaan_bahaya') ?? 0),
-                'penyediaan_apd'             => (int) ($this->request->getPost('penyediaan_apd') ?? 0),
-                'alat_pernapasan'            => (int) ($this->request->getPost('alat_pernapasan') ?? 0),
-                'pemeriksaan_kelayakan'      => (int) ($this->request->getPost('pemeriksaan_kelayakan') ?? 0),
-                'tanda_peringatan'           => (int) ($this->request->getPost('tanda_peringatan') ?? 0),
-                'perlengkapan_k3'            => (int) ($this->request->getPost('perlengkapan_k3') ?? 0),
-                'penaikan_penurunan_peralatan' => (int) ($this->request->getPost('penaikan_penurunan_peralatan') ?? 0),
-                'peralatan_terhubung_dengan_badan' => (int) ($this->request->getPost('peralatan_terhubung_dengan_badan') ?? 0),
-                'pengecekan_alat'            => (int) ($this->request->getPost('pengecekan_alat') ?? 0),
-                'peralatan_mengagetkan'      => (int) ($this->request->getPost('peralatan_mengagetkan') ?? 0),
-                'konfirmasi_pekerja'         => (int) ($this->request->getPost('konfirmasi_pekerja') ?? 0),
-                'monitoring_pekerjaan'       => (int) ($this->request->getPost('monitoring_pekerjaan') ?? 0),
-                'monitoring_kebersihan'      => (int) ($this->request->getPost('monitoring_kebersihan') ?? 0),
-                'izin_bahan_kimia'           => (int) ($this->request->getPost('izin_bahan_kimia') ?? 0),
-                'tersedia_apar'              => (int) ($this->request->getPost('tersedia_apar') ?? 0),
+            // get checklist work permit request
+            $checklistWorkPermitRequest = [
+                'work_permit_id'                    => $workPermitId,
+                'pemeriksaan_bahaya'                => (int) ($this->request->getPost('pemeriksaan_bahaya') ?? 0),
+                'penyediaan_apd'                    => (int) ($this->request->getPost('penyediaan_apd') ?? 0),
+                'alat_pernapasan'                   => (int) ($this->request->getPost('alat_pernapasan') ?? 0),
+                'pemeriksaan_kelayakan'             => (int) ($this->request->getPost('pemeriksaan_kelayakan') ?? 0),
+                'tanda_peringatan'                  => (int) ($this->request->getPost('tanda_peringatan') ?? 0),
+                'perlengkapan_k3'                   => (int) ($this->request->getPost('perlengkapan_k3') ?? 0),
+                'penaikan_penurunan_peralatan'      => (int) ($this->request->getPost('penaikan_penurunan_peralatan') ?? 0),
+                'peralatan_terhubung_dengan_badan'  => (int) ($this->request->getPost('peralatan_terhubung_dengan_badan') ?? 0),
+                'pengecekan_alat'                   => (int) ($this->request->getPost('pengecekan_alat') ?? 0),
+                'peralatan_mengagetkan'             => (int) ($this->request->getPost('peralatan_mengagetkan') ?? 0),
+                'konfirmasi_pekerja'                => (int) ($this->request->getPost('konfirmasi_pekerja') ?? 0),
+                'monitoring_pekerjaan'              => (int) ($this->request->getPost('monitoring_pekerjaan') ?? 0),
+                'monitoring_kebersihan'             => (int) ($this->request->getPost('monitoring_kebersihan') ?? 0),
+                'izin_bahan_kimia'                  => (int) ($this->request->getPost('izin_bahan_kimia') ?? 0),
+                'tersedia_apar'                     => (int) ($this->request->getPost('tersedia_apar') ?? 0),
+                'penggunaan_apd'                    => $this->request->getPost('penggunaan_apd'),
+                'pencegahan_tambahan'               => $this->request->getPost('pencegahan_tambahan'),
+                'pengawasan'                        => $this->request->getPost('pengawasan'),
+                'bagian_pekerjaan'                  => $this->request->getPost('bagian_pekerjaan'),
+                'mengetahui_ak3'                    => $this->request->getPost('mengetahui_ak3'),
+                'penanggung_jawab'                  => $this->request->getPost('penanggung_jawab_checklist'),
+            ];
 
-                'penggunaan_apd'         => $this->request->getPost('penggunaan_apd'),
+            $checklistModel->insert($checklistWorkPermitRequest);
 
-                'pencegahan_tambahan'         => $this->request->getPost('pencegahan_tambahan'),
-
-                'pengawasan'         => $this->request->getPost('pengawasan'),
-
-                'bagian_pekerjaan'         => $this->request->getPost('bagian_pekerjaan'),
-
-                'mengetahui_ak3'         => $this->request->getPost('mengetahui_ak3'),
-
-                'penanggung_jawab'         => $this->request->getPost('penanggung_jawab_checklist'),
-            ]);
-
-            // ===== 3. INSERT KE JOB SAFETY ANALYST TABLE =====
+            // insert job safety analyst table
             $jsaModel = new JobSafetyAnalystModel();
 
             $tahapPekerjaan   = $this->request->getPost('tahap_pekerjaan') ?? [];
@@ -181,9 +179,7 @@ class WorkPermit extends BaseController
             $penanggungjawab  = $this->request->getPost('penanggung_jawab') ?? [];
 
             foreach ($tahapPekerjaan as $i => $t) {
-
                 if (!empty($t)) {
-
                     $jsaModel->insert([
                         'work_permit_id'   => $workPermitId,
                         'tahap_pekerjaan'  => $t,
@@ -195,29 +191,32 @@ class WorkPermit extends BaseController
                 }
             }
 
-            // ===== 4. INSERT KE IZIN LEMBUR TABLE (JIKA ADA) =====
+            // insert izin lembur table
             $adaLembur = $this->request->getPost('ada_lembur');
+
+            $izinLemburRequest = [
+                'no_lembur'                          => $no_lembur,
+                'work_permit_id'                     => $workPermitId,
+                'tanggal_lembur'                     => $this->request->getPost('tanggal_lembur'),
+                'hari'                               => $this->request->getPost('hari'),
+                'jam_mulai_lembur'                   => $this->request->getPost('jam_mulai_lembur'),
+                'jam_selesai_lembur'                 => $this->request->getPost('jam_selesai_lembur'),
+                'uraian_pekerjaan'                   => $this->request->getPost('uraian_pekerjaan') ?? '',
+                'alasan_lembur'                      => $this->request->getPost('alasan_lembur') ?? '',
+                'peralatan_digunakan'                => $this->request->getPost('peralatan_digunakan') ?? '',
+                'potensi_bahaya'                     => $this->request->getPost('potensi_bahaya_lembur') ?? '',
+                'apd_digunakan'                      => $this->request->getPost('apd_digunakan') ?? '',
+                'nama_penanggung_jawab_vendor'       => $this->request->getPost('nama_penanggung_jawab_vendor') ?? '',
+                'jabatan_penanggung_jawab_vendor'    => $this->request->getPost('jabatan_penanggung_jawab_vendor') ?? '',
+                'nama_penanggung_jawab_perusahaan'   => $this->request->getPost('nama_penanggung_jawab_perusahaan') ?? '',
+                'jabatan_penanggung_jawab_perusahaan' => $this->request->getPost('jabatan_penanggung_jawab_perusahaan') ?? '',
+                'dibuat_oleh'                        => $this->request->getPost('dibuat_oleh') ?? '',
+            ];
+
             if ($adaLembur !== null && (int)$adaLembur === 1) {
                 $izinLemburModel = new IzinLemburModel();
 
-                $izinLemburModel->insert([
-                    'no_lembur'                          => $no_lembur,
-                    'work_permit_id'                     => $workPermitId,
-                    'tanggal_lembur'                     => $this->request->getPost('tanggal_lembur'),
-                    'hari'                               => $this->request->getPost('hari'),
-                    'jam_mulai_lembur'                   => $this->request->getPost('jam_mulai_lembur'),
-                    'jam_selesai_lembur'                 => $this->request->getPost('jam_selesai_lembur'),
-                    'uraian_pekerjaan'                   => $this->request->getPost('uraian_pekerjaan') ?? '',
-                    'alasan_lembur'                      => $this->request->getPost('alasan_lembur') ?? '',
-                    'peralatan_digunakan'                => $this->request->getPost('peralatan_digunakan') ?? '',
-                    'potensi_bahaya'                     => $this->request->getPost('potensi_bahaya_lembur') ?? '',
-                    'apd_digunakan'                      => $this->request->getPost('apd_digunakan') ?? '',
-                    'nama_penanggung_jawab_vendor'       => $this->request->getPost('nama_penanggung_jawab_vendor') ?? '',
-                    'jabatan_penanggung_jawab_vendor'    => $this->request->getPost('jabatan_penanggung_jawab_vendor') ?? '',
-                    'nama_penanggung_jawab_perusahaan'   => $this->request->getPost('nama_penanggung_jawab_perusahaan') ?? '',
-                    'jabatan_penanggung_jawab_perusahaan' => $this->request->getPost('jabatan_penanggung_jawab_perusahaan') ?? '',
-                    'dibuat_oleh'                        => $this->request->getPost('dibuat_oleh') ?? '',
-                ]);
+                $izinLemburModel->insert($izinLemburRequest);
             }
 
             $db->transComplete();

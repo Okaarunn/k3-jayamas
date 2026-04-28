@@ -1,9 +1,12 @@
-<form action="<?= base_url('work-permit-request/store') ?>" method="post" id="workPermitForm">
+<form action="<?= base_url('work-permit-request/store') ?>" method="post" id="workPermitForm"
+    data-csrf-name="<?= csrf_token() ?>"
+    data-csrf-value="<?= csrf_hash() ?>"
+    data-pekerjaan-store-url="<?= base_url('/pekerjaan/store') ?>">
     <?= csrf_field() ?>
 
     <div class="tab-content">
 
-        <!-- TAB 1 -->
+        <!-- tab identitas vendor/internal -->
         <div class="tab-pane fade show active" id="tab-vendor">
 
             <div class="row">
@@ -64,12 +67,26 @@
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label-k3">Pekerjaan</label>
-                    <select name="pekerjaan_id" class="form-control-k3" required>
-                        <option disabled selected>Pilih jenis pekerjaan...</option>
-                        <?php foreach ($pekerjaans as $pekerjaan) : ?>
-                            <option value="<?= $pekerjaan['id'] ?>"><?= $pekerjaan['nama_pekerjaan'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
+
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <select name="pekerjaan_id" class="form-control-k3" required style="flex:1;">
+                            <option value="" disabled selected>Pilih jenis pekerjaan...</option>
+
+                            <?php foreach ($pekerjaans as $pekerjaan) : ?>
+                                <option value="<?= $pekerjaan['id'] ?>">
+                                    <?= $pekerjaan['nama_pekerjaan'] ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+
+                        <button type="button"
+                            class="btn btn-primary"
+                            data-toggle="modal"
+                            data-target="#modalPekerjaan"
+                            style="white-space:nowrap;">
+                            + Tambah
+                        </button>
+                    </div>
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -98,24 +115,21 @@
 
         </div>
 
-        <!-- TAB 2 CHECKLIST -->
+        <!-- tab checklist -->
         <div class="tab-pane fade" id="tab-checklist">
 
             <?php
             function radio($name)
             {
-                return "
-<div class='form-check-inline-group'>
-<label><input type='radio' name='$name' value='1' required> Ya</label>
-<label><input type='radio' name='$name' value='0' required> Tidak</label>
-</div>";
+                return "<div class='form-check-inline-group'>
+                    <label><input type='radio' name='$name' value='1' required> Ya</label>
+                    <label><input type='radio' name='$name' value='0' required> Tidak</label>
+                    </div>";
             }
             ?>
-
-
-
+            <!-- checklist -->
             <div class="row">
-                <!-- KOLOM 1 -->
+                <!-- persiapan keselamatan -->
                 <div class="col-md-6">
                     <h6 class="checklist-section-title">Persiapan Keselamatan</h6>
 
@@ -155,7 +169,7 @@
                     </div>
                 </div>
 
-                <!-- KOLOM 2 -->
+                <!-- monitoring dan pengendalian -->
                 <div class="col-md-6">
                     <h6 class="checklist-section-title">Monitoring & Pengendalian</h6>
 
@@ -201,7 +215,7 @@
                 </div>
             </div>
 
-            <!-- TEXTAREA SECTION -->
+            <!-- text area -->
             <div class="row mt-5">
                 <div class="col-md-12">
                     <h6 class="checklist-section-title">Catatan Tambahan</h6>
@@ -245,7 +259,7 @@
             </div>
         </div>
 
-        <!-- TAB 3 JSA (tetap) -->
+        <!-- tab 3 JSA -->
         <div class="tab-pane fade" id="tab-jsa">
 
             <div id="tahapPekerjaanContainer"></div>
@@ -268,7 +282,7 @@
 
         </div>
 
-        <!-- TAB 4 LEMBUR -->
+        <!-- tab 4 lembur -->
         <div class="tab-pane fade" id="tab-lembur">
 
             <div class="row">
@@ -346,10 +360,9 @@
             </div>
 
         </div>
-
     </div>
 
-    <!-- GLOBAL TAB NAVIGATION -->
+    <!-- tab navigation -->
     <div class="tab-nav-bar" id="tabNavBar">
         <div class="tab-nav-info">
             <span class="step-indicator" id="stepIndicator">Langkah 1 dari 3</span>
@@ -362,8 +375,35 @@
             </button>
 
             <div id="btnNextArea">
-                <!-- Rendered dynamically by JavaScript -->
             </div>
         </div>
     </div>
 </form>
+
+<!-- modal add pekerjaan -->
+<div class="modal fade" id="modalPekerjaan" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="<?= base_url('/pekerjaan/store') ?>" method="post">
+                <?= csrf_field() ?>
+
+                <input type="hidden" name="redirect_to" value="<?= current_url() ?>">
+
+                <div class="modal-header">
+                    <h5 class="modal-title">Tambah Pekerjaan</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <div class="modal-body">
+                    <label>Nama Pekerjaan</label>
+                    <input type="text" name="nama_pekerjaan_baru" class="form-control" required>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

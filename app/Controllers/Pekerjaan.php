@@ -14,4 +14,22 @@ class Pekerjaan extends BaseController
         $pekerjaanModel = new PekerjaanModel();
         $pekerjaan = $pekerjaanModel->findAll();
     }
+
+    public function store()
+    {
+        $pekerjaan = new PekerjaanModel();
+
+        $namaPekerjaan = $this->request->getPost('nama_pekerjaan_baru');
+
+        if (empty($namaPekerjaan)) {
+            return redirect()->back()->with('error', 'Nama pekerjaan wajib diisi');
+        }
+
+        $pekerjaan->insert([
+            'nama_pekerjaan' => $namaPekerjaan
+        ]);
+
+        return redirect()->to('/work-permit-request')
+            ->with('success', 'Pekerjaan berhasil ditambahkan');
+    }
 }

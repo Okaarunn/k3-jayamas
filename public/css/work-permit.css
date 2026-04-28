@@ -216,7 +216,7 @@ body {
 }
 
 .tab-pane {
-  padding: 28px 28px 8px;
+  padding: 14px 28px 8px;
 }
 
 /* ── Section title ── */
@@ -575,7 +575,7 @@ select.form-control-k3 {
   background: #fce4ec;
   color: var(--danger);
   border-radius: 10px;
-  padding: 10px 16px;
+  padding: 10px 10px;
   margin: 0 28px 16px;
   font-size: 0.8rem;
   font-weight: 700;
