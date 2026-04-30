@@ -57,6 +57,7 @@ $routes->get('/admin/users/edit/(:num)', 'Admin::edit/$1', ['filter' => 'permiss
 $routes->post('/admin/users/update/(:num)', 'Admin::update/$1', ['filter' => 'permission:manage-users']);
 $routes->get('/admin/users/delete/(:num)', 'Admin::delete/$1', ['filter' => 'permission:manage-users']);
 $routes->post('/admin/users/reset-password', 'Admin::resetPassword', ['filter' => 'permission:manage-users']);
+$routes->get('/admin/datalogs', 'Admin::datalogs', ['filter' => 'permission:manage-users']);
 
 // management plant
 $routes->get('/admin/plant', 'Plant::index', ['filter' => 'permission:manage-users']);
@@ -68,3 +69,17 @@ $routes->get('/admin/plant/delete/(:num)', 'Plant::delete/$1', ['filter' => 'per
 
 // pekerjaan
 $routes->post('/pekerjaan/store', 'Pekerjaan::store');
+
+// approval k3
+$routes->get('/approval-k3', 'ApprovalK3::index', ['filter' => 'permission:manage-data']);
+$routes->get('/approvalk3/preview/(:num)', 'ApprovalK3::preview/$1', ['filter' => 'permission:manage-data']);
+$routes->post('/approval-k3/approve/(:num)', 'ApprovalK3::approve/$1', ['filter' => 'permission:manage-data']);
+
+// approval p2k3
+$routes->get('/approval-p2k3', 'ApprovalP2K3::index', ['filter' => 'role:administrator,p2k3']);
+
+// progress pengerjaan
+$routes->get('/progress-pengerjaan', 'ProgressPengerjaan::index', ['filter' => 'permission:manage-data']);
+
+// document center
+$routes->get('/document-center', 'DocumentCenter::index', ['filter' => 'login']);

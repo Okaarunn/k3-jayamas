@@ -1,6 +1,11 @@
 <?= $this->extend('templates/index'); ?>
 <?php $this->section('page-content'); ?>
 <div class="container-fluid">
+
+    <!-- alert -->
+    <?= $this->include('components/alert') ?>
+
+
     <!-- Header -->
     <div class="flex-column flex-md-row page-header">
 
@@ -25,19 +30,6 @@
 
         </div>
     </div>
-
-    <!-- Alerts -->
-    <?php if (session()->getFlashdata('success')): ?>
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle"></i> <?= session()->getFlashdata('success') ?>
-        </div>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle"></i> <?= session()->getFlashdata('error') ?>
-        </div>
-    <?php endif; ?>
 
     <!-- Roles Table Card -->
     <div class="card card-roles">

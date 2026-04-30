@@ -155,7 +155,6 @@ class Dashboard extends BaseController
         usort($activities, fn($a, $b) => strtotime($b->created_at) - strtotime($a->created_at));
         $activities = array_slice($activities, 0, 10);
 
-        // ------------------------------------------------------------------
         $data = [
             'title'             => 'Dashboard K3',
             'totalInduksi'      => $totalInduksi,

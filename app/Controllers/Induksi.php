@@ -179,6 +179,16 @@ class Induksi extends BaseController
         }
         $this->db->transComplete();
 
+        $id = $induksiId;
+
+        write_log(
+            module: 'induksi',
+            action: 'create',
+            description: "Menambahkan laporan induksi {$id}",
+            targetId: $id,
+            newData: $this->request->getPost()
+        );
+
         return redirect()->to('/induksi')->with('success', 'Data berhasil ditambahkan');
     }
 
@@ -296,6 +306,17 @@ class Induksi extends BaseController
 
         $this->db->transComplete();
 
+        $old = $this->getInduksi($id);
+
+        write_log(
+            module: 'induksi',
+            action: 'update',
+            description: "Mengubah laporan induksi pada id {$old->id}",
+            targetId: $id,
+            oldData: (array) $old,
+            newData: $this->request->getPost()
+        );
+
         session()->setFlashdata('success', 'Berhasil update data induksi');
         return redirect()->to('/induksi');
     }
@@ -311,6 +332,15 @@ class Induksi extends BaseController
         $this->db->table('induksi')->where('id', $id)->update([
             'deleted_at' => date('Y-m-d H:i:s')
         ]);
+
+
+        write_log(
+            module: 'induksi',
+            action: 'delete',
+            description: "Menghapus laporan induksi pada id {$row->id}",
+            targetId: $id,
+            oldData: (array) $row
+        );
 
         return redirect()->to('/induksi')->with('success', 'Data dihapus');
     }
@@ -408,6 +438,12 @@ class Induksi extends BaseController
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
 
+        write_log(
+            module: 'induksi',
+            action: 'export',
+            description: 'Export data induksi ke Excel'
+        );
+
         $writer->save('php://output');
         exit;
     }
@@ -427,5 +463,11 @@ class Induksi extends BaseController
         $dompdf->stream('induksi_k3_' . date('Ymd_His') . '.pdf', [
             'Attachment' => true
         ]);
+
+        write_log(
+            module: 'induksi',
+            action: 'export',
+            description: 'Export data induksi ke PDF'
+        );
     }
 }

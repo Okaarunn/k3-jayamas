@@ -1,3 +1,12 @@
+<?php
+
+/**
+ * @var array $plants
+ * @var array $pekerjaans
+ */
+
+?>
+
 <form action="<?= base_url('work-permit-request/store') ?>" method="post" id="workPermitForm"
     data-csrf-name="<?= csrf_token() ?>"
     data-csrf-value="<?= csrf_hash() ?>"
@@ -25,7 +34,7 @@
                     <select name="plant_id" class="form-control-k3" required>
                         <option disabled selected>Pilih</option>
                         <?php foreach ($plants as $plant) : ?>
-                            <option value="<?= $plant['id'] ?>"><?= esc($plant['nama_plant']) ?></option>
+                            <option value="<?= $plant['id'] ?>"><?= $plant['nama_plant'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -119,7 +128,7 @@
         <div class="tab-pane fade" id="tab-checklist">
 
             <?php
-            function radio($name)
+            function radio(string $name)
             {
                 return "<div class='form-check-inline-group'>
                     <label><input type='radio' name='$name' value='1' required> Ya</label>

@@ -1,3 +1,11 @@
+<?php
+
+/**
+ * @var array $patrol
+ * @var int $myPlantId
+ */
+?>
+
 <?= $this->extend('templates/index'); ?>
 <?php $this->section('page-content'); ?>
 
@@ -60,8 +68,8 @@
                             }
                             ksort($plants);
                             foreach ($plants as $plant) : ?>
-                                <option value="<?= esc($plant) ?>">
-                                    <?= esc(ucwords(strtolower($plant))) ?>
+                                <option value="<?= $plant ?>">
+                                    <?= ucwords(strtolower($plant)) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -97,16 +105,16 @@
                                 <td>
                                     <span class="kode-badge">
                                         <i class="fas fa-hashtag" style="font-size:.6rem"></i>
-                                        <?= esc($row->kode) ?>
+                                        <?= $row->kode ?>
                                     </span>
                                 </td>
 
                                 <td>
-                                    <div style="font-weight:600;color:#212121"><?= esc($row->nama_petugas) ?></div>
+                                    <div style="font-weight:600;color:#212121"><?= $row->nama_petugas ?></div>
                                 </td>
 
                                 <td>
-                                    <div style="font-weight:600;color:#212121"><?= esc($row->lokasi) ?></div>
+                                    <div style="font-weight:600;color:#212121"><?= $row->lokasi ?></div>
                                 </td>
 
                                 <td>
@@ -115,8 +123,8 @@
                                 </td>
 
                                 <td>
-                                    <div class="text-clamp" title="<?= esc($row->temuan ?? '') ?>">
-                                        <?= esc($row->temuan ?? '-') ?>
+                                    <div class="text-clamp" title="<?= $row->temuan ?? '' ?>">
+                                        <?= $row->temuan ?? '-' ?>
                                     </div>
                                 </td>
 
@@ -131,7 +139,7 @@
 
                                 <td>
                                     <?php if (!empty($row->penyelesaian)) : ?>
-                                        <?= esc($row->penyelesaian ?? '-') ?>
+                                        <?= $row->penyelesaian ?? '-' ?>
                                     <?php else : ?>
                                         <span style="color:#bdbdbd">—</span>
                                     <?php endif; ?>
@@ -157,7 +165,7 @@
                                             <img src="<?= base_url('uploads/patrol/' . $row->foto_before_filename) ?>"
                                                 class="foto-thumb preview-trigger"
                                                 data-url="<?= base_url('uploads/patrol/' . $row->foto_before_filename) ?>"
-                                                data-label="Foto Before — <?= esc($row->kode) ?>"
+                                                data-label="Foto Before — <?= $row->kode ?>"
                                                 data-toggle="modal" data-target="#previewModal"
                                                 title="Before">
                                         <?php else : ?>
@@ -170,7 +178,7 @@
                                             <img src="<?= base_url('uploads/patrol/' . $row->foto_after_filename) ?>"
                                                 class="foto-thumb preview-trigger"
                                                 data-url="<?= base_url('uploads/patrol/' . $row->foto_after_filename) ?>"
-                                                data-label="Foto After — <?= esc($row->kode) ?>"
+                                                data-label="Foto After — <?= $row->kode ?>"
                                                 data-toggle="modal" data-target="#previewModal"
                                                 title="After">
                                         <?php else : ?>
@@ -182,12 +190,12 @@
                                 </td>
 
                                 <td style="font-size:.78rem;color:#616161">
-                                    <?= esc($row->created_by_username ?? '-') ?>
+                                    <?= $row->created_by_username ?? '-' ?>
                                 </td>
 
                                 <td>
                                     <span style="background:#e8eaf6;color:#3949ab;border-radius:8px;padding:3px 8px;font-size:.72rem;font-weight:600;white-space:nowrap">
-                                        <?= esc(ucwords(strtolower($row->nama_plant))) ?>
+                                        <?= ucwords(strtolower($row->nama_plant)) ?>
                                     </span>
 
                                 </td>
@@ -211,7 +219,7 @@
                                                 data-toggle="modal"
                                                 data-target="#deleteModal"
                                                 data-id="<?= $row->id ?>"
-                                                data-kode="<?= esc($row->kode) ?>"
+                                                data-kode="<?= $row->kode ?>"
                                                 title="Hapus">
                                                 <i class="fas fa-trash"></i>
                                             </a>

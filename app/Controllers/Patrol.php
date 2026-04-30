@@ -200,15 +200,25 @@ class Patrol extends BaseController
             'updated_at'                => date('Y-m-d H:i:s'),
         ]);
 
-        $id = $this->db->insertID();
+        $patrolId = $this->db->insertID();
 
         // generate unique code
-        $kode = $this->generateCode($id);
+        $kode = $this->generateCode($patrolId);
 
         // update code
         $this->db->table('patrol')
-            ->where('id', $id)
+            ->where('id', $patrolId)
             ->update(['kode' => $kode]);
+
+        $id = $patrolId;
+
+        write_log(
+            module: 'patrol',
+            action: 'create',
+            description: "Menambahkan laporan patrol {$id}",
+            targetId: $id,
+            newData: $this->request->getPost()
+        );
 
         session()->setFlashdata('success', 'Laporan patrol berhasil ditambahkan.');
         return redirect()->to('/patrol');
@@ -318,6 +328,17 @@ class Patrol extends BaseController
 
         $this->db->table('patrol')->where('id', $id)->update($updateData);
 
+        $old = $this->getPatrol($id);
+
+        write_log(
+            module: 'patrol',
+            action: 'update',
+            description: "Mengubah laporan patrol pada id {$old->id}",
+            targetId: $id,
+            oldData: (array) $old,
+            newData: $this->request->getPost()
+        );
+
         session()->setFlashdata('success', 'Laporan patrol berhasil diperbarui.');
         return redirect()->to('/patrol');
     }
@@ -341,6 +362,14 @@ class Patrol extends BaseController
         $this->db->table('patrol')->where('id', $id)->update([
             'deleted_at' => date('Y-m-d H:i:s'),
         ]);
+
+        write_log(
+            module: 'patrol',
+            action: 'delete',
+            description: "Menghapus laporan patrol pada id {$row->id}",
+            targetId: $id,
+            oldData: (array) $row
+        );
 
         session()->setFlashdata('success', 'Laporan patrol berhasil dihapus.');
         return redirect()->to('/patrol');
@@ -449,6 +478,12 @@ class Patrol extends BaseController
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
 
+        write_log(
+            module: 'patrol',
+            action: 'export',
+            description: 'Export data patrol ke Excel'
+        );
+
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
         exit;
@@ -476,5 +511,11 @@ class Patrol extends BaseController
         $dompdf->stream('patrol_k3_' . date('Ymd_His') . '.pdf', [
             'Attachment' => true
         ]);
+
+        write_log(
+            module: 'patrol',
+            action: 'export',
+            description: 'Export data patrol ke PDF'
+        );
     }
 }

@@ -63,28 +63,30 @@
 
                 <!-- just permission manage data can access -->
                 <?php if (has_permission('manage-data')) : ?>
-                    <a class="collapse-item" href="#">
+                    <a class="collapse-item" href="<?= base_url('approval-k3') ?>">
                         <i class="fas fa-user-check mr-2"></i> Approval K3
                     </a>
                 <?php endif; ?>
 
 
                 <!-- just role p2k3 can access -->
-                <?php if (in_groups('p2k3')) : ?>
-                    <a class="collapse-item" href="#">
+                <?php if (in_groups(['p2k3', 'administrator'])) : ?>
+                    <a class="collapse-item" href="<?= base_url('approval-p2k3') ?>">
                         <i class="fas fa-users-cog mr-2"></i> Approval P2K3
                     </a>
                 <?php endif; ?>
 
 
+
+
                 <?php if (has_permission('manage-data')) : ?>
-                    <a class="collapse-item" href="#">
+                    <a class="collapse-item" href="<?= base_url('progress-pengerjaan') ?>">
                         <i class="fas fa-tasks mr-2"></i> Proses Pengerjaan
                     </a>
                 <?php endif; ?>
 
 
-                <a class="collapse-item" href="#">
+                <a class="collapse-item" href="<?= base_url('document-center') ?>">
                     <i class="fas fa-folder-open mr-2"></i> Document Center
                 </a>
 
@@ -114,7 +116,11 @@
                         <i class="fas fa-users mr-2"></i> User
                     </a>
                     <a class="collapse-item" href="<?= base_url('admin/userlogs') ?>">
-                        <i class="fas fa-clipboard-list mr-2"></i> Logs
+                        <i class="fas fa-clipboard-list mr-2"></i> User Logs
+                    </a>
+
+                    <a class="collapse-item" href="<?= base_url('admin/datalogs') ?>">
+                        <i class="fas fa-clipboard-list mr-2"></i> Data Logs
                     </a>
                     <a class="collapse-item" href="<?= base_url('admin/plant') ?>">
                         <i class="fas fa-map-marker-alt mr-2"></i> Plant

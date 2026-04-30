@@ -1,3 +1,10 @@
+<?php
+
+/**
+ * @var array $users
+ */
+?>
+
 <?= $this->extend('templates/index'); ?>
 
 <?php $this->section('styles'); ?>
@@ -410,12 +417,12 @@
                                     <div class="user-info">
                                         <div class="user-avatar avatar-<?= $role ?>"><?= $initials ?></div>
                                         <div>
-                                            <div class="user-name"><?= esc($user->username) ?></div>
+                                            <div class="user-name"><?= $user->username ?></div>
                                             <div class="user-username">ID #<?= $user->userid ?></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td><?= esc($user->email) ?></td>
+                                <td><?= $user->email ?></td>
                                 <td>
                                     <span class="role-badge <?= $role ?>">
                                         <?php if ($role === 'administrator') : ?><i class="fas fa-shield-alt"></i>
@@ -440,14 +447,14 @@
                                         <a href="#" class="btn-action password"
                                             data-toggle="modal" data-target="#passwordModal"
                                             data-id="<?= $user->userid ?>"
-                                            data-name="<?= esc($user->username) ?>"
+                                            data-name="<?= $user->username ?>"
                                             title="Reset Password">
                                             <i class="fas fa-key"></i>
                                         </a>
                                         <a href="#" class="btn-action delete"
                                             data-toggle="modal" data-target="#deleteModal"
                                             data-id="<?= $user->userid ?>"
-                                            data-name="<?= esc($user->username) ?>"
+                                            data-name="<?= $user->username ?>"
                                             title="Hapus Pengguna">
                                             <i class="fas fa-trash"></i>
                                         </a>

@@ -3,10 +3,12 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Models\DataLogsModel;
 
 class Admin extends BaseController
 {
-    protected $db, $builder;
+    protected $db;
+    protected $builder;
 
     public function __construct()
     {
@@ -60,7 +62,7 @@ class Admin extends BaseController
     }
 
     // set format status
-    private function formatStatus($isActive)
+    private function formatStatus(bool $isActive)
     {
         return $isActive ? 'aktif' : 'tidak aktif';
     }
@@ -389,5 +391,22 @@ class Admin extends BaseController
         ];
 
         return view('admin/user/user_logs', $data);
+    }
+
+    // data logs
+    public function datalogs()
+    {
+        $logModel = new DataLogsModel();
+
+        $logs = $logModel
+            ->select('data_logs.*, users.username')
+            ->join('users', 'users.id = data_logs.user_id', 'left')
+            ->orderBy('data_logs.created_at', 'DESC')
+            ->findAll();
+
+        return view('admin/datalogs', [
+            'title' => 'Logs Data K3',
+            'logs' => $logs
+        ]);
     }
 }

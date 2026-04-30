@@ -1,6 +1,13 @@
-<?= $this->extend('templates/index'); ?>
-<?php $this->section('page-content'); ?>
+<?php
 
+/**
+ * @var array $logs
+ */
+?>
+
+<?= $this->extend('templates/index'); ?>
+
+<?php $this->section('styles'); ?>
 <style>
     .page-header {
         background: #283593;
@@ -111,7 +118,7 @@
         padding: 20px 24px 24px;
     }
 
-    #plantTable thead th {
+    #usersTable thead th {
         background: #f8f9ff;
         color: #5c6bc0;
         font-size: 0.7rem;
@@ -122,16 +129,16 @@
         padding: 14px 16px;
     }
 
-    #plantTable tbody tr {
+    #usersTable tbody tr {
         transition: background .15s;
         border-bottom: 1px solid #f5f5f5;
     }
 
-    #plantTable tbody tr:hover {
+    #usersTable tbody tr:hover {
         background: #f8f9ff;
     }
 
-    #plantTable tbody td {
+    #usersTable tbody td {
         padding: 14px 16px;
         vertical-align: middle;
         border: none;
@@ -310,8 +317,8 @@
         font-size: 0.85rem;
     }
 
-    .dataTables_paginate .paginate_button.current,
-    .dataTables_paginate .paginate_button.current:hover {
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    div.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
         background: #3949ab !important;
         color: #fff !important;
         border: none !important;
@@ -319,8 +326,8 @@
     }
 
     .dataTables_paginate .paginate_button:hover {
-        background: #e8eaf6 !important;
-        color: #3949ab !important;
+        background: #3949ab !important;
+        color: #6a1b9a !important;
         border: none !important;
         border-radius: 8px !important;
     }
@@ -348,6 +355,10 @@
         color: #3949ab;
     }
 </style>
+<?php $this->endSection(); ?>
+
+
+<?php $this->section('page-content'); ?>
 
 <div class="container-fluid pb-4">
 
@@ -355,66 +366,72 @@
     <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1><i class="fa fa-map-marker mr-2"></i>Manajemen Plant</h1>
-            <p>Kelola lokasi plant untuk pengguna</p>
+            <h1><i class="fas fa-clipboard-list mr-2"></i>Data Logs</h1>
+            <p>Catatan aksi yang dilakukan oleh pengguna Aplikasi K3</p>
         </div>
-        <a href="<?= base_url('admin/plant/create') ?>" class="btn-add-user">
-            <i class="fa fa-map-marker"></i> Tambah Plant
-        </a>
+
     </div>
 
     <!-- Table Card -->
     <div class="card card-users">
         <div class="card-body">
             <div class="table-wrapper">
-                <table id="plantTable" class="table" style="width:100%">
+                <table id="datalogsTable" class="table" style="width:100%">
                     <thead>
                         <tr>
                             <th style="width:50px">#</th>
-                            <th>Kode Plant</th>
-                            <th>Nama Plant</th>
-                            <th style="width:120px">Aksi</th>
+                            <th>Tanggal</th>
+                            <th>Dilakukan Oleh</th>
+                            <th>Tabel</th>
+                            <th>Aksi</th>
+                            <th>Keterangan</th>
                         </tr>
                     </thead>
                     <tbody>
 
-                        <?php
+                        <?php $i = 1; ?>
+                        <?php foreach ($logs ?? [] as $log) :
 
-                        // no
-                        $i = 1;
+                            $actionColor = match ($log['action']) {
+                                'create' => 'background:#e8f5e9;color:#388e3c',
+                                'update' => 'background:#e3f2fd;color:#1565c0',
+                                'delete' => 'background:#fce4ec;color:#c62828',
+                                'export' => 'background:#fff8e1;color:#f57c00',
+                                'login'  => 'background:#f3e5f5;color:#7b1fa2',
+                                'logout' => 'background:#f5f5f5;color:#616161',
+                                default  => 'background:#f5f5f5;color:#616161',
+                            };
 
-                        foreach ($plants as $plant) : ?>
+
+                        ?>
 
                             <tr>
-                                <td class="text-muted" style="font-size:.8rem"><?= $i++ ?></td>
-                                <td><?= esc($plant->kode_plant) ?></td>
+                                <td><?= $i++;
+                                    ?></td>
 
-                                <td> <?= esc(ucwords(strtolower($plant->nama_plant))) ?></td>
+                                <td><?= date('d M Y H:i', strtotime($log['created_at'])) ?></td>
 
+                                <!-- Pelaku -->
+                                <td><?= $log['username'] ?? 'System' ?></td>
 
+                                <!-- Target (module) -->
                                 <td>
-                                    <div class="d-flex" style="gap:6px">
-                                        <a
-                                            href="<?= base_url('/admin/plant/edit/' . $plant->id) ?>"
-                                            class="btn-action edit" title="Edit plant">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
 
-                                        <a href="#"
-                                            class="btn-action delete"
-                                            data-toggle="modal"
-                                            data-target="#deleteModal"
-                                            data-id="<?= $plant->id ?>"
-                                            data-nama_plant="<?= esc($plant->nama_plant) ?>"
-                                            title="Hapus plant">
-                                            <i class="fas fa-trash"></i>
-                                        </a>
-                                    </div>
+                                    <?= ucfirst($log['module']) ?>
                                 </td>
+
+                                <!-- Aksi -->
+                                <td>
+                                    <span style="<?= $actionColor ?>;border-radius:20px;padding:3px 10px;font-size:.72rem;font-weight:700">
+                                        <?= ucfirst($log['action']) ?>
+                                    </span>
+                                </td>
+
+                                <!-- Keterangan -->
+                                <td><?= $log['description'] ?></td>
                             </tr>
 
                         <?php endforeach; ?>
-
                     </tbody>
                 </table>
             </div>
@@ -422,61 +439,42 @@
     </div>
 </div>
 
-<!-- Modal: Hapus -->
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content" style="border:none;border-radius:16px;overflow:hidden">
-            <div class="modal-body text-center p-4">
-                <div style="width:64px;height:64px;background:#fce4ec;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
-                    <i class="fas fa-trash" style="color:#c62828;font-size:1.4rem"></i>
-                </div>
-                <h5 style="font-weight:700;color:#212121">Hapus Plant?</h5>
-                <p style="color:#757575;font-size:.875rem" id="deletePlant"></p>
-                <div class="d-flex justify-content-center mt-3" style="gap:10px">
-                    <button type="button" class="btn btn-light" style="border-radius:10px;padding:8px 24px" data-dismiss="modal">Batal</button>
-                    <a id="confirmDeleteBtn" href="#" class="btn btn-danger" style="border-radius:10px;padding:8px 24px">Hapus</a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <?php $this->endSection(); ?>
+
 
 <?php $this->section('scripts'); ?>
 <script>
     $(document).ready(function() {
-        $('#plantTable').DataTable({
-            pageLength: 10,
-            lengthMenu: [10, 25, 50],
 
-            columnDefs: [{
-                orderable: false,
-                targets: 3
-            }],
+        $('#datalogsTable').DataTable({
+            pageLength: 10,
+            lengthMenu: [5, 10, 25, 50],
+            autoWidth: false,
+
             language: {
                 search: '',
-                searchPlaceholder: 'Cari nama plant...',
+                searchPlaceholder: 'Cari data log...',
                 lengthMenu: 'Tampilkan _MENU_ data',
-                info: 'Menampilkan _START_–_END_ dari _TOTAL_ plant',
+                info: 'Menampilkan _START_–_END_ dari _TOTAL_ data log',
                 paginate: {
                     previous: '‹',
                     next: '›'
                 },
                 zeroRecords: 'Tidak ada data ditemukan',
-                emptyTable: 'Belum ada pengguna terdaftar'
+                emptyTable: 'Belum ada aktivitas pengguna'
             },
 
+            columnDefs: [{
+                orderable: false,
+                targets: [5]
+            }],
+
+            order: [
+                [1, 'desc']
+            ]
         });
 
-        // ── Delete modal ───────────────────────────────────────────────
-        $('#deleteModal').on('show.bs.modal', function(e) {
-            const btn = $(e.relatedTarget);
-            const id = btn.data('id');
-            const name = btn.data('nama_plant');
-            $('#deletePlant').text('Data plant "' + name + '" akan dihapus permanen.');
-            $('#confirmDeleteBtn').attr('href', '<?= base_url("admin/plant/delete/") ?>' + id);
-        });
     });
 </script>
 <?php $this->endSection(); ?>

@@ -38,7 +38,7 @@
                 <strong><i class="fas fa-exclamation-circle mr-1"></i> Terdapat kesalahan:</strong>
                 <ul style="margin:8px 0 0;padding-left:20px">
                     <?php foreach ($errors as $e) : ?>
-                        <li style="font-size:.875rem"><?= esc($e) ?></li>
+                        <li style="font-size:.875rem"><?= $e ?></li>
                     <?php endforeach; ?>
                 </ul>
             </div>

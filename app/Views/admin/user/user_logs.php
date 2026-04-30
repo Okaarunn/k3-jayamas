@@ -1,3 +1,10 @@
+<?php
+
+/**
+ * @var array $userlogs
+ */
+?>
+
 <?= $this->extend('templates/index'); ?>
 
 <?php $this->section('styles'); ?>
@@ -356,8 +363,6 @@
 <div class="container-fluid pb-4">
 
     <?= $this->include('components/alert') ?>
-
-
     <!-- Page Header -->
     <div class="page-header">
         <div>
@@ -376,8 +381,8 @@
                         <tr>
                             <th style="width:50px">#</th>
                             <th>Tanggal</th>
-                            <th>Pelaku</th>
-                            <th>Target</th>
+                            <th>Dilakukan Oleh</th>
+                            <th>Dilakukan Untuk</th>
                             <th>Aksi</th>
                             <th>Keterangan</th>
                         </tr>
@@ -388,18 +393,18 @@
                             <tr>
                                 <td class="text-muted" style="font-size:.8rem"><?= $i++ ?></td>
 
-                                <td><?= esc($userlog->created_at) ?></td>
+                                <td><?= $userlog->created_at ?></td>
 
                                 <td>
                                     <div class="user-info">
                                         <div>
-                                            <div class="user-name"><?= esc($userlog->actor_name) ?></div>
+                                            <div class="user-name"><?= $userlog->actor_name ?></div>
                                         </div>
                                     </div>
                                 </td>
-                                <td><?= esc($userlog->target_name) ?></td>
-                                <td><?= esc($userlog->action) ?></td>
-                                <td><?= esc($userlog->description) ?></td>
+                                <td><?= $userlog->target_name ?></td>
+                                <td><?= $userlog->action ?></td>
+                                <td><?= $userlog->description ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

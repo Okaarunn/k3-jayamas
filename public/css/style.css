@@ -156,11 +156,15 @@ table tbody td {
 
 .status-selesai {
   background: #e8f5e9;
+  padding: 3px;
+  border-radius: 5px;
   color: #388e3c;
 }
 
 .status-proses {
   background: #fff8e1;
+  padding: 3px;
+  border-radius: 5px;
   color: #f57c00;
 }
 

@@ -1,5 +1,20 @@
 <?= $this->extend('templates/index'); ?>
 
+<?php
+/**
+ * @var int $totalInduksi
+ * @var int $totalPatrol
+ * @var int $totalSelesai
+ * @var int $totalBelumSelesai
+ * @var int|null $totalUsers
+ * @var string $induksiLabels
+ * @var string $induksiValues
+ * @var string $patrolLabels
+ * @var string $patrolValues
+ * @var array $activities
+ */
+?>
+
 <?php $this->section('styles'); ?>
 <style>
     /* ── Page header ── */
@@ -27,7 +42,7 @@
     /* ── Stat cards ── */
     .stat-cards {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        grid-template-columns: repeat(5, 1fr);
         gap: 16px;
         margin-bottom: 24px;
     }
@@ -376,6 +391,7 @@
 
     <?= $this->include('components/alert') ?>
 
+
     <!-- Header -->
     <div class="dash-header">
         <h1><i class="fas fa-tachometer-alt mr-2"></i> Dashboard K3</h1>
@@ -390,7 +406,7 @@
                 <i class="fas fa-user-check"></i>
             </div>
             <div class="stat-info">
-                <div class="stat-value"><?= number_format($totalInduksi) ?></div>
+                <div class="stat-value"><?= $totalInduksi ?></div>
                 <div class="stat-label">Sesi Induksi</div>
             </div>
         </div>
@@ -425,18 +441,72 @@
             </div>
         </div>
 
-        <?php if (has_permission('manage-users') && $totalUsers !== null) : ?>
-            <div class="stat-card">
-                <div class="stat-icon icon-users">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-value"><?= number_format($totalUsers) ?></div>
-                    <div class="stat-label">Pengguna</div>
-                </div>
+        <?php has_permission('manage-users') ?>
+        <div class="stat-card">
+            <div class="stat-icon icon-users">
+                <i class="fas fa-users"></i>
             </div>
-        <?php endif; ?>
+            <div class="stat-info">
+                <div class="stat-value"><?= $totalUsers ?></div>
+                <div class="stat-label">Pengguna</div>
+            </div>
+        </div>
 
+
+        <!-- total approval -->
+        <div class="stat-card">
+            <div class="stat-icon icon-proses">
+                <i class="fas fa-clipboard-list"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-label">Total Approval</div>
+            </div>
+        </div>
+
+        <!-- perlu disetujui -->
+        <div class="stat-card">
+            <div class="stat-icon icon-patrol">
+                <i class="fas fa-hourglass-half"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-label">Perlu Disetujui</div>
+            </div>
+        </div>
+
+        <!-- approval ditolak -->
+        <div class="stat-card">
+            <div class="stat-icon icon-users">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-label">Approval Ditolak</div>
+            </div>
+        </div>
+
+        <!-- pengerjaan ongoing -->
+        <div class="stat-card">
+            <div class="stat-icon icon-induksi">
+                <i class="fas fa-spinner"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-label">Pengerjaan OnGoing</div>
+            </div>
+        </div>
+
+        <!-- pengerjaan finish -->
+        <div class="stat-card">
+            <div class="stat-icon icon-selesai">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="stat-info">
+                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-label">Pengerjaan Finish</div>
+            </div>
+        </div>
     </div>
 
     <!-- Charts -->
@@ -514,11 +584,11 @@
                                 </td>
                                 <td class="col-hide-mobile" style="max-width:240px">
                                     <div style="overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical; line-clamp:1;">
-                                        <?= esc($act->deskripsi ?? '-') ?>
+                                        <?= $act->deskripsi ?? '-' ?>
                                     </div>
                                 </td>
                                 <td style="font-size:.78rem;color:#616161">
-                                    <?= esc($act->username ?? '-') ?>
+                                    <?= $act->username ?? '-' ?>
                                 </td>
                                 <td class="col-hide-mobile">
                                     <?php if (!empty($act->nama_plant)) : ?>

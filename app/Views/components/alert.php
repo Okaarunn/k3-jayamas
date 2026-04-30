@@ -123,10 +123,63 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <?php if (session()->getFlashdata('success')) : ?>
-    <div id="flashSuccess" data-msg="<?= esc(session()->getFlashdata('success')) ?>" style="display:none"></div>
+    <div id="flashSuccess" data-msg="<?= session()->getFlashdata('success') ?>" style="display:none"></div>
 <?php endif; ?>
 
 <?php if (session()->getFlashdata('error')) : ?>
-    <div id="flashError" data-msg="<?= esc(session()->getFlashdata('error')) ?>" style="display:none"></div>
+    <div id="flashError" data-msg="<?= session()->getFlashdata('error') ?>" style="display:none"></div>
 <?php endif; ?>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+
+            const toast = document.createElement('div');
+            toast.className = 'k3-toast ' + type;
+
+            toast.innerHTML = `
+            <div class="accent"></div>
+            <div class="body">
+                <div class="icon">
+                    <i class="fas ${type === 'success' ? 'fa-check' : 'fa-times'}"></i>
+                </div>
+                <div class="text">
+                    <div class="title">${type === 'success' ? 'Berhasil' : 'Error'}</div>
+                    <div class="msg">${message}</div>
+                </div>
+            </div>
+            <button class="close">&times;</button>
+            <div class="progress">
+                <div class="progress-fill"></div>
+            </div>
+        `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 50);
+
+            // auto close
+            setTimeout(() => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+
+            // manual close
+            toast.querySelector('.close').onclick = () => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 300);
+            };
+        }
+
+        const success = document.getElementById('flashSuccess');
+        const error = document.getElementById('flashError');
+
+        if (success) showToast(success.dataset.msg, 'success');
+        if (error) showToast(error.dataset.msg, 'error');
+
+    });
+</script>

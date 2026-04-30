@@ -42,8 +42,6 @@ class Role extends BaseController
 
     public function store()
     {
-
-
         // validation
         $rules = [
             'name' => [
@@ -83,6 +81,14 @@ class Role extends BaseController
             }
         }
 
+        write_log(
+            module: 'role',
+            action: 'create',
+            description: "Membuat role baru dengan id {$roleId}",
+            targetId: $roleId,
+            newData: $this->request->getPost()
+        );
+
         session()->setFlashdata('success', 'Role berhasil ditambahkan.');
         return redirect()->to('/admin/roles');
     }
@@ -112,7 +118,6 @@ class Role extends BaseController
 
     public function update(int $id = 0)
     {
-        // validasi
         $rules = [
             'name' => [
                 'label' => 'Role',
@@ -135,6 +140,12 @@ class Role extends BaseController
             return redirect()->back()->withInput();
         }
 
+        // ambil old data DULU
+        $oldData = $this->db->table('auth_groups')
+            ->where('id', $id)
+            ->get()
+            ->getRowArray();
+
         $name        = $this->request->getPost('name');
         $description = $this->request->getPost('description');
 
@@ -144,7 +155,7 @@ class Role extends BaseController
             'description' => $description,
         ]);
 
-        // update permissions (mirip logic user-role)
+        // update permissions
         $this->db->table('auth_groups_permissions')
             ->where('group_id', $id)
             ->delete();
@@ -161,13 +172,26 @@ class Role extends BaseController
                 ];
             }
 
-            // insert batch biar lebih cepat & clean
             $this->db->table('auth_groups_permissions')->insertBatch($insertData);
         }
 
-        // clear cache Myth\Auth
+        // clear cache
         cache()->delete("{$id}_permissions");
         cache()->delete("{$id}_users");
+
+        // log
+        write_log(
+            module: 'role',
+            action: 'update',
+            description: "Mengubah role {$oldData['name']} menjadi {$name}",
+            targetId: $id,
+            oldData: $oldData,
+            newData: [
+                'name' => $name,
+                'description' => $description,
+                'permissions' => $permissions
+            ]
+        );
 
         session()->setFlashdata('success', "Role \"{$name}\" berhasil diperbarui.");
         return redirect()->to('/admin/roles');
@@ -182,20 +206,43 @@ class Role extends BaseController
             return redirect()->to('/admin/roles');
         }
 
+        // ubah ke array untuk log
+        $roleData = $role->toArray();
+
+        // cek apakah masih dipakai user
         $usersInRole = $this->db->table('auth_groups_users')
             ->where('group_id', $id)
             ->countAllResults();
 
         if ($usersInRole > 0) {
+
+            // log gagal delete
+            write_log(
+                module: 'role',
+                action: 'delete',
+                description: "Gagal menghapus role {$role->name} (masih digunakan)",
+                targetId: $id,
+                oldData: $roleData
+            );
+
             session()->setFlashdata('error', 'Tidak dapat menghapus role yang masih memiliki pengguna.');
             return redirect()->to('/admin/roles');
         }
 
-
+        // hapus
         if (! $this->groupModel->delete($id)) {
             session()->setFlashdata('error', 'Gagal menghapus role.');
             return redirect()->to('/admin/roles');
         }
+
+        // log sukses delete
+        write_log(
+            module: 'role',
+            action: 'delete',
+            description: "Menghapus role {$role->name}",
+            targetId: $id,
+            oldData: $roleData
+        );
 
         session()->setFlashdata('success', 'Role berhasil dihapus.');
         return redirect()->to('/admin/roles');
