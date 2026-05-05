@@ -55,12 +55,12 @@ class ApprovalP2K3 extends BaseController
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
             $mail->SMTPAuth   = true;
-            $mail->Username   = 'noreplyemailtojmi@gmail.com';
-            $mail->Password   = 'gxbkjwgdgkzgauuu';
+            $mail->Username = env('EMAIL_USER');
+            $mail->Password = env('EMAIL_PASS');
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
             $mail->Port       = 465;
 
-            $mail->setFrom('noreplyemailtojmi@gmail.com', 'Approval System');
+            $mail->setFrom('noreplyemailtojmi@gmail.com', 'K3 Jayamas Medica Industri');
             $mail->addAddress($workPermit['email_pengaju']);
 
             // kirim excel tanpa simpan file

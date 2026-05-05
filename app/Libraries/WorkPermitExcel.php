@@ -471,11 +471,7 @@ class WorkPermitExcel
 
         $currentRow += count($pengesahanKiri);
 
-        /*
-|--------------------------------------------------------------------------
-| III. PENUTUP
-|--------------------------------------------------------------------------
-*/
+
 
         // Header seksi
         $sheet->mergeCells('B' . $currentRow . ':G' . $currentRow);
