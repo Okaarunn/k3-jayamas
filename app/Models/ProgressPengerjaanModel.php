@@ -4,15 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class PekerjaanModel extends Model
+class ProgressPengerjaanModel extends Model
 {
-    protected $table            = 'pekerjaan';
+    protected $table            = 'progress_pengerjaan';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['nama_pekerjaan', 'created_at', 'updated_at'];
+    protected $allowedFields    = ['work_permit_id', 'izin_lembur_id', 'status_pengerjaan', 'plant_id', 'updated_by', 'created_at', 'updated_at',];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

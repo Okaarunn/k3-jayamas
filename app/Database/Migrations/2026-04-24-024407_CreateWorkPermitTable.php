@@ -4,6 +4,8 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
+use function PHPSTORM_META\type;
+
 class CreateWorkPermitTable extends Migration
 {
     public function up()
@@ -40,12 +42,17 @@ class CreateWorkPermitTable extends Migration
                 'null' => false,
             ],
 
+            'email_pengaju' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => false,
+            ],
+
             'alamat_vendor' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
                 'null' => true,
             ],
-
 
             'notelp_vendor' => [
                 'type' => 'VARCHAR',
@@ -83,18 +90,27 @@ class CreateWorkPermitTable extends Migration
                 'null' => false,
             ],
 
-            'tanggal' => [
+            'tgl_mulai' => [
                 'type' => 'DATE',
                 'null' => false,
             ],
+            'tgl_selesai' => [
+                'type' => 'DATE',
+                'null' => true,
+            ],
 
-            'pekerjaan_id' => [
+            'kategori_pekerjaan_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
                 'unsigned' => true,
                 'null' => false,
             ],
 
+            'nama_pekerjaan' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => false,
+            ],
 
             'jam_mulai' => [
                 'type' => 'TIME',
@@ -106,9 +122,16 @@ class CreateWorkPermitTable extends Migration
                 'null' => false,
             ],
 
-            'tipe_approval' => [
-                'type' => 'ENUM("K3","P2K3")',
-                'null' => true,
+            'status_approval' => [
+                'type'       => 'ENUM("pending", "approve_by_k3", "approve_by_p2k3", "reject_by_k3", "reject_by_p2k3")',
+                'default'    => 'pending',
+                'null'       => true,
+            ],
+
+            'keterangan_ditolak' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => true
             ],
 
             'approved_k3_by' => [
@@ -123,6 +146,30 @@ class CreateWorkPermitTable extends Migration
                 'constraint' => 11,
                 'unsigned' => true,
                 'null' => true,
+            ],
+
+            'rejected_k3_by' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => true,
+            ],
+
+            'rejected_p2k3_by' => [
+                'type' => 'INT',
+                'constraint' => 11,
+                'unsigned' => true,
+                'null' => true,
+            ],
+
+            'verified_k3_at' => [
+                'type' => 'DATETIME',
+                'null' => true
+            ],
+
+            'verified_p2k3_at' => [
+                'type' => 'DATETIME',
+                'null' => true
             ],
 
             'created_at' => [
@@ -146,12 +193,14 @@ class CreateWorkPermitTable extends Migration
         $this->forge->addUniqueKey('no_wp');
 
         // foreign key table pekerjaan
-        $this->forge->addForeignKey('pekerjaan_id', 'pekerjaan', 'id', 'CASCADE', 'CASCADE');
+        $this->forge->addForeignKey('kategori_pekerjaan_id', 'kategori_pekerjaan', 'id', 'CASCADE', 'CASCADE');
 
         // foreign key table plant
         $this->forge->addForeignKey('plant_id', 'plant', 'id', 'CASCADE', 'CASCADE');
 
         // foreign key table user
+
+        // approve
         $this->forge->addForeignKey(
             'approved_k3_by',
             'users',
@@ -162,6 +211,24 @@ class CreateWorkPermitTable extends Migration
 
         $this->forge->addForeignKey(
             'approved_p2k3_by',
+            'users',
+            'id',
+            'SET NULL',
+            'CASCADE'
+        );
+
+        // reject
+
+        $this->forge->addForeignKey(
+            'rejected_k3_by',
+            'users',
+            'id',
+            'SET NULL',
+            'CASCADE'
+        );
+
+        $this->forge->addForeignKey(
+            'rejected_p2k3_by',
             'users',
             'id',
             'SET NULL',

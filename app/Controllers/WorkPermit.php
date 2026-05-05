@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\ChecklistWorkPermitModel;
 use App\Models\IzinLemburModel;
 use App\Models\JobSafetyAnalystModel;
-use App\Models\PekerjaanModel;
+use App\Models\KategoriPekerjaanModel;
 use App\Models\PlantModel;
 use App\Models\WorkPermitModel;
 
@@ -86,12 +86,12 @@ class WorkPermit extends BaseController
 
     public function index()
     {
-        $pekerjaanModel = new PekerjaanModel();
+        $kategoriPekerjaanModel = new KategoriPekerjaanModel();
         $plantModel     = new PlantModel();
 
         return view('work_permit/index', [
             'title'      => 'Work Permit Request K3',
-            'pekerjaans' => $pekerjaanModel->findAll(),
+            'kategoriPekerjaans' => $kategoriPekerjaanModel->findAll(),
             'plants'     => $plantModel->findAll(),
         ]);
     }
@@ -118,6 +118,7 @@ class WorkPermit extends BaseController
                 'tipe_pengaju'           => $tipe,
                 'plant_id'               => $plantId,
                 'nama_pengaju'           => $namaPengaju,
+                'email_pengaju'          => $this->request->getPost('email_pengaju'),
                 'alamat_vendor'          => $this->request->getPost('alamat_vendor') ?? null,
                 'notelp_vendor'          => $this->request->getPost('notelp_vendor') ?? null,
                 'nama_pekerja_vendor'    => $this->request->getPost('nama_pekerja_vendor') ?? null,
@@ -125,8 +126,9 @@ class WorkPermit extends BaseController
                 'no_ktp_pic_vendor'      => $this->request->getPost('no_ktp_pic_vendor') ?? null,
                 'departemen'             => $departemen,
                 'lokasi_kerja'           => $this->request->getPost('lokasi_kerja'),
-                'tanggal'                => $this->request->getPost('tanggal'),
-                'pekerjaan_id'           => $this->request->getPost('pekerjaan_id'),
+                'tgl_mulai'              => $this->request->getPost('tgl_mulai'),
+                'kategori_pekerjaan_id'  => $this->request->getPost('kategori_pekerjaan_id'),
+                'nama_pekerjaan'         => $this->request->getPost('nama_pekerjaan'),
                 'jam_mulai'              => $this->request->getPost('jam_mulai'),
                 'jam_selesai'            => $this->request->getPost('jam_selesai'),
             ];

@@ -68,18 +68,25 @@ $routes->post('/admin/plant/update/(:num)', 'Plant::update/$1', ['filter' => 'pe
 $routes->get('/admin/plant/delete/(:num)', 'Plant::delete/$1', ['filter' => 'permission:manage-users']);
 
 // pekerjaan
-$routes->post('/pekerjaan/store', 'Pekerjaan::store');
+$routes->post('/kategori-pekerjaan/store', 'KategoriPekerjaan::store');
 
 // approval k3
 $routes->get('/approval-k3', 'ApprovalK3::index', ['filter' => 'permission:manage-data']);
 $routes->get('/approvalk3/preview/(:num)', 'ApprovalK3::preview/$1', ['filter' => 'permission:manage-data']);
-$routes->post('/approval-k3/approve/(:num)', 'ApprovalK3::approve/$1', ['filter' => 'permission:manage-data']);
+$routes->post('/approval-k3/approve/(:num)', 'ApprovalK3::approvek3/$1', ['filter' => 'permission:manage-data']);
+$routes->post('/approval-k3/reject/(:num)', 'ApprovalK3::rejectk3/$1', ['filter' => 'permission:manage-data']);
+$routes->post('/approval-k3/delete/(:num)', 'ApprovalK3::delete/$1', ['filter' => 'permission:manage-data']);
 
 // approval p2k3
 $routes->get('/approval-p2k3', 'ApprovalP2K3::index', ['filter' => 'role:administrator,p2k3']);
+$routes->post('/approval-p2k3/approve/(:num)', 'ApprovalP2K3::approvep2k3/$1', ['filter' => 'permission:manage-approval']);
+$routes->post('/approval-p2k3/reject/(:num)', 'ApprovalP2K3::rejectp2k3/$1', ['filter' => 'permission:manage-approval']);
+$routes->post('/approval-p2k3/delete/(:num)', 'ApprovalP2K3::delete/$1', ['filter' => 'permission:manage-data']);
 
 // progress pengerjaan
 $routes->get('/progress-pengerjaan', 'ProgressPengerjaan::index', ['filter' => 'permission:manage-data']);
+$routes->post('progress-pengerjaan/finish-batch', 'ProgressPengerjaan::finishBatch', ['filter' => 'permission:manage-data']);
+$routes->post('progress-pengerjaan/finish-single', 'ProgressPengerjaan::finishSingle', ['filter' => 'permission:manage-data']);
 
 // document center
 $routes->get('/document-center', 'DocumentCenter::index', ['filter' => 'login']);

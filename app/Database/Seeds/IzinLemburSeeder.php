@@ -8,23 +8,36 @@ class IzinLemburSeeder extends Seeder
 {
     public function run()
     {
+
+        // get work permit
+        $wp = $this->db->table('work_permit')
+            ->where('no_wp', 'K3/JMI2/WP/001/2026')
+            ->get()
+            ->getRow();
+
+        if (!$wp) {
+            echo 'Error: Work permit tidak ditemukan, jalankan work permit seeder terlebih dahulu';
+            return;
+        }
+
         $data = [
             [
-                'no_lembur' => 'LB-001',
-                'tanggal_lembur' => '2026-04-01',
+                'no_lembur' => 'K3/JMI1/LEMBUR/001/2026',
+                'work_permit_id' => $wp->id,
+                'tanggal_lembur' => date('Y-m-d H:i:s'),
                 'hari' => 'Senin',
-                'jam_mulai_lembur' => '18:00:00',
-                'jam_selesai_lembur' => '21:00:00',
-                'uraian_pekerjaan' => 'Perbaikan panel listrik',
-                'alasan_lembur' => 'Perbaikan mendesak',
-                'peralatan_digunakan' => 'Toolkit listrik',
-                'potensi_bahaya' => 'Sengatan listrik',
-                'apd_digunakan' => 'Sarung tangan, helm',
-                'nama_penanggung_jawab_vendor' => 'Budi',
-                'jabatan_penanggung_jawab_vendor' => 'Supervisor',
-                'nama_penanggung_jawab_perusahaan' => 'Andi',
-                'jabatan_penanggung_jawab_perusahaan' => 'Manager',
-                'dibuat_oleh' => 'system',
+                'jam_mulai_lembur' => '16:00:00',
+                'jam_selesai_lembur' => '18:00:00',
+                'uraian_pekerjaan' => 'perbaikan listrik di gudang',
+                'alasan_lembur' => 'terlalu banyak barang di gudang jadi harus dipindah terlebih dahulu',
+                'peralatan_digunakan' => 'tang, obeng, bor',
+                'potensi_bahaya' => 'kesetrum',
+                'apd_digunakan' => 'sarung tangan anti listrik, helm, sepatu safety',
+                'nama_penanggung_jawab_vendor' => 'wisnu',
+                'jabatan_penanggung_jawab_vendor' => 'kepala bagian',
+                'nama_penanggung_jawab_perusahaan' => 'ahmad',
+                'jabatan_penanggung_jawab_perusahaan' => 'kepala k3',
+                'dibuat_oleh' => 'agung'
             ],
         ];
 

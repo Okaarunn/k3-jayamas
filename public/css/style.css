@@ -115,6 +115,14 @@
   overflow-x: auto;
 }
 
+#approvalk3Table th,
+#approvalk3Table td,
+#approvalp2k3Table th,
+#approvalp2k3Table td {
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 table thead th {
   background: #f8f9ff;
   color: #5c6bc0;

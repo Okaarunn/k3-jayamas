@@ -4,43 +4,15 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class WorkPermitModel extends Model
+class KategoriPekerjaanModel extends Model
 {
-    protected $table            = 'work_permit';
+    protected $table            = 'kategori_pekerjaan';
     protected $primaryKey       = 'id';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = [
-        'no_wp',
-        'tipe_pengaju',
-        'plant_id',
-        'nama_pengaju',
-        'email_pengaju',
-        'alamat_vendor',
-        'notelp_vendor',
-        'nama_pekerja_vendor',
-        'jabatan_pekerja_vendor',
-        'no_ktp_pic_vendor',
-        'departemen',
-        'lokasi_kerja',
-        'tgl_mulai',
-        'tgl_selesai',
-        'kategori_pekerjaan_id',
-        'nama_pekerjaan',
-        'jam_mulai',
-        'jam_selesai',
-        'status_approval',
-        'keterangan_ditolak',
-        'approved_k3_by',
-        'approved_p2k3_by',
-        'rejected_k3_by',
-        'rejected_p2k3_by',
-        'verified_k3_at',
-        'verified_p2k3_at',
-        'updated_by',
-    ];
+    protected $allowedFields    = ['nama_kategori_pekerjaan', 'created_at', 'updated_at'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;

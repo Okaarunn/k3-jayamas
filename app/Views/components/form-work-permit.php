@@ -2,7 +2,7 @@
 
 /**
  * @var array $plants
- * @var array $pekerjaans
+ * @var array $kategoriPekerjaans
  */
 
 ?>
@@ -10,7 +10,7 @@
 <form action="<?= base_url('work-permit-request/store') ?>" method="post" id="workPermitForm"
     data-csrf-name="<?= csrf_token() ?>"
     data-csrf-value="<?= csrf_hash() ?>"
-    data-pekerjaan-store-url="<?= base_url('/pekerjaan/store') ?>">
+    data-pekerjaan-store-url="<?= base_url('/kategori-pekerjaan/store') ?>">
     <?= csrf_field() ?>
 
     <div class="tab-content">
@@ -44,6 +44,11 @@
                     <input type="text" name="nama_pengaju" id="nama_pengaju" class="form-control-k3" placeholder="Contoh: PT. Maju Jaya" required>
                 </div>
 
+                <div class="col-md-6 mb-4">
+                    <label class="form-label-k3">Alamat Email Pengaju</label>
+                    <input type="email" name="email_pengaju" id="email_pengaju" class="form-control-k3" placeholder="Contoh: majujaya@gmail.com" required>
+                </div>
+
                 <div class="col-md-6 mb-4" id="wrap_alamat_vendor">
                     <label class="form-label-k3">Alamat Vendor</label>
                     <input type="text" name="alamat_vendor" id="alamat_vendor" class="form-control-k3" placeholder="Contoh: Jl. Raya Industri No. 12, Surabaya">
@@ -75,15 +80,15 @@
                 </div>
 
                 <div class="col-md-6 mb-4">
-                    <label class="form-label-k3">Pekerjaan</label>
+                    <label class="form-label-k3">Kategori Pekerjaan</label>
 
                     <div style="display:flex; gap:10px; align-items:center;">
-                        <select name="pekerjaan_id" class="form-control-k3" required style="flex:1;">
+                        <select name="kategori_pekerjaan_id" class="form-control-k3" required style="flex:1;">
                             <option value="" disabled selected>Pilih jenis pekerjaan...</option>
 
-                            <?php foreach ($pekerjaans as $pekerjaan) : ?>
-                                <option value="<?= $pekerjaan['id'] ?>">
-                                    <?= $pekerjaan['nama_pekerjaan'] ?>
+                            <?php foreach ($kategoriPekerjaans as $kategoriPekerjaan) : ?>
+                                <option value="<?= $kategoriPekerjaan['id'] ?>">
+                                    <?= $kategoriPekerjaan['nama_kategori_pekerjaan'] ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -99,13 +104,18 @@
                 </div>
 
                 <div class="col-md-6 mb-4">
+                    <label class="form-label-k3">Nama Pekerjaan</label>
+                    <input type="text" name="nama_pekerjaan" id="nama_pekerjaan" class="form-control-k3" placeholder="Contoh: Memasang kabel listrik" required>
+                </div>
+
+                <div class="col-md-6 mb-4">
                     <label class="form-label-k3">Lokasi Kerja</label>
                     <input type="text" name="lokasi_kerja" id="lokasi_kerja" class="form-control-k3" placeholder="Contoh: Area Produksi Lantai 2" required>
                 </div>
 
                 <div class="col-md-6 mb-4">
                     <label class="form-label-k3">Tanggal Pelaksanaan</label>
-                    <input type="date" name="tanggal" class="form-control-k3" required>
+                    <input type="date" name="tgl_mulai" class="form-control-k3" required>
                 </div>
 
                 <div class="col-md-6 mb-4">
@@ -393,7 +403,7 @@
 <div class="modal fade" id="modalPekerjaan" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="<?= base_url('/pekerjaan/store') ?>" method="post">
+            <form action="<?= base_url('/kategori-pekerjaan/store') ?>" method="post">
                 <?= csrf_field() ?>
 
                 <input type="hidden" name="redirect_to" value="<?= current_url() ?>">
@@ -404,8 +414,8 @@
                 </div>
 
                 <div class="modal-body">
-                    <label>Nama Pekerjaan</label>
-                    <input type="text" name="nama_pekerjaan_baru" class="form-control" required>
+                    <label>Kategori Pekerjaan Baru</label>
+                    <input type="text" name="nama_kategori_pekerjaan_baru" class="form-control" required>
                 </div>
 
                 <div class="modal-footer">

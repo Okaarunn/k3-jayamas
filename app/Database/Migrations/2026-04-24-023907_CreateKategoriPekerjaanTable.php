@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreatePekerjaanTable extends Migration
+class CreateKategoriPekerjaanTable extends Migration
 {
     public function up()
     {
@@ -15,7 +15,7 @@ class CreatePekerjaanTable extends Migration
                 'unsigned' => true,
                 'auto_increment' => true,
             ],
-            'nama_pekerjaan' => [
+            'nama_kategori_pekerjaan' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
             ],
@@ -30,11 +30,11 @@ class CreatePekerjaanTable extends Migration
         ]);
 
         $this->forge->addKey('id', true, 'PRIMARY');
-        $this->forge->createTable('pekerjaan');
+        $this->forge->createTable('kategori_pekerjaan');
     }
 
     public function down()
     {
-        $this->forge->dropTable('pekerjaan');
+        $this->forge->dropTable('kategori_pekerjaan');
     }
 }

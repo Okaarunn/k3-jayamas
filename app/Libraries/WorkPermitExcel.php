@@ -1,157 +1,33 @@
 <?php
 
-namespace App\Controllers;
+namespace App\Libraries;
 
-use App\Controllers\BaseController;
 use App\Models\WorkPermitModel;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
 use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
 use PhpOffice\PhpSpreadsheet\Worksheet\PageMargins;
 
-
-
-class ApprovalK3 extends BaseController
+class WorkPermitExcel
 {
-
-    protected $db;
-
-    public function __construct()
-    {
-        $this->db = \Config\Database::connect();
-    }
-
-    private function currentUserPlantId(): ?int
-    {
-        $user = $this->db->table('users')
-            ->select('plant_id')
-            ->where('id', user_id())
-            ->get()->getRow();
-
-        return $user->plant_id ?? null;
-    }
-
-    private function canModify(object $row): bool
-    {
-        if (in_groups('administrator')) return true;
-
-        $myPlantId = (int) $this->currentUserPlantId();
-
-        $dataPlantId = isset($row->plant_id) ? (int)$row->plant_id : null;
-
-        return $myPlantId === $dataPlantId;
-    }
-
-    public function index()
-    {
-        $workPermitModel = new WorkPermitModel();
-        $myPlantId = $this->currentUserPlantId();
-
-        $builder = $workPermitModel
-            ->select('work_permit.*, kategori_pekerjaan.nama_kategori_pekerjaan, plant.nama_plant, u1.username as approved_k3_nama, u2.username as approved_p2k3_nama, izin_lembur.id as lembur_id')
-            ->join('kategori_pekerjaan', 'kategori_pekerjaan.id = work_permit.kategori_pekerjaan_id', 'left')
-            ->join('plant', 'plant.id = work_permit.plant_id', 'left')
-            ->join('users as u1', 'u1.id = work_permit.approved_k3_by', 'left')
-            ->join('users as u2', 'u2.id = work_permit.approved_p2k3_by', 'left')
-            ->join('izin_lembur', 'izin_lembur.work_permit_id = work_permit.id', 'left');
-
-        if (!in_groups('administrator')) {
-            $builder->where('work_permit.plant_id', $myPlantId);
-        }
-
-        $workPermits = $builder->findAll();
-
-        return view('approvalk3/approvalk3', [
-            'title'       => 'Work Permit Approval ',
-            'workPermits' => $workPermits,
-        ]);
-    }
-
-    public function approvek3(int $id)
-    {
-        $workPermitModel = new WorkPermitModel();
-        $workPermit = $workPermitModel->find($id);
-
-        if (!$workPermit || !$this->canModify((object)$workPermit)) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke data plant ini.');
-        }
-
-        if ($workPermit['status_approval'] !== 'pending') {
-            return redirect()->back()->with('error', 'Work permit ini sudah diproses.');
-        }
-
-        $workPermitModel->update($id, [
-            'approved_k3_by'  => user_id(),
-            'status_approval' => 'approve_by_k3',
-            'verified_k3_at'  => date('Y-m-d H:i:s'),
-            'updated_at'      => date('Y-m-d H:i:s'),
-        ]);
-
-        return redirect()->to('/approval-k3')->with('success', 'Work Permit berhasil disetujui.');
-    }
-
-    public function rejectk3(int $id)
-    {
-        $workPermitModel = new WorkPermitModel();
-        $workPermit = $workPermitModel->find($id);
-
-        if (!$workPermit || !$this->canModify((object)$workPermit)) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke data plant ini.');
-        }
-
-        if ($workPermit['status_approval'] !== 'pending') {
-            return redirect()->back()->with('error', 'Work permit ini sudah diproses.');
-        }
-
-        $alasan = $this->request->getPost('keterangan_ditolak');
-
-        $workPermitModel->update($id, [
-            'rejected_k3_by'     => user_id(),
-            'status_approval'    => 'reject_by_k3',
-            'keterangan_ditolak' => $alasan,
-            'verified_k3_at'  => date('Y-m-d H:i:s'),
-            'updated_at'         => date('Y-m-d H:i:s'),
-        ]);
-
-        return redirect()->to('/approval-k3')->with('success', 'Work Permit berhasil ditolak.');
-    }
-
-    public function delete(int $id)
-    {
-        $workPermitModel = new WorkPermitModel();
-        $workPermit = $workPermitModel->find($id);
-
-        if (!$workPermit || !$this->canModify((object)$workPermit)) {
-            return redirect()->back()->with('error', 'Data tidak ditemukan atau Anda tidak memiliki akses.');
-        }
-
-        if ($workPermitModel->delete($id)) {
-            return redirect()->to('/approval-k3')->with('success', 'Work Permit dan data lembur terkait berhasil dihapus.');
-        } else {
-            return redirect()->to('/approval-k3')->with('error', 'Gagal menghapus data.');
-        }
-    }
-
-
-    public function preview(int $id)
+    public function generate(int $id)
     {
         $db = \Config\Database::connect();
         $workPermitModel = new WorkPermitModel();
 
         $workPermit = $workPermitModel
             ->select('
-                work_permit.*,
-                kategori_pekerjaan.nama_kategori_pekerjaan,
-                plant.nama_plant,
-                u1.username as approved_k3_nama,
-                u2.username as approved_p2k3_nama,
-                izin_lembur.id as lembur_id,
-                progress_pengerjaan.status_pengerjaan,
-                cwp.*
-            ')
+            work_permit.*,
+            kategori_pekerjaan.nama_kategori_pekerjaan,
+            plant.nama_plant,
+            u1.username as approved_k3_nama,
+            u2.username as approved_p2k3_nama,
+            izin_lembur.id as lembur_id,
+            progress_pengerjaan.status_pengerjaan,
+            cwp.*
+        ')
             ->join('kategori_pekerjaan', 'kategori_pekerjaan.id = work_permit.kategori_pekerjaan_id', 'left')
             ->join('plant', 'plant.id = work_permit.plant_id', 'left')
             ->join('users as u1', 'u1.id = work_permit.approved_k3_by', 'left')
@@ -257,10 +133,10 @@ class ApprovalK3 extends BaseController
         $sheet->getStyle('B3:G' . $row)->getFont()->setSize(10);
 
         /*
-        |--------------------------------------------------------------------------
-        | IDENTITAS
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | IDENTITAS
+    |--------------------------------------------------------------------------
+    */
         $startRow = $row + 1;
 
         $identitasKiri = [
@@ -272,7 +148,7 @@ class ApprovalK3 extends BaseController
 
         $identitasKanan = [
             'No.'         => $workPermit['no_wp'] ?? '-',
-            'Tanggal'     => $workPermit['tanggal'] ?? '-',
+            'Tanggal'     => $workPermit['tgl_mulai'] ?? '-',
             'Jam Mulai'   => $workPermit['jam_mulai'] ?? '-',
             'Jam Selesai' => $workPermit['jam_selesai'] ?? '-',
         ];
@@ -292,10 +168,10 @@ class ApprovalK3 extends BaseController
         }
 
         /*
-        |--------------------------------------------------------------------------
-        | CHECKLIST SAFETY
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | CHECKLIST SAFETY
+    |--------------------------------------------------------------------------
+    */
         $checklistMaster = [
             'pemeriksaan_bahaya'           => 'Pemeriksaan bahaya di tempat kerja (analisa resiko / HIRA)',
             'penyediaan_apd'               => 'Penyediaan APD yang diperlukan (safety helmet, safety shoes, body harness, dll.)',
@@ -391,10 +267,10 @@ class ApprovalK3 extends BaseController
 
 
         /*
-            |--------------------------------------------------------------------------
-            | BAGIAN APD, PENCEGAHAN, PEKERJA, DAN PENGAWAS (KOLOM E-G)
-            |--------------------------------------------------------------------------
-            */
+        |--------------------------------------------------------------------------
+        | BAGIAN APD, PENCEGAHAN, PEKERJA, DAN PENGAWAS (KOLOM E-G)
+        |--------------------------------------------------------------------------
+        */
         $boxRowStart = $currentRow;
 
         // Menentukan batas baris untuk setiap kotak
@@ -495,10 +371,10 @@ class ApprovalK3 extends BaseController
         $currentRow = $endAllBoxRow + 1;
 
         /*
-            |--------------------------------------------------------------------------
-            | III. PENGESAHAN
-            |--------------------------------------------------------------------------
-            */
+        |--------------------------------------------------------------------------
+        | III. PENGESAHAN
+        |--------------------------------------------------------------------------
+        */
 
         // Header seksi
         $sheet->mergeCells('B' . $currentRow . ':G' . $currentRow);
@@ -596,10 +472,10 @@ class ApprovalK3 extends BaseController
         $currentRow += count($pengesahanKiri);
 
         /*
-    |--------------------------------------------------------------------------
-    | III. PENUTUP
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| III. PENUTUP
+|--------------------------------------------------------------------------
+*/
 
         // Header seksi
         $sheet->mergeCells('B' . $currentRow . ':G' . $currentRow);
@@ -724,10 +600,10 @@ class ApprovalK3 extends BaseController
         $currentRow++;
 
         /*
-        |--------------------------------------------------------------------------
-        | PAGE SETUP
-        |--------------------------------------------------------------------------
-        */
+    |--------------------------------------------------------------------------
+    | PAGE SETUP
+    |--------------------------------------------------------------------------
+    */
         $sheet->getPageSetup()
             ->setOrientation(PageSetup::ORIENTATION_PORTRAIT)
             ->setPaperSize(PageSetup::PAPERSIZE_A4)
@@ -744,10 +620,10 @@ class ApprovalK3 extends BaseController
 
 
         /*
-    |--------------------------------------------------------------------------
-    | BORDER LUAR SAJA
-    |--------------------------------------------------------------------------
-    */
+|--------------------------------------------------------------------------
+| BORDER LUAR SAJA
+|--------------------------------------------------------------------------
+*/
         $lastRow = $currentRow - 1; // baris terakhir dari checklist
 
         $sheet->getStyle('B1:G' . $lastRow)
@@ -756,18 +632,16 @@ class ApprovalK3 extends BaseController
             ->setBorderStyle(Border::BORDER_THIN);
 
         /*
-        |--------------------------------------------------------------------------
-        | OUTPUT
-        |--------------------------------------------------------------------------
-        */
-        $filename = 'Work_Permit_' . $id . '.xlsx';
-
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
-
+    |--------------------------------------------------------------------------
+    | OUTPUT
+    |--------------------------------------------------------------------------
+    */
         $writer = new Xlsx($spreadsheet);
+
+        ob_start();
         $writer->save('php://output');
-        exit;
+        $data = ob_get_clean();
+
+        return $data;
     }
 }

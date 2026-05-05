@@ -82,32 +82,32 @@ class CreateIzinLemburTable extends Migration
             'nama_penanggung_jawab_vendor' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
-                'null' => false,
+                'null' => true,
             ],
 
             'jabatan_penanggung_jawab_vendor' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
-                'null' => false,
+                'null' => true,
             ],
 
             'nama_penanggung_jawab_perusahaan' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
-                'null' => false,
+                'null' => true,
             ],
 
             'jabatan_penanggung_jawab_perusahaan' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
-                'null' => false,
+                'null' => true,
             ],
 
 
             'dibuat_oleh' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,
-                'null' => false,
+                'null' => true,
             ]
 
         ]);

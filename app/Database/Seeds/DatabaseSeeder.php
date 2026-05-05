@@ -19,6 +19,17 @@ class DatabaseSeeder extends Seeder
         $this->call('DokumentasiAbsensiSeeder');
 
         // pekerjaan
-        $this->call('PekerjaanSeeder');
+        $this->call('KategoriPekerjaanSeeder');
+
+        // work permit
+        $this->call('WorkPermitSeeder');
+
+        // checklist work permit
+        $this->call('ChecklistWorkPermitSeeder');
+
+        $this->call('JobSafetyAnalystSeeder');
+
+        // izin lembur
+        $this->call('IzinLemburSeeder');
     }
 }
