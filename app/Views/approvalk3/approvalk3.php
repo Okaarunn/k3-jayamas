@@ -141,7 +141,7 @@
 
 
                                 <td>
-                                    <a href="<?= site_url('approvalk3/preview/' . $workPermit['id']) ?>"
+                                    <a href="<?= site_url('approval-p2k3/preview/' . $workPermit['id']) ?>"
                                         target="_blank"
                                         class="btn btn-sm btn-success">
                                         Preview

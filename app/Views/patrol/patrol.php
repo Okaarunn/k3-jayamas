@@ -147,13 +147,11 @@
 
                                 <td>
                                     <?php if ($row->status_patrol == 1) : ?>
-                                        <span class="status-selesai">
-                                            <i class="fas fa-check-circle" style="font-size:.6rem"></i>
+                                        <span class="text-success">
                                             Selesai
                                         </span>
                                     <?php else : ?>
-                                        <span class="status-proses">
-                                            <i class="fas fa-clock" style="font-size:.6rem"></i>
+                                        <span class="text-warning">
                                             Proses
                                         </span>
                                     <?php endif; ?>

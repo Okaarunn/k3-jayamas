@@ -78,10 +78,12 @@ $routes->post('/approval-k3/reject/(:num)', 'ApprovalK3::rejectk3/$1', ['filter'
 $routes->post('/approval-k3/delete/(:num)', 'ApprovalK3::delete/$1', ['filter' => 'permission:manage-data']);
 
 // approval p2k3
-$routes->get('/approval-p2k3', 'ApprovalP2K3::index', ['filter' => 'role:administrator,p2k3']);
+$routes->get('/approval-p2k3', 'ApprovalP2K3::index', ['filter' => 'permission:manage-approval']);
 $routes->post('/approval-p2k3/approve/(:num)', 'ApprovalP2K3::approvep2k3/$1', ['filter' => 'permission:manage-approval']);
 $routes->post('/approval-p2k3/reject/(:num)', 'ApprovalP2K3::rejectp2k3/$1', ['filter' => 'permission:manage-approval']);
 $routes->post('/approval-p2k3/delete/(:num)', 'ApprovalP2K3::delete/$1', ['filter' => 'permission:manage-data']);
+$routes->get('/approval-p2k3/preview/(:num)', 'ApprovalP2K3::preview/$1', ['filter' => 'permission:manage-approval']);
+
 
 // progress pengerjaan
 $routes->get('/progress-pengerjaan', 'ProgressPengerjaan::index', ['filter' => 'permission:manage-data']);

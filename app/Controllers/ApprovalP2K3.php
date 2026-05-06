@@ -5,11 +5,9 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use App\Models\ProgressPengerjaanModel;
 use App\Models\WorkPermitModel;
-use CodeIgniter\HTTP\ResponseInterface;
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
-use App\Libraries\WorkPermitExcel;
+use App\Libraries\WorkPermitWorkbook;
 
 
 class ApprovalP2K3 extends BaseController
@@ -42,15 +40,15 @@ class ApprovalP2K3 extends BaseController
         return $myPlantId === $dataPlantId;
     }
 
-
     private function sendApprovalEmail($id, $workPermit)
     {
         $mail = new PHPMailer(true);
 
         try {
             // generate excel ke memory
-            $excel = new WorkPermitExcel();
+            $excel = new WorkPermitWorkbook();
             $excelData = $excel->generate($id);
+            $filename  = $excel->getFilename($id);
 
             $mail->isSMTP();
             $mail->Host       = 'smtp.gmail.com';
@@ -66,13 +64,32 @@ class ApprovalP2K3 extends BaseController
             // kirim excel tanpa simpan file
             $mail->addStringAttachment(
                 $excelData,
-                'Work_Permit_' . $id . '.xlsx'
+                $filename,
+                'base64',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
             );
 
-            $mail->isHTML(true);
-            $mail->Subject = 'Work Permit Disetujui';
-            $mail->Body    = "Work Permit ID {$id} sudah disetujui.";
+            $namaPengaju = $workPermit['nama_pengaju'] ?? 'Pengaju';
+            $keputusan = $excel->getKeputusanAkhir($workPermit);
 
+            $mail->isHTML(true);
+            $namaPengaju = $workPermit['nama_pengaju'] ?? 'Bapak/Ibu';
+            $noWp        = $workPermit['no_wp'] ?? $id;
+            $mail->Subject = "Pemberitahuan Status Work Permit No. {$noWp} - {$keputusan}";
+
+            $mail->Body = "
+    <p>Kepada Yth. {$namaPengaju},</p>
+
+    <p>Dengan hormat,</p>
+
+    <p>Kami informasikan bahwa Work Permit yang Anda ajukan telah diproses dengan rincian sebagai berikut:</p>
+
+    <p>
+        No. Work Permit : {$noWp}<br>
+        Plant : {$workPermit['nama_plant']}<br>
+        Status : <strong>{$keputusan}</strong>
+    </p>
+";
             $mail->send();
             return true;
         } catch (Exception $e) {
@@ -117,6 +134,7 @@ class ApprovalP2K3 extends BaseController
     {
         $workPermitModel = new WorkPermitModel();
         $progressPengerjaanModel = new ProgressPengerjaanModel();
+
         $workPermit = $workPermitModel->find($id);
 
         if (!$workPermit || !$this->canModify((object)$workPermit)) {
@@ -127,43 +145,64 @@ class ApprovalP2K3 extends BaseController
             return redirect()->back()->with('error', 'Work permit ini belum disetujui oleh K3.');
         }
 
+        // ambil lembur
         $lembur = $this->db->table('izin_lembur')
             ->select('id')
             ->where('work_permit_id', $id)
             ->get()
             ->getRow();
 
-        $this->db->transStart();
+        $this->db->transBegin();
 
-        $workPermitModel->update($id, [
-            'approved_p2k3_by' => user_id(),
-            'status_approval'  => 'approve_by_p2k3',
-            'verified_p2k3_at' => date('Y-m-d H:i:s'),
-            'updated_at'       => date('Y-m-d H:i:s'),
-        ]);
+        // update
+        $updated = $workPermitModel
+            ->where('id', $id)
+            ->where('status_approval', 'approve_by_k3')
+            ->set([
+                'approved_p2k3_by' => user_id(),
+                'status_approval'  => 'approve_by_p2k3',
+                'verified_p2k3_at' => date('Y-m-d H:i:s'),
+                'updated_at'       => date('Y-m-d H:i:s'),
+            ])
+            ->update();
 
-        $progressPengerjaanModel->insert([
-            'work_permit_id'    => $id,
-            'izin_lembur_id'    => $lembur ? $lembur->id : null,
-            'status_pengerjaan' => 'ongoing',
-            'plant_id'          => $workPermit['plant_id'],
-            'updated_by'        => user_id(),
-            'created_at'        => date('Y-m-d H:i:s'),
-            'updated_at'        => date('Y-m-d H:i:s'),
-        ]);
-
-        $this->db->transComplete();
-
-        if ($this->db->transStatus() === false) {
-            return redirect()->back()->with('error', 'Terjadi kesalahan saat memproses data.');
+        if (!$updated) {
+            $this->db->transRollback();
+            return redirect()->back()->with('error', 'Data sudah diproses oleh user lain.');
         }
 
+        // cegah duplicate progress
+        $exists = $progressPengerjaanModel
+            ->where('work_permit_id', $id)
+            ->first();
+
+        if (!$exists) {
+            $progressPengerjaanModel->insert([
+                'work_permit_id'    => $id,
+                'izin_lembur_id'    => $lembur ? $lembur->id : null,
+                'status_pengerjaan' => 'ongoing',
+                'plant_id'          => $workPermit['plant_id'],
+                'updated_by'        => user_id(),
+                'created_at'        => date('Y-m-d H:i:s'),
+                'updated_at'        => date('Y-m-d H:i:s'),
+            ]);
+        }
+
+        $this->db->transCommit();
+
+        // ambil data terbaru untuk email
+        $updatedWorkPermit = $workPermitModel
+            ->select('work_permit.*, plant.nama_plant')
+            ->join('plant', 'plant.id = work_permit.plant_id', 'left')
+            ->where('work_permit.id', $id)
+            ->first();
+
         // kirim email
-        $emailResult = $this->sendApprovalEmail($id, $workPermit);
+        $emailResult = $this->sendApprovalEmail($id, $updatedWorkPermit);
 
         if ($emailResult !== true) {
             return redirect()->to('/approval-p2k3')
-                ->with('warning', 'Approve berhasil, tapi email gagal dikirim: ' . $emailResult);
+                ->with('warning', 'Approval berhasil, tapi email gagal dikirim: ' . $emailResult);
         }
 
         return redirect()->to('/approval-p2k3')
@@ -173,6 +212,7 @@ class ApprovalP2K3 extends BaseController
     public function rejectp2k3(int $id)
     {
         $workPermitModel = new WorkPermitModel();
+
         $workPermit = $workPermitModel->find($id);
 
         if (!$workPermit || !$this->canModify((object)$workPermit)) {
@@ -185,15 +225,49 @@ class ApprovalP2K3 extends BaseController
 
         $alasan = $this->request->getPost('keterangan_ditolak');
 
-        $workPermitModel->update($id, [
-            'rejected_p2k3_by'   => user_id(),
-            'status_approval'    => 'reject_by_p2k3',
-            'keterangan_ditolak' => $alasan,
-            'verified_k3_at'  => date('Y-m-d H:i:s'),
-            'updated_at'         => date('Y-m-d H:i:s'),
-        ]);
+        if (empty($alasan)) {
+            return redirect()->back()->with('error', 'Alasan penolakan wajib diisi.');
+        }
 
-        return redirect()->to('/approval-p2k3')->with('success', 'Work Permit berhasil ditolak.');
+        $this->db->transBegin();
+
+        // proteksi race condition
+        $updated = $workPermitModel
+            ->where('id', $id)
+            ->where('status_approval', 'approve_by_k3')
+            ->set([
+                'rejected_p2k3_by'   => user_id(),
+                'status_approval'    => 'reject_by_p2k3',
+                'keterangan_ditolak' => $alasan,
+                'verified_p2k3_at'   => date('Y-m-d H:i:s'),
+                'updated_at'         => date('Y-m-d H:i:s'),
+            ])
+            ->update();
+
+        if (!$updated) {
+            $this->db->transRollback();
+            return redirect()->back()->with('error', 'Data sudah diproses oleh user lain.');
+        }
+
+        $this->db->transCommit();
+
+        // ambil data terbaru
+        $updatedWorkPermit = $workPermitModel
+            ->select('work_permit.*, plant.nama_plant')
+            ->join('plant', 'plant.id = work_permit.plant_id', 'left')
+            ->where('work_permit.id', $id)
+            ->first();
+
+        // kirim email
+        $emailResult = $this->sendApprovalEmail($id, $updatedWorkPermit);
+
+        if ($emailResult !== true) {
+            return redirect()->to('/approval-p2k3')
+                ->with('warning', 'Penolakan berhasil, tapi email gagal dikirim: ' . $emailResult);
+        }
+
+        return redirect()->to('/approval-p2k3')
+            ->with('success', 'Work Permit berhasil ditolak & email terkirim.');
     }
 
     public function delete(int $id)
@@ -210,5 +284,11 @@ class ApprovalP2K3 extends BaseController
         } else {
             return redirect()->to('/approval-p2k3')->with('error', 'Gagal menghapus data.');
         }
+    }
+
+    public function preview(int $id)
+    {
+        $excel = new WorkPermitWorkbook();
+        return $excel->download($id);
     }
 }
