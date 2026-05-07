@@ -27,8 +27,8 @@
         <!-- Header -->
         <div class="create-header">
             <div>
-                <h1><i class="fas fa-file-signature mr-2"></i> Work Permit Request K3</h1>
-                <p>Buat permintaan izin kerja dengan penilaian keselamatan kerja</p>
+                <h1><i class="fas fa-file-signature mr-2"></i> Pengajuan Izin Kerja (Work Permit)</h1>
+                <p>Lengkapi formulir berikut untuk mengajukan izin kerja beserta analisis keselamatan</p>
             </div>
         </div>
 

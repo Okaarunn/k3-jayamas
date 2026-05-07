@@ -31,5 +31,11 @@ class DatabaseSeeder extends Seeder
 
         // izin lembur
         $this->call('IzinLemburSeeder');
+
+        // progress pengerjaan
+        $this->call('ProgressPengerjaanSeeder');
+
+        // document center
+        $this->call('DocumentCenterSeeder');
     }
 }

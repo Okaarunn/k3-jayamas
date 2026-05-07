@@ -78,17 +78,15 @@ class ApprovalP2K3 extends BaseController
             $mail->Subject = "Pemberitahuan Status Work Permit No. {$noWp} - {$keputusan}";
 
             $mail->Body = "
-    <p>Kepada Yth. {$namaPengaju},</p>
+      <p>Dear Departement/Vendor {$namaPengaju},</p>
 
-    <p>Dengan hormat,</p>
-
-    <p>Kami informasikan bahwa Work Permit yang Anda ajukan telah diproses dengan rincian sebagai berikut:</p>
-
+    <p>Dengan ini menyampaikan hasil Work Permit (Izin kerja) untuk hari ini</p>
     <p>
         No. Work Permit : {$noWp}<br>
         Plant : {$workPermit['nama_plant']}<br>
         Status : <strong>{$keputusan}</strong>
     </p>
+    <p>Terimakasih, salam sehat (Tim K3)</p>
 ";
             $mail->send();
             return true;
@@ -116,7 +114,8 @@ class ApprovalP2K3 extends BaseController
             ->join('users as u1', 'u1.id = work_permit.approved_k3_by', 'left')
             ->join('users as u2', 'u2.id = work_permit.approved_p2k3_by', 'left')
             ->join('izin_lembur', 'izin_lembur.work_permit_id = work_permit.id', 'left')
-            ->where('work_permit.approved_k3_by IS NOT NULL');
+            ->where('work_permit.approved_k3_by IS NOT NULL')
+            ->orderBy('work_permit.created_at', 'DESC');
 
         if (!in_groups('administrator')) {
             $builder->where('work_permit.plant_id', $myPlantId);
@@ -186,6 +185,21 @@ class ApprovalP2K3 extends BaseController
                 'created_at'        => date('Y-m-d H:i:s'),
                 'updated_at'        => date('Y-m-d H:i:s'),
             ]);
+
+            $progressId = $progressPengerjaanModel->insertID();
+
+            // tambahkan ke document_center
+            $dcExists = $this->db->table('document_center')
+                ->where('work_permit_id', $id)
+                ->get()->getRow();
+
+            if (!$dcExists) {
+                $this->db->table('document_center')->insert([
+                    'work_permit_id'         => $id,
+                    'izin_lembur_id'         => $lembur ? $lembur->id : null,
+                    'progress_pengerjaan_id' => $progressId,
+                ]);
+            }
         }
 
         $this->db->transCommit();

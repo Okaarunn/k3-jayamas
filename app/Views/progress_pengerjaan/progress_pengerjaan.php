@@ -7,9 +7,9 @@
         <div class="mb-3 mb-md-0">
             <h1 class="mb-1">
                 <i class="fas fa-tasks mr-2"></i>
-                <span class="d-block d-md-inline">Progress Pengerjaan Vendor K3</span>
+                <span class="d-block d-md-inline">Monitoring Progress Pengerjaan</span>
             </h1>
-            <p class="mb-0">Monitoring status pengerjaan dan penyelesaian work permit</p>
+            <p class="mb-0">Pantau dan perbarui status penyelesaian setiap work permit yang sedang berjalan</p>
         </div>
     </div>
 

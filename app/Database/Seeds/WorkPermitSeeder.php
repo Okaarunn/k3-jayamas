@@ -10,13 +10,20 @@ class WorkPermitSeeder extends Seeder
     {
 
         // get users mojoagung
-        $user = $this->db->table('users')
+        $userk3 = $this->db->table('users')
             ->where('username', 'k3mojoagung')
             ->get()
             ->getRow();
 
-        if (!$user) {
-            echo 'Error: user tidak ditemukan, jalankan users seeder terlebih dahulu';
+        $userp2k3 = $this->db->table('users')->where('username', 'p2k3mojoagung')->get()->getRow();
+
+        if (!$userk3) {
+            echo 'Error: user k3mojoagung tidak ditemukan, jalankan users seeder terlebih dahulu';
+            return;
+        }
+
+        if (!$userp2k3) {
+            echo 'Error: user p2k3mojoagung tidak ditemukan, jalankan users seeder terlebih dahulu';
             return;
         }
 
@@ -58,15 +65,17 @@ class WorkPermitSeeder extends Seeder
                 'nama_pekerjaan' => 'Memperbaiki kabel di gudang',
                 'jam_mulai' => '10:00:00',
                 'jam_selesai' => '18:00:00',
-                'status_approval' => 'pending',
+                'status_approval' => 'approve_by_p2k3',
                 'keterangan_ditolak' => null,
-                'approved_k3_by' => null,
-                'approved_p2k3_by' => null,
+                'approved_k3_by' => $userk3->id,
+                'approved_p2k3_by' => $userp2k3->id,
                 'rejected_k3_by' => null,
                 'rejected_p2k3_by' => null,
+                'verified_k3_at' => date('Y-m-d H:i:s'),
+                'verified_p2k3_at' => date('Y-m-d H:i:s'),
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
-                'updated_by' => null
+                'updated_by' => $userp2k3->id,
             ],
         ];
 

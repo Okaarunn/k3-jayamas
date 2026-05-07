@@ -52,7 +52,9 @@ class ApprovalK3 extends BaseController
             ->join('plant', 'plant.id = work_permit.plant_id', 'left')
             ->join('users as u1', 'u1.id = work_permit.approved_k3_by', 'left')
             ->join('users as u2', 'u2.id = work_permit.approved_p2k3_by', 'left')
-            ->join('izin_lembur', 'izin_lembur.work_permit_id = work_permit.id', 'left');
+            ->join('izin_lembur', 'izin_lembur.work_permit_id = work_permit.id', 'left')
+            ->orderBy('work_permit.created_at', 'DESC');
+
 
         if (!in_groups('administrator')) {
             $builder->where('work_permit.plant_id', $myPlantId);
@@ -102,20 +104,18 @@ class ApprovalK3 extends BaseController
             $mail->isHTML(true);
             $namaPengaju = $workPermit['nama_pengaju'] ?? 'Bapak/Ibu';
             $noWp        = $workPermit['no_wp'] ?? $id;
-            $mail->Subject = "Pemberitahuan Status Work Permit No. {$noWp} - {$keputusan}";
+            $mail->Subject = "Work Permit (Izin Kerja).";
 
             $mail->Body = "
-    <p>Kepada Yth. {$namaPengaju},</p>
+    <p>Dear Departement/Vendor {$namaPengaju},</p>
 
-    <p>Dengan hormat,</p>
-
-    <p>Kami informasikan bahwa Work Permit yang Anda ajukan telah diproses dengan rincian sebagai berikut:</p>
-
+    <p>Dengan ini menyampaikan hasil Work Permit (Izin kerja) untuk hari ini</p>
     <p>
         No. Work Permit : {$noWp}<br>
         Plant : {$workPermit['nama_plant']}<br>
         Status : <strong>{$keputusan}</strong>
     </p>
+    <p>Terimakasih, salam sehat (Tim K3)</p>
 ";
             $mail->send();
             return true;

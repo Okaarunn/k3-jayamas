@@ -366,8 +366,8 @@
     <!-- Page Header -->
     <div class="page-header">
         <div>
-            <h1><i class="fas fa-clipboard-list mr-2"></i>Data Logs</h1>
-            <p>Catatan aksi yang dilakukan oleh pengguna Aplikasi K3</p>
+            <h1><i class="fas fa-clipboard-list mr-2"></i>Riwayat Aktivitas Sistem</h1>
+            <p>Catatan seluruh aksi yang dilakukan pengguna dalam aplikasi K3</p>
         </div>
 
     </div>

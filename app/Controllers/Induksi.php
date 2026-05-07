@@ -192,7 +192,7 @@ class Induksi extends BaseController
         return redirect()->to('/induksi')->with('success', 'Data berhasil ditambahkan');
     }
 
-    public function edit($id)
+    public function edit(int $id)
     {
         $row = $this->getInduksi($id);
 
@@ -218,7 +218,7 @@ class Induksi extends BaseController
         ]);
     }
 
-    public function update($id)
+    public function update(int $id)
     {
         $row = $this->getInduksi($id);
 
@@ -321,7 +321,7 @@ class Induksi extends BaseController
         return redirect()->to('/induksi');
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {
         $row = $this->getInduksi($id);
 

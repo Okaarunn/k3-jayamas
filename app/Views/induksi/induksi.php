@@ -13,11 +13,11 @@
             <h1 class="mb-1">
                 <i class="fas fa-user-check mr-2"></i>
                 <span class="d-block d-md-inline">
-                    Data Induksi Keselamatan dan Kesehatan Kerja
+                    Data Induksi K3
                 </span>
             </h1>
             <p class="mb-0">
-                Pencatatan dan manajemen hasil training / induksi K3
+                Pencatatan dan rekap hasil pelatihan keselamatan kerja seluruh peserta
             </p>
         </div>
 

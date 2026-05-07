@@ -11,11 +11,11 @@
             <h1 class="mb-1">
                 <i class="fas fa-user-check mr-2"></i>
                 <span class="d-block d-md-inline">
-                    Data Approval P2K3 Work Permit Request
+                    Persetujuan Work Permit — Tim P2K3
                 </span>
             </h1>
             <p class="mb-0">
-                Data approval k3
+                Tinjau dan berikan keputusan final atas izin kerja yang telah disetujui K3
             </p>
         </div>
     </div>

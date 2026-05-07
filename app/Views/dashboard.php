@@ -395,7 +395,7 @@
     <!-- Header -->
     <div class="dash-header">
         <h1><i class="fas fa-tachometer-alt mr-2"></i> Dashboard K3</h1>
-        <p>Ringkasan data Keselamatan dan Kesehatan Kerja — <?= date('d F Y') ?></p>
+        <p>Ringkasan data Keselamatan dan Kesehatan Kerja PT. Jayamas Medica Industri — <?= date('d F Y') ?></p>
     </div>
 
     <!-- Stat Cards -->
@@ -459,7 +459,7 @@
                 <i class="fas fa-clipboard-list"></i>
             </div>
             <div class="stat-info">
-                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-value"><?= number_format($totalApproval) ?></div>
                 <div class="stat-label">Total Approval</div>
             </div>
         </div>
@@ -470,7 +470,7 @@
                 <i class="fas fa-hourglass-half"></i>
             </div>
             <div class="stat-info">
-                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-value"><?= number_format($totalWpBelumDiSetujui) ?></div>
                 <div class="stat-label">Perlu Disetujui</div>
             </div>
         </div>
@@ -481,7 +481,7 @@
                 <i class="fas fa-times-circle"></i>
             </div>
             <div class="stat-info">
-                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-value"><?= $totalWpDiTolak ?></div>
                 <div class="stat-label">Approval Ditolak</div>
             </div>
         </div>
@@ -492,7 +492,7 @@
                 <i class="fas fa-spinner"></i>
             </div>
             <div class="stat-info">
-                <div class="stat-value"><?= number_format($totalBelumSelesai) ?></div>
+                <div class="stat-value"><?= number_format($totalStatusPengerjaanOnGoing) ?></div>
                 <div class="stat-label">Pengerjaan OnGoing</div>
             </div>
         </div>

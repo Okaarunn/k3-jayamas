@@ -20,11 +20,11 @@
             <h1 class="mb-1">
                 <i class="fas fa-user-check mr-2"></i>
                 <span class="d-block d-md-inline">
-                    Data Patrol Keselamatan dan Kesehatan Kerja
+                    Data Patrol K3
                 </span>
             </h1>
             <p class="mb-0">
-                Dokumentasi kegiatan patrol lapangan dengan foto Sebelum &amp; Sesudah
+                Dokumentasi kegiatan inspeksi lapangan beserta temuan dan tindak lanjut penyelesaian
             </p>
         </div>
 

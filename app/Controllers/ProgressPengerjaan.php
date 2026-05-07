@@ -45,9 +45,9 @@ class ProgressPengerjaan extends BaseController
             ')
             ->join('work_permit', 'work_permit.id = progress_pengerjaan.work_permit_id', 'left')
             ->join('izin_lembur', 'izin_lembur.id = progress_pengerjaan.izin_lembur_id', 'left')
-            ->join('plant', 'plant.id = work_permit.plant_id', 'left');
+            ->join('plant', 'plant.id = work_permit.plant_id', 'left')
+            ->orderBy('work_permit.created_at', 'DESC');
 
-        // PROTEKSI: Jika bukan admin, hanya tampilkan plant yang sesuai
         if (!in_groups('administrator')) {
             $builder->where('work_permit.plant_id', $myPlantId);
         }

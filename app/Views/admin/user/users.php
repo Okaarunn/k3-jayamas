@@ -333,11 +333,11 @@
             <h1 class="mb-1">
                 <i class="fas fa-user-check mr-2"></i>
                 <span class="d-block d-md-inline">
-                    Data Induksi Keselamatan dan Kesehatan Kerja
+                    Manajemen Pengguna Sistem K3
                 </span>
             </h1>
             <p class="mb-0">
-                Pencatatan dan manajemen hasil training / induksi K3
+                Kelola akun, role, dan hak akses pengguna aplikasi K3 Jayamas Medica Industri
             </p>
         </div>
 
