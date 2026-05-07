@@ -94,3 +94,4 @@ $routes->post('progress-pengerjaan/finish-single', 'ProgressPengerjaan::finishSi
 $routes->get('/document-center', 'DocumentCenter::index', ['filter' => 'login']);
 $routes->get('/document-center/exportexcel',       'DocumentCenter::exportExcel', ['filter' => 'permission:export-report']);
 $routes->get('/document-center/exportpdf',        'DocumentCenter::exportPdf',  ['filter' => 'permission:export-report']);
+$routes->get('/document-center/preview/(:num)', 'DocumentCenter::preview/$1', ['filter' => 'permission:export-report']);

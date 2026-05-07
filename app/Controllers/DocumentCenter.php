@@ -3,12 +3,12 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Libraries\WorkPermitWorkbook;
 use App\Models\DocumentCenterModel;
-
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use Dompdf\Options;
-use Dompdf\Dompdf;
 
 class DocumentCenter extends BaseController
 {
@@ -38,6 +38,7 @@ class DocumentCenter extends BaseController
 
         $builder = $documentCenterModel
             ->select('
+                document_center.work_permit_id,
                 work_permit.no_wp,
                 work_permit.nama_pengaju,
                 work_permit.tgl_mulai,
@@ -292,5 +293,12 @@ class DocumentCenter extends BaseController
                 description: 'Export data document center ke PDF'
             );
         }
+    }
+
+    // preview excel
+    public function preview(int $id)
+    {
+        $excel = new WorkPermitWorkbook();
+        return $excel->download($id);
     }
 }

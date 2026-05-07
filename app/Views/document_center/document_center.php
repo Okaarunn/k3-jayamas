@@ -80,6 +80,8 @@
                                 <th>Plant</th>
                             <?php endif; ?>
 
+                            <th>Aksi</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -98,6 +100,14 @@
                                 <?php if (in_groups('administrator')) : ?>
                                     <td><?= esc($documentCenter['nama_plant']) ?></td>
                                 <?php endif; ?>
+
+                                <td>
+                                    <a href="<?= site_url('document-center/preview/' . $documentCenter['work_permit_id']) ?>"
+                                        target="_blank"
+                                        class="btn btn-sm btn-success">
+                                        </i>Preview
+                                    </a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -129,13 +139,17 @@
         },
         columnDefs: [{
                 orderable: false,
-                targets: [0]
+                targets: '_all'
             },
             {
                 width: '0px',
                 targets: 0
             }
         ]
+    });
+
+    $('#filterPlant').on('change', function() {
+        table.column(-2).search(this.value).draw();
     });
 </script>
 <?php $this->endSection(); ?>
