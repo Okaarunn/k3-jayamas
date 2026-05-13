@@ -2,16 +2,8 @@
     <?php $this->section('page-content'); ?>
     <div class="container-fluid pb-4">
 
-        <?php if (!empty($errors)) : ?>
-            <div style="background:#fce4ec;color:#c62828;border-radius:12px;padding:14px 18px;margin-bottom:20px">
-                <strong><i class="fas fa-exclamation-circle mr-1"></i>Terdapat kesalahan:</strong>
-                <ul style="margin:8px 0 0;padding-left:20px">
-                    <?php foreach ($errors as $e) : ?>
-                        <li style="font-size:.875rem"><?= esc($e) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-        <?php endif; ?>
+        <?= $this->include('components/alert') ?>
+
 
         <!-- Header -->
         <div class="create-header">

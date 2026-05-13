@@ -72,6 +72,10 @@ class Patrol extends BaseController
             return [null, null, null, null];
         }
 
+        if ($file->getSize() > 2 * 1024 * 1024) {
+            return ['__SIZE_EXCEEDED__', null, null, null];
+        }
+
         // define upload path
         $uploadPath = FCPATH . 'uploads/patrol/';
         if (! is_dir($uploadPath)) {
@@ -162,8 +166,8 @@ class Patrol extends BaseController
             'tanggal_penyelesaian' => 'permit_empty|valid_date[Y-m-d]',
             'temuan'               => 'permit_empty|max_length[2000]',
             'penyelesaian'         => 'permit_empty|max_length[2000]',
-            'foto_before'          => 'permit_empty|uploaded[foto_before]|max_size[foto_before,5120]|ext_in[foto_before,jpg,jpeg,png]',
-            'foto_after'           => 'permit_empty|uploaded[foto_after]|max_size[foto_after,5120]|ext_in[foto_after,jpg,jpeg,png]',
+            'foto_before'          => 'permit_empty|uploaded[foto_before]|max_size[foto_before,2120]|ext_in[foto_before,jpg,jpeg,png]',
+            'foto_after'           => 'permit_empty|uploaded[foto_after]|max_size[foto_after,2120]|ext_in[foto_after,jpg,jpeg,png]',
         ];
 
         if (! $this->validate($rules)) {
@@ -173,6 +177,10 @@ class Patrol extends BaseController
 
         [$beforeFile, $beforeOrig, $beforeMime, $beforeSize] = $this->uploadFoto('foto_before');
         [$afterFile,  $afterOrig,  $afterMime,  $afterSize]  = $this->uploadFoto('foto_after');
+
+        if ($beforeFile === '__SIZE_EXCEEDED__' || $afterFile === '__SIZE_EXCEEDED__') {
+            return redirect()->back()->withInput()->with('error', 'Gambar melebihi batas ukuran maksimal 2 MB');
+        }
 
         $tanggalSelesai = $this->request->getPost('tanggal_penyelesaian') ?: null;
         $statusPatrol   = $this->getStatusPatrol($tanggalSelesai);
@@ -273,8 +281,8 @@ class Patrol extends BaseController
             'tanggal_penyelesaian' => 'permit_empty|valid_date[Y-m-d]',
             'temuan'               => 'permit_empty|max_length[2000]',
             'penyelesaian'         => 'permit_empty|max_length[2000]',
-            'foto_before'          => 'permit_empty|uploaded[foto_before]|max_size[foto_before,5120]|ext_in[foto_before,jpg,jpeg,png]',
-            'foto_after'           => 'permit_empty|uploaded[foto_after]|max_size[foto_after,5120]|ext_in[foto_after,jpg,jpeg,png]',
+            'foto_before'          => 'permit_empty|uploaded[foto_before]|max_size[foto_before,2120]|ext_in[foto_before,jpg,jpeg,png]',
+            'foto_after'           => 'permit_empty|uploaded[foto_after]|max_size[foto_after,2120]|ext_in[foto_after,jpg,jpeg,png]',
         ];
 
         if (! $this->validate($rules)) {
@@ -301,11 +309,14 @@ class Patrol extends BaseController
         // image before: change if there is a new upload
         $fileBefore = $this->request->getFile('foto_before');
         if ($fileBefore && $fileBefore->isValid() && ! $fileBefore->hasMoved()) {
+            [$f, $o, $m, $s] = $this->uploadFoto('foto_before');
+            if ($f === '__SIZE_EXCEEDED__') {
+                return redirect()->back()->withInput()->with('error', 'Gambar melebihi batas ukuran maksimal 2 MB');
+            }
             if (! empty($row->foto_before_filename)) {
                 $old = FCPATH . 'uploads/patrol/' . $row->foto_before_filename;
                 if (file_exists($old)) unlink($old);
             }
-            [$f, $o, $m, $s] = $this->uploadFoto('foto_before');
             $updateData['foto_before_filename']      = $f;
             $updateData['foto_before_original_name'] = $o;
             $updateData['foto_before_mime']          = $m;
@@ -315,11 +326,14 @@ class Patrol extends BaseController
         // image after: change if there is a new upload
         $fileAfter = $this->request->getFile('foto_after');
         if ($fileAfter && $fileAfter->isValid() && ! $fileAfter->hasMoved()) {
+            [$f, $o, $m, $s] = $this->uploadFoto('foto_after');
+            if ($f === '__SIZE_EXCEEDED__') {
+                return redirect()->back()->withInput()->with('error', 'Gambar melebihi batas ukuran maksimal 2 MB');
+            }
             if (! empty($row->foto_after_filename)) {
                 $old = FCPATH . 'uploads/patrol/' . $row->foto_after_filename;
                 if (file_exists($old)) unlink($old);
             }
-            [$f, $o, $m, $s] = $this->uploadFoto('foto_after');
             $updateData['foto_after_filename']      = $f;
             $updateData['foto_after_original_name'] = $o;
             $updateData['foto_after_mime']          = $m;

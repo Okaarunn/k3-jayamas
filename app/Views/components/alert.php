@@ -123,11 +123,17 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <?php if (session()->getFlashdata('success')) : ?>
-    <div id="flashSuccess" data-msg="<?= session()->getFlashdata('success') ?>" style="display:none"></div>
+    <div id="flashSuccess" data-msg="<?= esc(session()->getFlashdata('success')) ?>" style="display:none"></div>
 <?php endif; ?>
 
 <?php if (session()->getFlashdata('error')) : ?>
-    <div id="flashError" data-msg="<?= session()->getFlashdata('error') ?>" style="display:none"></div>
+    <div id="flashError" data-msg="<?= esc(session()->getFlashdata('error')) ?>" style="display:none"></div>
+<?php endif; ?>
+
+<?php if (session()->getFlashdata('errors')) : ?>
+    <?php foreach ((array) session()->getFlashdata('errors') as $errMsg) : ?>
+        <div class="flashErrors" data-msg="<?= esc($errMsg) ?>" style="display:none"></div>
+    <?php endforeach; ?>
 <?php endif; ?>
 
 <script>

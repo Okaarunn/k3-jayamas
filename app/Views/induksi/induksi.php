@@ -291,51 +291,5 @@
             table.column(7).search($(this).val()).draw();
         });
     });
-
-    function showToast(message, type = "success") {
-        const container = document.getElementById("toastContainer");
-
-        const toast = document.createElement("div");
-        toast.className = "k3-toast " + type;
-
-        toast.innerHTML = `
-        <div class="accent"></div>
-        <div class="body">
-            <div class="icon">
-                <i class="fas ${type === 'success' ? 'fa-check' : 'fa-times'}"></i>
-            </div>
-            <div class="text">
-                <div class="title">${type === 'success' ? 'Berhasil' : 'Error'}</div>
-                <div class="msg">${message}</div>
-            </div>
-        </div>
-    `;
-
-        container.appendChild(toast);
-
-        setTimeout(() => {
-            toast.classList.add("show");
-        }, 100);
-
-        setTimeout(() => {
-            toast.classList.add("hide");
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    }
-
-    document.addEventListener("DOMContentLoaded", function() {
-        const flashSuccess = document.getElementById("flashSuccess");
-        const flashError = document.getElementById("flashError");
-
-        if (flashSuccess) {
-            const msg = flashSuccess.getAttribute("data-msg");
-            showToast(msg, "success");
-        }
-
-        if (flashError) {
-            const msg = flashError.getAttribute("data-msg");
-            showToast(msg, "error");
-        }
-    });
 </script>
 <?php $this->endSection(); ?>

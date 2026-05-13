@@ -354,6 +354,10 @@
 
 <div class="container-fluid pb-4">
 
+
+    <?= $this->include('components/alert') ?>
+
+
     <!-- HEADER -->
     <div class="edit-header">
         <a href="<?= base_url('induksi') ?>" class="back-btn">

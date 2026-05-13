@@ -84,27 +84,75 @@ class Induksi extends BaseController
         return $myPlantId === (int) $row->creator_plant_id;
     }
 
-    private function uploadFile(string $fieldName, string $uploadDir = 'uploads/induksi/')
+    private function uploadFile(string $fieldName, string $uploadDir = 'uploads/induksi/'): array
     {
-        $files = $this->request->getFiles();
-        $results = [];
+        $files      = $this->request->getFiles();
+        $results    = [];
+        $maxSize    = 2 * 1024 * 1024; // 2 MB dalam bytes
+        $allowedExt = ['jpg', 'jpeg', 'png', 'pdf'];
 
         if (!isset($files[$fieldName])) return [];
 
         foreach ($files[$fieldName] as $file) {
-            if (!$file->isValid() || $file->hasMoved()) continue;
+            // Skip jika tidak ada file yang diupload (input kosong)
+            if (!$file->isValid()) {
+                // Error code 4 = UPLOAD_ERR_NO_FILE (tidak ada file dipilih) — skip saja
+                if ($file->getError() === UPLOAD_ERR_NO_FILE) continue;
 
+                $results[] = [
+                    'error'    => true,
+                    'filename' => '',
+                    'original' => $file->getClientName(),
+                    'message'  => 'File "' . $file->getClientName() . '" tidak valid.',
+                ];
+                continue;
+            }
+
+            if ($file->hasMoved()) continue;
+
+            // ── Ambil semua metadata SEBELUM move() ──────────────────
+            $origName = $file->getClientName();
+            $mime     = $file->getClientMimeType();
+            $size     = $file->getSize();
+            $ext      = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
+
+            // ── Validasi ukuran ───────────────────────────────────────
+            if ($size > $maxSize) {
+                $sizeMb = number_format($size / 1024 / 1024, 2);
+                $results[] = [
+                    'error'    => true,
+                    'filename' => '',
+                    'original' => $origName,
+                    'message'  => "File \"{$origName}\" ({$sizeMb} MB) melebihi batas maksimal 2 MB.",
+                ];
+                continue;
+            }
+
+            // ── Validasi ekstensi ─────────────────────────────────────
+            if (!in_array($ext, $allowedExt)) {
+                $results[] = [
+                    'error'    => true,
+                    'filename' => '',
+                    'original' => $origName,
+                    'message'  => "Format file \"{$origName}\" tidak didukung. Gunakan JPG, PNG, atau PDF.",
+                ];
+                continue;
+            }
+
+            // ── Buat direktori jika belum ada ─────────────────────────
             $uploadPath = FCPATH . $uploadDir;
             if (!is_dir($uploadPath)) mkdir($uploadPath, 0755, true);
 
+            // ── Pindahkan file ────────────────────────────────────────
             $newName = $file->getRandomName();
             $file->move($uploadPath, $newName);
 
             $results[] = [
+                'error'    => false,
                 'filename' => $newName,
-                'original' => $file->getClientName(),
-                'mime'     => $file->getClientMimeType(),
-                'size'     => $file->getSize()
+                'original' => $origName,
+                'mime'     => $mime,
+                'size'     => $size,
             ];
         }
 
@@ -138,6 +186,29 @@ class Induksi extends BaseController
 
     public function store()
     {
+        // Validate files FIRST before inserting data
+        $dokumentasi = $this->uploadFile('dokumentasi');
+        $absensi = $this->uploadFile('absensi');
+        $errors = [];
+
+        // Check for file size errors
+        foreach ($dokumentasi as $f) {
+            if (isset($f['error']) && $f['error']) {
+                $errors[] = $f['message'];
+            }
+        }
+
+        foreach ($absensi as $f) {
+            if (isset($f['error']) && $f['error']) {
+                $errors[] = $f['message'];
+            }
+        }
+
+        // If there are file errors, reject the entire request
+        if (!empty($errors)) {
+            return redirect()->back()->with('error', 'Gambar melebihi batas ukuran maksimal 2 MB');
+        }
+
         $this->db->transStart();
 
         // insert induksi utama
@@ -153,9 +224,7 @@ class Induksi extends BaseController
 
         $induksiId = $this->db->insertID();
 
-        // dokumentasi
-        $dokumentasi = $this->uploadFile('dokumentasi');
-
+        // Insert dokumentasi
         foreach ($dokumentasi as $f) {
             $this->db->table('induksi_dokumentasi')->insert([
                 'induksi_id'   => $induksiId,
@@ -166,8 +235,7 @@ class Induksi extends BaseController
             ]);
         }
 
-        // absensi
-        $absensi = $this->uploadFile('absensi');
+        // Insert absensi
         foreach ($absensi as $f) {
             $this->db->table('induksi_absensi')->insert([
                 'induksi_id'   => $induksiId,
@@ -177,6 +245,7 @@ class Induksi extends BaseController
                 'size'         => $f['size'],
             ]);
         }
+
         $this->db->transComplete();
 
         $id = $induksiId;
@@ -224,6 +293,29 @@ class Induksi extends BaseController
 
         if (!$row || !$this->canModify($row)) {
             return redirect()->to('/induksi')->with('error', 'Tidak ada akses');
+        }
+
+        // Validate new files FIRST before updating
+        $newAbsensi = $this->uploadFile('absensi');
+        $newDokumentasi = $this->uploadFile('dokumentasi');
+        $errors = [];
+
+        // Check for file size errors
+        foreach ($newAbsensi as $f) {
+            if (isset($f['error']) && $f['error']) {
+                $errors[] = $f['message'];
+            }
+        }
+
+        foreach ($newDokumentasi as $f) {
+            if (isset($f['error']) && $f['error']) {
+                $errors[] = $f['message'];
+            }
+        }
+
+        // If there are file errors, reject the entire request
+        if (!empty($errors)) {
+            return redirect()->back()->with('error', implode('<br>', $errors));
         }
 
         $this->db->transStart();
@@ -278,10 +370,8 @@ class Induksi extends BaseController
             }
         }
 
-        // upload tambahan absensi baru (tidak hapus lama)
-        $files = $this->uploadFile('absensi');
-
-        foreach ($files as $f) {
+        // Insert new absensi files
+        foreach ($newAbsensi as $f) {
             $this->db->table('induksi_absensi')->insert([
                 'induksi_id'   => $id,
                 'filename'     => $f['filename'],
@@ -291,10 +381,8 @@ class Induksi extends BaseController
             ]);
         }
 
-        // upload tambahan dokumentasi baru (tidak hapus lama)
-        $docFiles = $this->uploadFile('dokumentasi');
-
-        foreach ($docFiles as $f) {
+        // Insert new dokumentasi files
+        foreach ($newDokumentasi as $f) {
             $this->db->table('induksi_dokumentasi')->insert([
                 'induksi_id'   => $id,
                 'filename'     => $f['filename'],
@@ -317,8 +405,7 @@ class Induksi extends BaseController
             newData: $this->request->getPost()
         );
 
-        session()->setFlashdata('success', 'Berhasil update data induksi');
-        return redirect()->to('/induksi');
+        return redirect()->to('/induksi')->with('success', 'Berhasil update data induksi');
     }
 
     public function delete(int $id)
@@ -332,7 +419,6 @@ class Induksi extends BaseController
         $this->db->table('induksi')->where('id', $id)->update([
             'deleted_at' => date('Y-m-d H:i:s')
         ]);
-
 
         write_log(
             module: 'induksi',
